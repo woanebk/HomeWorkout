@@ -9,19 +9,26 @@ import {
   StatusBar,
   Animated,
   FlatList,
+  Modal,
 } from 'react-native';
 import Video from 'react-native-video';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 import WorkoutItem from '../../components/WorkoutItem';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Icon} from 'react-native-elements';
 
 const HORIZONTAL_LIST_HEIGHT = 150;
+const STOP_WATCH_HEIGHT = 100;
 
 function WorkoutProgressScreen(props, route) {
   const [excersise, setExcersise] = useState({});
   const [time, setTime] = useState(5);
   const [isCounting, setIsCounting] = useState(true);
   const [workout, setWorkout] = useState(['1', '2', '3']);
+  const [isRest, setIsRest] = useState(false);
+  const [showListAll, setShowListAll] = useState(false);
+
 
   const dummyDATA = [
     {
@@ -90,9 +97,63 @@ function WorkoutProgressScreen(props, route) {
 
   const renderExcerciseItem = (item, index) => {
     return (
-      <View style={{width: SCREEN_WIDTH,}}>
+      <View
+        style={{
+          width: SCREEN_WIDTH,
+          height: HORIZONTAL_LIST_HEIGHT,
+          backgroundColor: '#000',
+        }}>
         <Image style={styles.excersiseImg} source={{uri: item.img}} />
       </View>
+    );
+  };
+
+  const renderExcercise = () => {
+    return (
+      <>
+        <Video
+          style={styles.video}
+          repeat
+          source={require('../../assets/5svideo.mp4')}
+        />
+        <View style={styles.nameWrapper}>
+          <Text style={styles.nameTxt}>Hít đất</Text>
+          <Text style={styles.repTxt}>15 Reps</Text>
+        </View>
+      </>
+    );
+  };
+
+  const renderSeeAllButton = () => {
+    return (
+      <View style={styles.seeAllBtnWrapper}>
+        <TouchableOpacity
+          style={styles.roundBtn}
+          onPress={() => setShowListAll(true)}>
+          <Icon name="tags" type="font-awesome" size={13} color={COLOR.BLACK} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderListAllExcercise = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent
+        statusBarTranslucent 
+        visible={showListAll}
+        onRequestClose={() => {
+          setShowListAll(false);
+        }}>
+        <View style={styles.listAllExcercise}>
+          <View style={styles.listCloseBtnWrapper}>
+            <TouchableOpacity style={styles.smallRoundBtn}>
+              <Icon name="close" type="font-awesome" size={13} color={COLOR.BLACK} onPress={()=>setShowListAll(false)} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     );
   };
 
@@ -102,26 +163,11 @@ function WorkoutProgressScreen(props, route) {
         barStyle="light-content"
         translucent
         backgroundColor="transparent"></StatusBar>
-      <Video
-        style={styles.video}
-        repeat
-        source={require('../../assets/5svideo.mp4')}
-      />
-      <View style={styles.nameWrapper}>
-        <Text style={styles.nameTxt}>Hít đất</Text>
-        <Text style={styles.repTxt}>15 Reps</Text>
-      </View>
-      <View style={{}}>{CountClock()}</View>
-      <FlatList
-          pagingEnabled
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.horizontalList}
-          data={dummyDATA}
-          renderItem={({item, index}) => renderExcerciseItem(item, index)}
-        />
+      {isRest ? CountClock() : renderExcercise()}
 
       <View style={{alignItems: 'center'}}></View>
+      {renderSeeAllButton()}
+      {renderListAllExcercise()}
     </View>
   );
 }
@@ -136,7 +182,7 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: 'center',
     borderRadius: 15,
-    marginTop: 10,
+    marginTop: STOP_WATCH_HEIGHT,
   },
   horizontalList: {
     backgroundColor: COLOR.RED,
@@ -156,12 +202,43 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   excersiseImg: {
-    width: 150,
+    width: '100%',
     height: HORIZONTAL_LIST_HEIGHT,
     position: 'absolute',
     bottom: 0,
-    borderRadius:5,
-    marginLeft:20,
+    borderRadius: 5,
+    marginLeft: 20,
+  },
+  seeAllBtnWrapper: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+  },
+  roundBtn: {
+    width: 50,
+    height: 50,
+    backgroundColor: COLOR.WHITE,
+    borderRadius: 50,
+    justifyContent: 'center',
+  },
+  smallRoundBtn: {
+    width: 30,
+    height: 30,
+    backgroundColor: COLOR.WHITE,
+    borderRadius: 50,
+    justifyContent: 'center',
+  },
+  listAllExcercise: {
+    backgroundColor:COLOR.GREY,
+    height:'100%',
+    marginTop:STOP_WATCH_HEIGHT,
+    borderTopLeftRadius:5,
+    borderTopRightRadius:5,
+  },
+  listCloseBtnWrapper:{
+    position:'absolute',
+    top:20,
+    right:20
   },
 });
 
