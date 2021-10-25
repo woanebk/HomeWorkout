@@ -17,7 +17,7 @@ const AuthStack = createStackNavigator();
 function MainStackNavigator() {
   return (
     <MainStack.Navigator
-      initialRouteName="AuthStack" //AuthStack
+      initialRouteName="Tab" //AuthStack
       screenOptions={{
         headerTransparent: true,
         headerTitle: '',

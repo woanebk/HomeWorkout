@@ -9,10 +9,14 @@ import {
 import { Icon } from 'react-native-elements';
 import { BackgroundImage } from 'react-native-elements/dist/config';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import LinearGradient from 'react-native-linear-gradient';
 import HomeSection from '../components/HomeSection';
 import UserStatus from '../components/UserStatus';
 import WorkoutItem from '../components/WorkoutItem';
-import {COLOR, SCREEN_WIDTH} from '../constant'
+import {COLOR, SCREEN_WIDTH} from '../constant';
+import {BlurView} from '@react-native-community/blur'
+
+const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
 
   const [suggestedWorkouts, setSuggestedWorkouts] = useState(['1','2','3'])
@@ -26,37 +30,36 @@ function HomeScreen({navigation}) {
             <Text style={styles.todayWorkoutTxt}>Bài Tập Của Ngày</Text>
           </View>
           
-          <View style={styles.bannerBlur}>
-            <View style={{flex:4, marginRight:5}}>
-              <View style={styles.bannerTag}>
-                <Icon
-                  name='tags'
-                  type='font-awesome'
-                  size={13}
-                  color={COLOR.BLACK}/>
-                <Text style={styles.bannerTagTxt}>Dành cho bạn</Text>
-              </View>
-              <Text numberOfLines={2} style={styles.bannerTxt}>Bài tập bụng giúp xây dựng sức bền</Text>
-              <View style={{flexDirection:'row', alignItems:'center', position:'absolute', bottom:3, marginRight:10}}>
-                <Icon
-                name='certificate'
-                type='font-awesome-5'
-                size={15}
-                color={COLOR.WHITE}/>
-                <Text numberOfLines={1} style={styles.bannerdesTxt}>Nhóm Cơ: Vai, Tay trước, Lưng, Bụng, Xô</Text>
-              </View>
-            </View>
+          <LinearGradient
+            style={styles.bannerLinearGradient}
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 0.9}}
+            colors={[COLOR.TRANSPARENT, COLOR.MATTE_BLACK]}>
+          </LinearGradient>
 
-            <View style={styles.bannerBtn}>
-              <TouchableOpacity onPress={()=>navigation.navigate('WorkoutInfo')}>
-                <Icon
-                  name='dumbbell'
-                  type='font-awesome-5'
-                  size={23}
-                  color={COLOR.GOLD}/>
-                  <Text style={{color:COLOR.WHITE, marginTop:5}}>Tập Ngay</Text>
+          <View style={styles.bannerLeft}>
+            <Text style={styles.bannerTxt}>Bài tập bụng giúp xây dựng sức bền</Text>
+            <View style={styles.bannerBtnWrapper}>
+              <TouchableOpacity style={styles.bannerBtn} onPress={()=>navigation.navigate('WorkoutInfo')}>
+              <Icon
+                    name='dumbbell'
+                    type='font-awesome-5'
+                    size={13}
+                    color={COLOR.WHITE}/>
+                    <Text style={styles.bannerBtnTxt}>Tập Ngay</Text>
               </TouchableOpacity>
             </View>
+          </View>
+
+          <View style={styles.bannerRight} >
+            <BlurView style={styles.bannerRightInsider} blurType={'dark'} blurRadius={25} overlayColor='transparent'>
+              <Text style={styles.bannerRightTxt}>3</Text>
+              <Text style={styles.bannerRightSmallTxt}>Số set</Text>
+              <Text style={styles.bannerRightTxt}>30m</Text>
+              <Text style={styles.bannerRightSmallTxt}>Thời gian</Text>
+              <Text style={[styles.bannerRightTxt, {fontSize:15}]}>Medium</Text>
+              <Text style={styles.bannerRightSmallTxt}>Level</Text>
+            </BlurView>
           </View>
         </BackgroundImage>
   )
@@ -148,65 +151,75 @@ function HomeScreen({navigation}) {
 
 const styles = StyleSheet.create({
   banner:{
-    height:250,
-    justifyContent:'flex-end',
-  },
-  bannerBlur:{
-    backgroundColor:'#000',
-    opacity:0.8,
-    marginHorizontal:5,
-    marginBottom:5,
-    borderRadius:10,
-    paddingHorizontal:10,
-    paddingTop:10,
-    flexDirection:'row'
-  },
-  bannerImg:{
-    width:70, 
-    height:70,
-    borderRadius:5,
-    marginLeft:5
-  },
-  bannerTag:{
-    backgroundColor:COLOR.GOLD,
-    borderWidth:1,
-    width:120,
-    borderRadius:5,
+    height:HOME_BANNER_HEIGHT,
+    alignItems:'flex-end',
     flexDirection:'row',
-    paddingHorizontal:9,
-    justifyContent:'space-between',
-    alignItems:'center'
+    justifyContent:'space-between'
   },
-  bannerTagTxt:{
-    fontSize:13,
-    color:COLOR.BLACK,
-    fontWeight:'bold'
+  bannerLinearGradient:{
+    position:'absolute', 
+    height:HOME_BANNER_HEIGHT, 
+    width:'100%', 
+    bottom:0
+  },
+  bannerLeft:{
+    paddingLeft:20,
+    paddingBottom:20,
+    flex:1
+  },
+  bannerRight:{
+    //backgroundColor:COLOR.BLACK,
+    width:70,
+    height:HOME_BANNER_HEIGHT* 0.6,
+    borderRadius:20,
+    marginHorizontal:10,
+    marginBottom:20,
+    alignItems:'center',
+    overflow:'hidden'
+  },
+  bannerRightInsider:{
+    width:'100%',
+    height:'100%',
+    alignItems:'center',
+    paddingVertical:10,
   },
   bannerTxt:{
     color:COLOR.WHITE,
-    fontSize:20,
-    fontWeight:'bold'
-  },
-  bannerdesTxt:{
-    color:COLOR.WHITE,
-    fontSize:13,
+    fontSize:26,
     fontWeight:'bold',
-    marginLeft:5
+    width:'90%',
+    marginBottom:15
+  },
+  bannerRightTxt:{
+    color:COLOR.WHITE,
+    fontSize:20,
+  },
+  bannerRightSmallTxt:{
+    fontSize:13,
+    color:COLOR.GREY,
+    marginBottom:10
   },
   bannerBtn:{
-    flex:1, 
-    borderLeftWidth:1, 
-    borderLeftColor:COLOR.GREY, 
-    marginVertical:20, 
-    alignItems:'center', 
-    paddingTop:10,
+    backgroundColor:COLOR.RED,
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center',
+    height:40,
+    width:180,
+    borderRadius:15
+  },
+  bannerBtnTxt:{
+    color:COLOR.WHITE,
+    fontSize:15,
+    fontWeight:'bold',
+    marginLeft:5
   },
   todayWorkout:{
     backgroundColor:COLOR.GOLD,
     width:170,
     height:25,
     position:'absolute',
-    bottom:150,
+    top:50,
     right:0,
     borderTopLeftRadius:10,
     borderBottomLeftRadius:10,
@@ -235,7 +248,8 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     flexDirection:'row',
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center',
+    marginTop:10
   },
   userBtnTxt:{
     color:COLOR.WHITE,

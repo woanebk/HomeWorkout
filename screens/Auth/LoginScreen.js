@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   },
   textinput:{
     alignSelf:'center',
-    marginTop:300,
+    marginTop:350,
     width:'85%'
   },
   commandBtn:{

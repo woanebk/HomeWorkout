@@ -12,13 +12,16 @@ import {
   Modal,
 } from 'react-native';
 import Video from 'react-native-video';
-import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
+import {COLOR, HORIZONTAL_LIST_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 import WorkoutItem from '../../components/WorkoutItem';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Icon} from 'react-native-elements';
+import RoundButton from '../../components/RoundButton';
+import TextTicker from 'react-native-text-ticker';
+import WorkoutStatus from '../../components/WorkoutStatus';
+import CommandButton from '../../components/CommandButton';
 
-const HORIZONTAL_LIST_HEIGHT = 150;
 const STOP_WATCH_HEIGHT = 100;
 
 function WorkoutProgressScreen(props, route) {
@@ -28,43 +31,52 @@ function WorkoutProgressScreen(props, route) {
   const [workout, setWorkout] = useState(['1', '2', '3']);
   const [isRest, setIsRest] = useState(false);
   const [showListAll, setShowListAll] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
+  const currentExcerciseListRef = useRef();
 
   const dummyDATA = [
     {
-      name: 'Cơ Vai',
+      name: 'Đẩy vai qua đầu',
       img: 'https://cdn.shopify.com/s/files/1/0866/7664/articles/image2_f2c3ca07-e2b8-402e-b67b-8824e6ce1a4d_2048x.jpg?v=1607671623',
       total: 5,
+      restTime: 30,
     },
     {
       name: 'Cơ Ngực',
       img: 'https://onnitacademy.imgix.net/wp-content/uploads/2020/06/sizzlchestBIG-1333x1000.jpg',
       total: 5,
+      restTime: 30,
     },
     {
       name: 'Tay Trước',
       img: 'https://manofmany.com/wp-content/uploads/2020/06/best-bicep-exercises.jpg',
       total: 5,
+      restTime: 30,
     },
     {
       name: 'Tay Sau',
       img: 'https://s35247.pcdn.co/wp-content/uploads/2019/07/tw5.jpg.optimal.jpg',
       total: 5,
+      restTime: 30,
     },
     {
       name: 'Cơ Chân',
       img: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bring-it-all-the-way-up-here-royalty-free-image-1625750638.jpg?crop=0.601xw:0.946xh;0.397xw,0.0103xh&resize=640:*',
       total: 5,
+      restTime: 30,
     },
     {
       name: 'Cơ Lưng Xô',
       img: 'https://www.bodybuilding.com/images/2017/december/your-blueprint-for-building-a-bigger-back-tall-v2-MUSCLETECH.jpg',
       total: 5,
+      restTime: 30,
     },
     {
       name: 'Cơ Bụng',
       img: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bodybuilders-abdominal-muscles-royalty-free-image-1608761464.?crop=0.668xw:1.00xh;0.332xw,0&resize=640:*',
       total: 5,
+      restTime: 30,
     },
   ];
 
@@ -95,20 +107,7 @@ function WorkoutProgressScreen(props, route) {
     </CountdownCircleTimer>
   );
 
-  const renderExcerciseItem = (item, index) => {
-    return (
-      <View
-        style={{
-          width: SCREEN_WIDTH,
-          height: HORIZONTAL_LIST_HEIGHT,
-          backgroundColor: '#000',
-        }}>
-        <Image style={styles.excersiseImg} source={{uri: item.img}} />
-      </View>
-    );
-  };
-
-  const renderExcercise = () => {
+  const renderCurrentExcercise = () => {
     return (
       <>
         <Video
@@ -124,15 +123,9 @@ function WorkoutProgressScreen(props, route) {
     );
   };
 
-  const renderSeeAllButton = () => {
-    return (
-      <View style={styles.seeAllBtnWrapper}>
-        <TouchableOpacity
-          style={styles.roundBtn}
-          onPress={() => setShowListAll(true)}>
-          <Icon name="tags" type="font-awesome" size={13} color={COLOR.BLACK} />
-        </TouchableOpacity>
-      </View>
+  const renderExcerciseStatus = () => {
+    return(
+    <WorkoutStatus currentIndex={currentIndex} data={dummyDATA}/>
     );
   };
 
@@ -141,17 +134,20 @@ function WorkoutProgressScreen(props, route) {
       <Modal
         animationType="slide"
         transparent
-        statusBarTranslucent 
+        statusBarTranslucent
         visible={showListAll}
         onRequestClose={() => {
           setShowListAll(false);
         }}>
         <View style={styles.listAllExcercise}>
-          <View style={styles.listCloseBtnWrapper}>
-            <TouchableOpacity style={styles.smallRoundBtn}>
-              <Icon name="close" type="font-awesome" size={13} color={COLOR.BLACK} onPress={()=>setShowListAll(false)} />
-            </TouchableOpacity>
-          </View>
+          <RoundButton
+            icon="close"
+            buttonWidth={30}
+            buttonHeight={30}
+            size={10}
+            style={styles.listCloseBtnWrapper}
+            onPress={() => setShowListAll(false)}
+          />
         </View>
       </Modal>
     );
@@ -163,10 +159,17 @@ function WorkoutProgressScreen(props, route) {
         barStyle="light-content"
         translucent
         backgroundColor="transparent"></StatusBar>
-      {isRest ? CountClock() : renderExcercise()}
+      {isRest ? CountClock() : renderCurrentExcercise()}
 
-      <View style={{alignItems: 'center'}}></View>
-      {renderSeeAllButton()}
+      <View style={{alignItems: 'center', flex: 1}}>
+        {renderExcerciseStatus()}
+      </View>
+      <RoundButton
+        style={styles.seeAllBtnWrapper}
+        icon="tag"
+        onPress={() => setShowListAll(true)}
+      />
+      <CommandButton  title='Hoàn thành' icon='tag' style={styles.commandBtn}/>
       {renderListAllExcercise()}
     </View>
   );
@@ -184,9 +187,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginTop: STOP_WATCH_HEIGHT,
   },
-  horizontalList: {
-    backgroundColor: COLOR.RED,
-  },
   nameTxt: {
     fontSize: 30,
     color: COLOR.WHITE,
@@ -201,44 +201,29 @@ const styles = StyleSheet.create({
     color: COLOR.GREY,
     fontWeight: 'bold',
   },
-  excersiseImg: {
-    width: '100%',
-    height: HORIZONTAL_LIST_HEIGHT,
-    position: 'absolute',
-    bottom: 0,
-    borderRadius: 5,
-    marginLeft: 20,
-  },
   seeAllBtnWrapper: {
     position: 'absolute',
-    bottom: 20,
-    left: 20,
-  },
-  roundBtn: {
-    width: 50,
-    height: 50,
-    backgroundColor: COLOR.WHITE,
-    borderRadius: 50,
-    justifyContent: 'center',
-  },
-  smallRoundBtn: {
-    width: 30,
-    height: 30,
-    backgroundColor: COLOR.WHITE,
-    borderRadius: 50,
-    justifyContent: 'center',
+    bottom: HORIZONTAL_LIST_HEIGHT - 40,
+    left: 10,
   },
   listAllExcercise: {
-    backgroundColor:COLOR.GREY,
-    height:'100%',
-    marginTop:STOP_WATCH_HEIGHT,
-    borderTopLeftRadius:5,
-    borderTopRightRadius:5,
+    backgroundColor: COLOR.GREY,
+    height: '100%',
+    marginTop: STOP_WATCH_HEIGHT,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
   },
-  listCloseBtnWrapper:{
+  listCloseBtnWrapper: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+  },
+  commandBtn:{
     position:'absolute',
-    top:20,
-    right:20
+    bottom:10,
+    width:'90%',
+    height:50,
+    alignSelf:'center'
   },
 });
 

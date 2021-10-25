@@ -8,6 +8,7 @@ export const COLOR = {
     TRANSPARENT: '#00000000',
     BLACK : '#181510',
     MATTE_BLACK : '#222222',
+    LIGHT_MATTE_BLACK: '#333333',
     DARK_BROWN : '#785F37',
     LIGHT_BROWN : '#A08C5B',
     GOLD : '#CBB682',
@@ -24,5 +25,8 @@ export const COLOR = {
     ORANGE:'#ff5e13',
     DARK_BLUE: '#09143c',
     BLUE_BLACK: '#040720',
-    KELLY_GREEN:'#4cbb17'
+    KELLY_GREEN:'#4cbb17',
+    BLUE:'#187bcd'
 }
+
+export const HORIZONTAL_LIST_HEIGHT = 200; //left view 130

@@ -23,7 +23,7 @@ function MainTabNavigator({navigation}) {
   );
   return (
     <MainTab.Navigator
-    barStyle={{ backgroundColor: COLOR.BLACK }}
+    barStyle={{ backgroundColor: COLOR.SILVER }}
     >
       <MainTab.Screen name="Home" component={HomeScreen} 
       options={{
