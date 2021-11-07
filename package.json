@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@react-native-community/blur": "^3.6.0",
+    "@react-native-firebase/app": "^13.0.1",
+    "@react-native-firebase/database": "^13.0.1",
     "@react-navigation/material-bottom-tabs": "^6.0.5",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
@@ -19,6 +21,7 @@
     "react": "17.0.2",
     "react-native": "0.65.1",
     "react-native-countdown-circle-timer": "^2.5.4",
+    "react-native-effects-view": "^0.4.0",
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-ionicons": "^4.6.5",

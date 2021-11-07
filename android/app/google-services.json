@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "441584493982",
+    "project_id": "homeworkout-73750",
+    "storage_bucket": "homeworkout-73750.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441584493982:android:4cc25a0479951ebd9ae28f",
+        "android_client_info": {
+          "package_name": "com.homeworkout"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441584493982-j10cn1kh0dfpolhtvpqs8fnsbt6heiha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkRL-ioTDzcncb0Loq4uwEa1lEheiXIO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441584493982-j10cn1kh0dfpolhtvpqs8fnsbt6heiha.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

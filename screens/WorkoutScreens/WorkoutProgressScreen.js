@@ -162,6 +162,18 @@ function WorkoutProgressScreen(props, route) {
       {isRest ? CountClock() : renderCurrentExcercise()}
 
       <View style={{alignItems: 'center', flex: 1}}>
+        <FlatList
+        horizontal
+        pagingEnabled
+        data={dummyDATA}
+        renderItem={({item})=>{
+          return(
+            <View style={{ width:SCREEN_WIDTH}}>
+              <Text style={{color:COLOR.WHITE}}>{item.name}</Text>
+            </View>
+          )
+        }}
+        />
         {renderExcerciseStatus()}
       </View>
       <RoundButton
@@ -169,7 +181,7 @@ function WorkoutProgressScreen(props, route) {
         icon="tag"
         onPress={() => setShowListAll(true)}
       />
-      <CommandButton  title='Hoàn thành' icon='tag' style={styles.commandBtn}/>
+      <CommandButton title='Hoàn thành' icon='tag' style={styles.commandBtn}/>
       {renderListAllExcercise()}
     </View>
   );

@@ -2,14 +2,18 @@ import React from 'react';
 import {TouchableOpacity, StyleSheet, View, Text} from 'react-native';
 import {COLOR} from '../constant';
 import {Icon} from 'react-native-elements';
+import LinearGradient from 'react-native-linear-gradient';
 
-function CommandButton(props) {
+function GradientCommandButton(props) {
   return (
-    <View style={props.style}>
+    <LinearGradient style={props.style}
+    start={{x: 0.7, y: 0.1}}
+    end={{x: 0, y: 0.5}}
+    colors={[COLOR.GOLD,COLOR.DARK_BROWN , COLOR.BLACK]}
+    >
       <TouchableOpacity
         style={[
           styles.commandBtn,
-          props.backgroundColor? {backgroundColor: props.backgroundColor} : {}
         ]}
         onPress={props.onPress}>
         <Icon
@@ -20,13 +24,13 @@ function CommandButton(props) {
         />
         <Text style={{color:props.textColor?textColor:COLOR.WHITE, fontSize:15, fontWeight:'bold', marginLeft:10}}>{props.title}</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
     commandBtn: {
-    backgroundColor: COLOR.BLUE,
+    //backgroundColor: COLOR.BLUE,
     borderRadius: 7,
     justifyContent: 'center',
     alignItems:'center',
@@ -36,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CommandButton;
+export default GradientCommandButton;

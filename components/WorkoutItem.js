@@ -63,11 +63,10 @@ function WorkoutItem(props) {
   
   const styles = StyleSheet.create({
     container:{
-        height:240,
+        height:200,
         borderRadius:5,
         elevation:5,
         backgroundColor:COLOR.WHITE,
-        margin:10
     },
     img:{
         flex:0.75,
