@@ -15,7 +15,7 @@ import {COLOR, SCREEN_WIDTH} from '../constant';
 import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
-import { firebase } from '@react-native-firebase/database';
+import { Test } from '../utilities/FirebaseDatabase';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
@@ -196,6 +196,8 @@ function HomeScreen({navigation}) {
           title="Đi đến thư viện bài tập"
           backgroundColor={COLOR.GOLD}
           onPress={async () => {
+            const res = await Test();
+            console.log(res.val())
           }}
         />
       </View>
