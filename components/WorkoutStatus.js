@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -12,8 +12,22 @@ import LinearGradient from 'react-native-linear-gradient';
 import TextTicker from 'react-native-text-ticker';
 import {COLOR, HORIZONTAL_LIST_HEIGHT, SCREEN_WIDTH} from '../constant';
 
-function WorkoutStatus(props) {
+function WorkoutStatus(props, ref) {
   const currentExcerciseListRef = useRef();
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      scrollBack : () => {
+        currentExcerciseListRef.current.scrollTo({
+          x: 0,
+          y: 0,
+          animated: true,
+        })
+      }
+    }),
+    []
+  );
 
   return (
     <ScrollView
@@ -58,12 +72,13 @@ function WorkoutStatus(props) {
               <View style={styles.nextExcercise}>
                 <TouchableOpacity
                   style={{alignItems: 'center'}}
-                  onPress={() =>
+                  onPress={() =>{
                     currentExcerciseListRef.current.scrollTo({
                       x: SCREEN_WIDTH,
                       y: 0,
                       animated: true,
                     })
+                  }
                   }>
                   <Image
                     style={styles.nextExcersiseImg}
@@ -204,4 +219,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WorkoutStatus;
+export default forwardRef(WorkoutStatus);

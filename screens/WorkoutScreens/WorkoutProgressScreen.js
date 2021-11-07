@@ -32,8 +32,8 @@ function WorkoutProgressScreen(props, route) {
   const [isRest, setIsRest] = useState(false);
   const [showListAll, setShowListAll] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const currentExcerciseListRef = useRef();
+  
+  const excersiseStatusRef = useRef();
 
   const dummyDATA = [
     {
@@ -125,7 +125,7 @@ function WorkoutProgressScreen(props, route) {
 
   const renderExcerciseStatus = () => {
     return(
-    <WorkoutStatus currentIndex={currentIndex} data={dummyDATA}/>
+    <WorkoutStatus ref={excersiseStatusRef} currentIndex={currentIndex} data={dummyDATA}/>
     );
   };
 
@@ -153,26 +153,45 @@ function WorkoutProgressScreen(props, route) {
     );
   };
 
+  const onScrollThroughtPage = (e) => { // action when a page is focus (https://newbedev.com/react-native-get-current-page-in-flatlist-when-using-pagingenabled)
+    let contentOffset = e.nativeEvent.contentOffset;
+    let viewSize = e.nativeEvent.layoutMeasurement;
+
+    // Divide the horizontal offset by the width of the view to see which page is visible
+    let pageNum = Math.floor(contentOffset.x / viewSize.width);
+    // Action:
+    if (pageNum != currentIndex) {
+      setCurrentIndex(pageNum)
+      console.log('scrolled to page ', pageNum);
+      excersiseStatusRef.current.scrollBack();
+    }
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
         translucent
         backgroundColor="transparent"></StatusBar>
-      {isRest ? CountClock() : renderCurrentExcercise()}
 
       <View style={{alignItems: 'center', flex: 1}}>
         <FlatList
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 50
+        }}
+        initialNumToRender ={1}
         horizontal
         pagingEnabled
         data={dummyDATA}
         renderItem={({item})=>{
           return(
             <View style={{ width:SCREEN_WIDTH}}>
+            {isRest ? CountClock() : renderCurrentExcercise()}
               <Text style={{color:COLOR.WHITE}}>{item.name}</Text>
             </View>
           )
         }}
+        onMomentumScrollEnd={onScrollThroughtPage}
         />
         {renderExcerciseStatus()}
       </View>
