@@ -18,7 +18,7 @@ function CommandButton(props) {
           size={props.iconSize ? props.iconSize : 13}
           color={props.iconColor ? props.iconColor : COLOR.WHITE}
         />
-        <Text style={{color:props.textColor?textColor:COLOR.WHITE, fontSize:15, fontWeight:'bold', marginLeft:10}}>{props.title}</Text>
+        <Text style={props.textStyle ? props.textStyle : {color:props.textColor?textColor:COLOR.WHITE, fontSize:15, fontWeight:'bold', marginLeft:10}}>{props.title}</Text>
       </TouchableOpacity>
     </View>
   );

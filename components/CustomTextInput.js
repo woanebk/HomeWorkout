@@ -7,11 +7,15 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import {COLOR} from '../constant';
 
 const TITLE_HEIGHT = 20;
 
 function CustomTextInput(props) {
+
+  const inputRef = useRef();
+
   return (
     <KeyboardAvoidingView style={[styles.body, props.style]}>
       <View style={styles.title}>
@@ -24,12 +28,21 @@ function CustomTextInput(props) {
         color={COLOR.WHITE}
       />
       <TextInput
+        ref={inputRef}
         value={props.value}
         onChangeText={props.onChangeText}
         style={{width: '80%', marginLeft: 10, color:COLOR.WHITE}}
         placeholderTextColor={COLOR.WHITE}
         placeholder={props.placeholder}
       />
+      <TouchableOpacity onPress={()=>inputRef.current.clear()}>
+        <Icon
+        name={'close'}
+        type="font-awesome"
+        size={14}
+        color={COLOR.WHITE}
+        />
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 }

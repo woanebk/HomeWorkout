@@ -134,7 +134,7 @@ const scrollX = useRef(new Animated.Value(0)).current
             outputRange:[0, 1, 0]
         })
         return (
-          <View style={[styles.imgWrapper]}>
+          <View style={[styles.imgWrapper]} key={index}>
               <TouchableWithoutFeedback >
                 <Image source={{uri:item.img}} style={styles.img}/>
               </TouchableWithoutFeedback>

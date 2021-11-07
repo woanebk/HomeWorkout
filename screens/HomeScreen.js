@@ -9,7 +9,6 @@ import {
 } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import HomeSection from '../components/HomeSection';
-import UserStatus from '../components/UserStatus';
 import WorkoutItem from '../components/WorkoutItem';
 import {COLOR, SCREEN_WIDTH} from '../constant';
 import ProgramItem from '../components/ProgramItem';
@@ -197,7 +196,7 @@ function HomeScreen({navigation}) {
           backgroundColor={COLOR.GOLD}
           onPress={async () => {
             const res = await Test();
-            console.log(res.val())
+            alert(res.val())
           }}
         />
       </View>
