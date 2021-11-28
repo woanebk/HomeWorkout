@@ -135,23 +135,6 @@ function HomeScreen({navigation}) {
         translucent></StatusBar>
       {renderBanner()}
       {renderUserInfo()}
-      <HomeSection title="Đề xuất cho bạn" onPress={() => {}} />
-      <FlatList
-        pagingEnabled
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.horizontalList}
-        data={suggestedWorkouts}
-        renderItem={({item}) => (
-          <View style={{width: SCREEN_WIDTH, paddingRight: 30}}>
-            <WorkoutItem
-              image={{
-                uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
-              }}
-            />
-          </View>
-        )}
-      />
       <HomeSection title="Tham gia thử thách" onPress={() => {}} />
       <FlatList
         horizontal
@@ -163,6 +146,23 @@ function HomeScreen({navigation}) {
             <ProgramItem
               style={{height: 200, width: 160}}
               title="Thử thách thay đổi bản thân 7 ngày"
+              image={{
+                uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
+              }}
+            />
+          </View>
+        )}
+      />
+      <HomeSection title="Đề xuất cho bạn" onPress={() => {}} />
+      <FlatList
+        pagingEnabled
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.horizontalList}
+        data={suggestedWorkouts}
+        renderItem={({item}) => (
+          <View style={{width: SCREEN_WIDTH, paddingRight: 30}}>
+            <WorkoutItem
               image={{
                 uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
               }}

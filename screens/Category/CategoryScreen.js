@@ -75,7 +75,7 @@ const scrollX = useRef(new Animated.Value(0)).current
             })
             return (
                 <>
-                <Animated.Image
+                <Animated.Image key={index}
                 key={'image-' + index}
                 style={[StyleSheet.absoluteFillObject, {opacity}]}
                 key={index}
@@ -92,7 +92,7 @@ const scrollX = useRef(new Animated.Value(0)).current
                         (index + 1) * width
                     ]
                     return (
-                        <Animated.Text 
+                        <Animated.Text  key={index}
                         key={index}
                         style={[styles.catName, {transform:[
                             {

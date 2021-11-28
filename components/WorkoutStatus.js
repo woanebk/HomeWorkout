@@ -82,7 +82,7 @@ function WorkoutStatus(props, ref) {
                   }>
                   <Image
                     style={styles.nextExcersiseImg}
-                    source={{uri: props.data[index + 1].img}}
+                    source={{uri: props.data[index + 1]?.img || 'https://hips.hearstapps.com/ame-prod-menshealth-assets.s3.amazonaws.com/main/thumbs/39579/workout_finished.jpg'}}
                   />
                   <Text style={{color:COLOR.WHITE, marginTop:5, fontSize:13, fontWeight:'bold'}}>
                     Next 
@@ -104,7 +104,7 @@ function WorkoutStatus(props, ref) {
               <View style={styles.background} />
               <BackgroundImage
                 style={styles.nextExcersiseImg2}  imageStyle={{borderRadius:5}}
-                source={{uri: item.img}}>
+                source={{uri: item?.img}}>
                 <LinearGradient
                   style={styles.nextExcersiseItemDesWrapper}
                   start={{x: 0.7, y: 0}}
