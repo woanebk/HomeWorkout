@@ -1,14 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Text,
     StyleSheet,
     View,
-    StatusBar,
-    ImageBackground,
-    ScrollView,
-    TouchableOpacity
   } from 'react-native';
-import {COLOR} from '../constant'
 import LottieView from 'lottie-react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
