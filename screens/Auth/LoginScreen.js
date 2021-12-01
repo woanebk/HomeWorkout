@@ -21,9 +21,11 @@ import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
   const [OTPCode, setOTPCode] = useState();
+  const [SDT, setSDT] = useState();
 
   const handleLogin = () => {
-    setShowOTP(true);
+    //setShowOTP(true);
+    alert(SDT)
   };
 
   const renderSignUp = () => {
@@ -61,6 +63,8 @@ function LoginScreen({navigation}, route) {
         colors={[COLOR.TRANSPARENT, COLOR.BLACK]}
         style={styles.linearGradient}>
         <CustomTextInput
+        value={SDT}
+        onChangeText={(text)=>setSDT(text)}
           style={styles.textinput}
           icon="phone"
           placeholder="Nhập số điện thoại của bạn"
