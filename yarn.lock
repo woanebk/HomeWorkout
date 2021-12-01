@@ -1214,6 +1214,11 @@
     "opencollective-postinstall" "^2.0.1"
     "superstruct" "^0.6.2"
 
+"@react-native-firebase/auth@^13.0.1":
+  "integrity" "sha512-oZ0KqAjjbqT6It7/zAVIbQu+M4t1noKkAgZ76G12GHHo1mtVCjBTGDpej+J2oqbaEDDDuBAxq8lAhRxf8T+R4g=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/auth/-/auth-13.0.1.tgz"
+  "version" "13.0.1"
+
 "@react-native-firebase/database@^13.0.1":
   "integrity" "sha512-B8fBC+NAcUdZvNOEvbmT1VC6KjZ/EfFWy3iZM8+diGY2PHbPrtrx7mpfvw9HQub6s2inSzpNsvyynD7HPfZ9Yw=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/database/-/database-13.0.1.tgz"
@@ -5952,6 +5957,11 @@
   "resolved" "https://registry.npmjs.org/react-native-countdown-circle-timer/-/react-native-countdown-circle-timer-2.5.4.tgz"
   "version" "2.5.4"
 
+"react-native-dialog@^9.2.0":
+  "integrity" "sha512-VXdfo+bAi9ER7+w4aKOWypw8K97C2orvnfnxX4Lup/U8iQB/635V00hgfHEE3s0XScQHftXxm34Fa4iIIjojQA=="
+  "resolved" "https://registry.npmjs.org/react-native-dialog/-/react-native-dialog-9.2.0.tgz"
+  "version" "9.2.0"
+
 "react-native-effects-view@^0.4.0":
   "integrity" "sha1-TDanASm7XENhyw/T9a/Ah4oajV8="
   "resolved" "https://registry.npmjs.org/react-native-effects-view/-/react-native-effects-view-0.4.0.tgz"
@@ -6081,7 +6091,7 @@
     "prop-types" "^15.7.2"
     "shaka-player" "^2.5.9"
 
-"react-native@*", "react-native@>=0.30", "react-native@>=0.42.0", "react-native@>=0.46", "react-native@>=0.50.0", "react-native@>=0.55", "react-native@>=0.57.0", "react-native@>=0.65.0-rc.0 || 0.0.0-*", "react-native@0.65.1":
+"react-native@*", "react-native@>=0.30", "react-native@>=0.42.0", "react-native@>=0.46", "react-native@>=0.50.0", "react-native@>=0.55", "react-native@>=0.57.0", "react-native@>=0.63.0", "react-native@>=0.65.0-rc.0 || 0.0.0-*", "react-native@0.65.1":
   "integrity" "sha512-0UOVSnlssweQZjuaUtzViCifE/4tXm8oRbxwakopc8GavPu9vLulde145GOw6QVYiOy4iL50f+2XXRdX9NmMeQ=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.65.1.tgz"
   "version" "0.65.1"
