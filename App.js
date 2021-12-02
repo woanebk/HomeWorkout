@@ -3,6 +3,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import MainStackNavigator from './navigation/MainStackNavigator';
+import AuthStackNavigator from './navigation/AuthStackNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
@@ -30,7 +31,7 @@ function App () {
     return (
       <SafeAreaProvider>
       <NavigationContainer>
-        <LoginScreen/>
+        <AuthStackNavigator/>
       </NavigationContainer>
     </SafeAreaProvider>
     );

@@ -19,11 +19,9 @@ import Video from 'react-native-video';
 import CustomTextInput from '../../components/CustomTextInput';
 import OTPVerifyModal from '../../components/OTPVerifyModal';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
-import Dialog from 'react-native-dialog';
 import SingUpModal from '../../components/SignUpModal';
 import {createIconSetFromFontello} from 'react-native-vector-icons';
-import auth, { firebase } from '@react-native-firebase/auth';
-import firebaseApp from '../../utilities/firebaseconfig'
+import auth, {firebase} from '@react-native-firebase/auth';
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
   const [OTPCode, setOTPCode] = useState();
@@ -33,37 +31,78 @@ function LoginScreen({navigation}, route) {
   const [valuePasswordConfirm, setValuePasswordConfirm] = useState('');
 
   const handleSignUp = () => {
-    console.debug('đăng kí')
+    console.debug('đăng kí');
 
     if (valuePassword != valuePasswordConfirm)
       Alert.alert(
         '',
         //body
         'Mật khẩu không giống',
-      )
-      else {
-      console.debug('đăng kí')
-      firebase.app().auth()
-      .createUserWithEmailAndPassword(valueEmail, valuePasswordConfirm)
+      );
+    else {
+      console.debug('đăng kí');
+      auth()
+        .createUserWithEmailAndPassword(valueEmail, valuePasswordConfirm)
+        .then(() => {
+          Alert.alert(
+            '',
+            //body
+            'Tạo tài khoản thành công và đăng nhập',
+          );
+          console.debug('User account created & signed in!');
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.debug('That email address is already in use!');
+            Alert.alert(
+              '',
+              //body
+              'Địa chỉ email này đã được sử dụng',
+            );
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            Alert.alert(
+              '',
+              //body
+              'Vui lòng nhập địa chỉ Email xác thực',
+            );
+          }
+
+          console.debug(error);
+        });
+    }
+  };
+  const handleLogin = () => {
+    dosomething();
+  };
+  const dosomething = () => {
+    auth()
+      .signInWithEmailAndPassword(valueEmail, valuePassword)
       .then(() => {
         Alert.alert(
           '',
           //body
-          'Tạo tài khoản thành công và đăng nhập',
+          'Đăng nhập thành công',
         );
         console.debug('User account created & signed in!');
       })
       .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          console.debug('That email address is already in use!');
+        if (error.code === 'auth/user-not-found') {
+          console.debug(
+            'The password is invalid or the user does not have a password.',
+          );
           Alert.alert(
             '',
             //body
-            'Địa chỉ email này đã được sử dụng',
+            'Địa chỉ email hoặc mật khẩu không xác thực',
           );
         }
 
-        if (error.code === 'auth/invalid-email') {
+        if (
+          error.code ===
+          'There is no user record corresponding to this identifier. The user may have been deleted.'
+        ) {
           Alert.alert(
             '',
             //body
@@ -72,18 +111,6 @@ function LoginScreen({navigation}, route) {
         }
 
         console.debug(error);
-      });}
-  };
-  const handleLogin = () => {
-    setShowOTP(true);
-  };
-  const dosomething = () => {
-    firebase.app.auth().signInWithEmailAndPassword('18520096@gm.uit.edu.vn', '01236313025')
-      .then(this.onLoginSuccess)
-      .catch(err => {
-        this.setState({
-          error: err.message,
-        });
       });
   };
 
@@ -136,12 +163,22 @@ function LoginScreen({navigation}, route) {
         colors={[COLOR.TRANSPARENT, COLOR.BLACK]}
         style={styles.linearGradient}>
         <CustomTextInput
-          value={valueEmail}
-          onChangeText={(t)=>setValueEmail(t)}
           style={styles.textinput}
-          icon="phone"
-          placeholder="Nhập số điện thoại của bạn"
-          title="Số điện thoại"
+          value={valueEmail}
+          onChangeText={setValueEmail}
+          title="Email"
+          icon="envelope"
+          placeholder="Nhập Email để đăng nhập"
+          keyboardType="numeric"
+        />
+        <CustomTextInput
+          style={{alignSelf: 'center', marginTop: 30, width: '85%'}}
+          value={valuePassword}
+          onChangeText={setValuePassword}
+          title="Mật khẩu"
+          secureTextEntry={true}
+          icon="circle"
+          placeholder="Nhập mật khẩu"
         />
         <TouchableOpacity style={styles.commandBtn}>
           <Text style={styles.commandTxt} onPress={() => handleLogin()}>
@@ -169,14 +206,14 @@ function LoginScreen({navigation}, route) {
       <SingUpModal
         visible={visibleRegister}
         onPressClose={() => setVisibleRegister(false)}
-        onPressSignUp={()=> handleSignUp()}
+        onPressSignUp={() => 
+          handleSignUp()
+        }
         valueEmail={valueEmail}
         setValueEmail={setValueEmail}
-
         valuePassword={valuePassword}
         setValuePassword={setValuePassword}
-
-       valuePasswordConfirm={valuePasswordConfirm}
+        valuePasswordConfirm={valuePasswordConfirm}
         setValuePasswordConfirm={setValuePasswordConfirm}
       />
     </View>
@@ -204,7 +241,7 @@ const styles = StyleSheet.create({
   },
   textinput: {
     alignSelf: 'center',
-    marginTop: 350,
+    marginTop: 300,
     width: '85%',
   },
   commandBtn: {

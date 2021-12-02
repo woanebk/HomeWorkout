@@ -26,7 +26,8 @@ export const COLOR = {
     DARK_BLUE: '#09143c',
     BLUE_BLACK: '#040720',
     KELLY_GREEN:'#4cbb17',
-    BLUE:'#187bcd'
+    BLUE:'#187bcd',
+    LIGHT_MATTE_BLACK : '#484848',
 }
 
 export const HORIZONTAL_LIST_HEIGHT = 200; //left view 130
