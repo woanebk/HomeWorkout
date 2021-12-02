@@ -11,9 +11,11 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@firebase/auth": "^0.19.3",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-firebase/app": "^13.0.1",
+    "@react-native-firebase/auth": "^13.0.1",
     "@react-native-firebase/database": "^13.0.1",
     "@react-navigation/material-bottom-tabs": "^6.0.5",
     "@react-navigation/native": "^6.0.2",
