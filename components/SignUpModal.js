@@ -56,7 +56,7 @@ function SingUpModal(props) {
           keyboardType="numeric"
         />
         <TouchableOpacity style={styles.commandBtn}>
-          <Text style={styles.commandTxt} onPress={props.handleSignUp}>
+          <Text onPress={props.onPressSignUp}>
             Đăng Kí
           </Text>
         </TouchableOpacity>
