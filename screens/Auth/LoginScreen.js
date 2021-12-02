@@ -21,7 +21,7 @@ import OTPVerifyModal from '../../components/OTPVerifyModal';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import SingUpModal from '../../components/SignUpModal';
 import {createIconSetFromFontello} from 'react-native-vector-icons';
-import auth, { firebase } from '@react-native-firebase/auth';
+import auth, {firebase} from '@react-native-firebase/auth';
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
   const [OTPCode, setOTPCode] = useState();
@@ -30,38 +30,79 @@ function LoginScreen({navigation}, route) {
   const [valuePassword, setValuePassword] = useState('');
   const [valuePasswordConfirm, setValuePasswordConfirm] = useState('');
 
-  const handleSignUp= () => {
-    console.debug('đăng kí')
+  const handleSignUp = () => {
+    console.debug('đăng kí');
 
     if (valuePassword != valuePasswordConfirm)
       Alert.alert(
         '',
         //body
         'Mật khẩu không giống',
-      )
-      else {
-      console.debug('đăng kí')
+      );
+    else {
+      console.debug('đăng kí');
       auth()
-      .createUserWithEmailAndPassword(valueEmail, valuePasswordConfirm)
+        .createUserWithEmailAndPassword(valueEmail, valuePasswordConfirm)
+        .then(() => {
+          Alert.alert(
+            '',
+            //body
+            'Tạo tài khoản thành công và đăng nhập',
+          );
+          console.debug('User account created & signed in!');
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.debug('That email address is already in use!');
+            Alert.alert(
+              '',
+              //body
+              'Địa chỉ email này đã được sử dụng',
+            );
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            Alert.alert(
+              '',
+              //body
+              'Vui lòng nhập địa chỉ Email xác thực',
+            );
+          }
+
+          console.debug(error);
+        });
+    }
+  };
+  const handleLogin = () => {
+    dosomething();
+  };
+  const dosomething = () => {
+    auth()
+      .signInWithEmailAndPassword(valueEmail, valuePassword)
       .then(() => {
         Alert.alert(
           '',
           //body
-          'Tạo tài khoản thành công và đăng nhập',
+          'Đăng nhập thành công',
         );
         console.debug('User account created & signed in!');
       })
       .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          console.debug('That email address is already in use!');
+        if (error.code === 'auth/user-not-found') {
+          console.debug(
+            'The password is invalid or the user does not have a password.',
+          );
           Alert.alert(
             '',
             //body
-            'Địa chỉ email này đã được sử dụng',
+            'Địa chỉ email hoặc mật khẩu không xác thực',
           );
         }
 
-        if (error.code === 'auth/invalid-email') {
+        if (
+          error.code ===
+          'There is no user record corresponding to this identifier. The user may have been deleted.'
+        ) {
           Alert.alert(
             '',
             //body
@@ -70,42 +111,7 @@ function LoginScreen({navigation}, route) {
         }
 
         console.debug(error);
-      });}
-  };
-  const handleLogin = () => {
-    dosomething();
-  };
-  const dosomething = () => {   
-    auth()
-    .signInWithEmailAndPassword(valueEmail, valuePassword)
-    .then(() => {
-      Alert.alert(
-        '',
-        //body
-        'Đăng nhập thành công',
-      );
-      console.debug('User account created & signed in!');
-    })
-    .catch(error => {
-      if (error.code === 'auth/user-not-found') {
-        console.debug('The password is invalid or the user does not have a password.');
-        Alert.alert(
-          '',
-          //body
-          'Địa chỉ email hoặc mật khẩu không xác thực',
-        );
-      }
-
-      if (error.code === 'There is no user record corresponding to this identifier. The user may have been deleted.') {
-        Alert.alert(
-          '',
-          //body
-          'Vui lòng nhập địa chỉ Email xác thực',
-        );
-      }
-
-      console.debug(error);
-    });
+      });
   };
 
   const onLoginSuccess = () => {
@@ -156,7 +162,7 @@ function LoginScreen({navigation}, route) {
         end={{x: 0, y: 0.85}}
         colors={[COLOR.TRANSPARENT, COLOR.BLACK]}
         style={styles.linearGradient}>
-          <CustomTextInput
+        <CustomTextInput
           style={styles.textinput}
           value={valueEmail}
           onChangeText={setValueEmail}
@@ -166,9 +172,7 @@ function LoginScreen({navigation}, route) {
           keyboardType="numeric"
         />
         <CustomTextInput
-          style={{alignSelf: 'center',
-    marginTop: 30,
-    width: '85%',}}
+          style={{alignSelf: 'center', marginTop: 30, width: '85%'}}
           value={valuePassword}
           onChangeText={setValuePassword}
           title="Mật khẩu"
@@ -202,14 +206,14 @@ function LoginScreen({navigation}, route) {
       <SingUpModal
         visible={visibleRegister}
         onPressClose={() => setVisibleRegister(false)}
-        onPressSignUp={()=> {handleSignUp()}}
+        onPressSignUp={() => 
+          handleSignUp()
+        }
         valueEmail={valueEmail}
         setValueEmail={setValueEmail}
-
         valuePassword={valuePassword}
         setValuePassword={setValuePassword}
-
-       valuePasswordConfirm={valuePasswordConfirm}
+        valuePasswordConfirm={valuePasswordConfirm}
         setValuePasswordConfirm={setValuePasswordConfirm}
       />
     </View>
