@@ -31,8 +31,9 @@ function CustomTextInput(props) {
         ref={inputRef}
         value={props.value}
         onChangeText={props.onChangeText}
-        style={{width: '80%', marginLeft: 10, color:COLOR.WHITE}}
+        style={{width: '80%', marginLeft: 10, color:COLOR.WHITE,fontSize:18}}
         placeholderTextColor={COLOR.WHITE}
+        secureTextEntry={props.secureTextEntry}
         placeholder={props.placeholder}
       />
       <TouchableOpacity onPress={()=>inputRef.current.clear()}>
@@ -55,13 +56,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.WHITE,
     opacity: 0.6,
     borderRadius: 6,
+    borderWidth:0.5,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
   },
   title: {
     position: 'absolute',
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     height: TITLE_HEIGHT,
     top: -TITLE_HEIGHT -5,
     left: 5,
