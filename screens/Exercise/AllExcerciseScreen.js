@@ -112,7 +112,7 @@ function AllExcerciseScreen({navigation}) {
       ]}>
       <Animated.Image
         blurRadius={scrollY.interpolate({
-          inputRange: [0, HEADER_HEIGHT, 99999],
+          inputRange: [0, HEADER_HEIGHT, SCREEN_HEIGHT],
           outputRange: [0, 20, 20],
         })}
         style={[
@@ -128,9 +128,7 @@ function AllExcerciseScreen({navigation}) {
             ],
           },
         ]}
-        source={{
-          uri: 'https://lh3.googleusercontent.com/proxy/Qor-bjtjbEG8lafOF_-YaIlZEEqlMdSKer84Oo0SD0vfZjg6kD0ohiQQjdTMsv0H0lR0YsSlw1nlsKPat2GjNzLXJK6lCEJCdkyk',
-        }}
+        source={{uri:'https://upload.wikimedia.org/wikipedia/vi/4/45/Divide_cover.png'}}
         resizeMode="cover"></Animated.Image>
       <Animated.View style={[styles.headerContentWrapper,{
           transform: [
@@ -232,7 +230,6 @@ const styles = StyleSheet.create({
     height: HEADER_HEIGHT,
     width: SCREEN_WIDTH,
     backgroundColor: COLOR.BLACK,
-    opacity: 0.75,
   },
   headerContentWrapper: {
     position: 'absolute',
@@ -267,6 +264,7 @@ const styles = StyleSheet.create({
   itemWrapper: {
     //backgroundColor: COLOR.WHITE,
     paddingVertical: 5,
+    height:100
   },
   excersiseWrapper: {
     height: 70,
