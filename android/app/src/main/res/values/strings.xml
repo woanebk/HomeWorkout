@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HomeWorkout</string>
+    <string name="facebook_app_id">689363225352570</string> <string name="fb_login_protocol_scheme">fb689363225352570</string>
 </resources>

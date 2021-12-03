@@ -28,6 +28,7 @@
     "react-native-dialog": "^9.2.0",
     "react-native-effects-view": "^0.4.0",
     "react-native-elements": "^3.4.2",
+    "react-native-fbsdk-next": "^6.1.1",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-ionicons": "^4.6.5",
     "react-native-linear-gradient": "^2.5.6",

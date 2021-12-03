@@ -131,6 +131,7 @@ function LoginScreen({navigation}, route) {
   };
   async function onFacebookButtonPress() {
     // Attempt login with permissions
+    console.debug('đăng kí');
     const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
   
     if (result.isCancelled) {
