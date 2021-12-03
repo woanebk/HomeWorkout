@@ -18,8 +18,6 @@ target 'HomeWorkout' do
 
   pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
 
-  pod 'react-native-fbsdk-next', :path => '../node_modules/react-native-fbsdk-next'
-
   target 'HomeWorkoutTests' do
     inherit! :complete
     # Pods for testing
