@@ -22,6 +22,8 @@ import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import SingUpModal from '../../components/SignUpModal';
 import {createIconSetFromFontello} from 'react-native-vector-icons';
 import auth, {firebase} from '@react-native-firebase/auth';
+import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
+
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
   const [OTPCode, setOTPCode] = useState();
@@ -33,6 +35,13 @@ function LoginScreen({navigation}, route) {
   const handleSignUp = () => {
     console.debug('đăng kí');
 
+    if(valueEmail==""|| valuePassword=="")
+    {Alert.alert(
+      '',
+      //body
+      'Vui lòng nhập địa chỉ email và password',
+    ); }
+    else 
     if (valuePassword != valuePasswordConfirm)
       Alert.alert(
         '',
@@ -77,6 +86,13 @@ function LoginScreen({navigation}, route) {
     dosomething();
   };
   const dosomething = () => {
+    if(valueEmail==""|| valuePassword=="")
+    {Alert.alert(
+      '',
+      //body
+      'Vui lòng nhập địa chỉ email và password',
+    ); }
+    else 
     auth()
       .signInWithEmailAndPassword(valueEmail, valuePassword)
       .then(() => {
@@ -113,7 +129,28 @@ function LoginScreen({navigation}, route) {
         console.debug(error);
       });
   };
+  async function onFacebookButtonPress() {
+    // Attempt login with permissions
+    const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+  
+    if (result.isCancelled) {
+      throw 'User cancelled the login process';
+    }
+    console.debug('mở lên dc rồi');
 
+    // Once signed in, get the users AccesToken
+    const data = await AccessToken.getCurrentAccessToken();
+  
+    if (!data) {
+      throw 'Something went wrong obtaining access token';
+    }
+  
+    // Create a Firebase credential with the AccessToken
+    const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
+  
+    // Sign-in the user with the credential
+    return auth().signInWithCredential(facebookCredential);
+  }
   const onLoginSuccess = () => {
     this.setState({
       error: '',
@@ -188,7 +225,7 @@ function LoginScreen({navigation}, route) {
         <Text style={styles.orTxt}>- HOẶC -</Text>
         <TouchableOpacity
           style={styles.facebookBtn}
-          onPress={() => navigation.navigate('Tab')}>
+          onPress={()  => onFacebookButtonPress().then(() => console.log('Signed in with Facebook!'))}>
           <Image
             resizeMode="cover"
             style={styles.facebook}
@@ -276,12 +313,13 @@ const styles = StyleSheet.create({
   },
   facebookBtn: {
     alignSelf: 'center',
-    marginTop: 30,
+    marginTop: 10,
   },
   facebook: {
     width: 40,
     height: 40,
     borderRadius: 40,
+    marginTop:0,
   },
   logo: {
     width: 80,
