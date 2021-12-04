@@ -22,7 +22,7 @@ import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import SingUpModal from '../../components/SignUpModal';
 import {createIconSetFromFontello} from 'react-native-vector-icons';
 import auth, {firebase} from '@react-native-firebase/auth';
-import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
@@ -31,18 +31,17 @@ function LoginScreen({navigation}, route) {
   const [valueEmail, setValueEmail] = useState('');
   const [valuePassword, setValuePassword] = useState('');
   const [valuePasswordConfirm, setValuePasswordConfirm] = useState('');
-
+  //#region SignUp
   const handleSignUp = () => {
     console.debug('đăng kí');
 
-    if(valueEmail==""|| valuePassword=="")
-    {Alert.alert(
-      '',
-      //body
-      'Vui lòng nhập địa chỉ email và password',
-    ); }
-    else 
-    if (valuePassword != valuePasswordConfirm)
+    if (valueEmail == '' || valuePassword == '') {
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập địa chỉ email và password',
+      );
+    } else if (valuePassword != valuePasswordConfirm)
       Alert.alert(
         '',
         //body
@@ -82,58 +81,94 @@ function LoginScreen({navigation}, route) {
         });
     }
   };
+  //#endregion
+  //#region Forgotpass
+  const handleForgot = () => {
+    console.debug('đăng kí');
+
+    if (valueEmail == '' ) {
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập địa chỉ email',
+      );
+    } else
+      auth().sendPasswordResetEmail(valueEmail)
+        .then(onforgotSuccess())
+        .catch(err => {
+          Alert.alert(
+            err.message,
+            //body
+            'Vui lòng nhập địa chỉ email',
+          );
+        });
+  };
+  const onforgotSuccess = () => {
+    Alert.alert(
+      '',
+      //body
+      'Vui lòng kiểm tra email của bạn',
+    );
+  };
+  //#endregion
+  //#region Login
   const handleLogin = () => {
     dosomething();
   };
   const dosomething = () => {
-    if(valueEmail==""|| valuePassword=="")
-    {Alert.alert(
-      '',
-      //body
-      'Vui lòng nhập địa chỉ email và password',
-    ); }
-    else 
-    auth()
-      .signInWithEmailAndPassword(valueEmail, valuePassword)
-      .then(() => {
-        Alert.alert(
-          '',
-          //body
-          'Đăng nhập thành công',
-        );
-        console.debug('User account created & signed in!');
-      })
-      .catch(error => {
-        if (error.code === 'auth/user-not-found') {
-          console.debug(
-            'The password is invalid or the user does not have a password.',
-          );
+    if (valueEmail == '' || valuePassword == '') {
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập địa chỉ email và password',
+      );
+    } else
+      auth()
+        .signInWithEmailAndPassword(valueEmail, valuePassword)
+        .then(() => {
           Alert.alert(
             '',
             //body
-            'Địa chỉ email hoặc mật khẩu không xác thực',
+            'Đăng nhập thành công',
           );
-        }
+          console.debug('User account created & signed in!');
+        })
+        .catch(error => {
+          if (error.code === 'auth/user-not-found') {
+            console.debug(
+              'The password is invalid or the user does not have a password.',
+            );
+            Alert.alert(
+              '',
+              //body
+              'Địa chỉ email hoặc mật khẩu không xác thực',
+            );
+          }
 
-        if (
-          error.code ===
-          'There is no user record corresponding to this identifier. The user may have been deleted.'
-        ) {
-          Alert.alert(
-            '',
-            //body
-            'Vui lòng nhập địa chỉ Email xác thực',
-          );
-        }
+          if (
+            error.code ===
+            'There is no user record corresponding to this identifier. The user may have been deleted.'
+          ) {
+            Alert.alert(
+              '',
+              //body
+              'Vui lòng nhập địa chỉ Email xác thực',
+            );
+          }
 
-        console.debug(error);
-      });
+          console.debug(error);
+        });
   };
+  //#endregion
+  //#region FaceBook
   async function onFacebookButtonPress() {
     // Attempt login with permissions
     console.debug('đăng kí');
-    const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-  
+    const result = await LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+    ]);
+
     if (result.isCancelled) {
       throw 'User cancelled the login process';
     }
@@ -141,17 +176,20 @@ function LoginScreen({navigation}, route) {
 
     // Once signed in, get the users AccesToken
     const data = await AccessToken.getCurrentAccessToken();
-  
+
     if (!data) {
       throw 'Something went wrong obtaining access token';
     }
-  
+
     // Create a Firebase credential with the AccessToken
-    const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
-  
+    const facebookCredential = auth.FacebookAuthProvider.credential(
+      data.accessToken,
+    );
+
     // Sign-in the user with the credential
     return auth().signInWithCredential(facebookCredential);
   }
+  //#endregion
   const onLoginSuccess = () => {
     this.setState({
       error: '',
@@ -163,7 +201,7 @@ function LoginScreen({navigation}, route) {
   const showDialog = () => {
     setVisibleRegister(true);
   };
-
+  //#region Render
   const renderSignUp = () => {
     return (
       <View style={styles.signupWrapper}>
@@ -223,10 +261,28 @@ function LoginScreen({navigation}, route) {
             Đăng nhập
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity>
+          <Text
+            style={{
+              color: COLOR.WHITE,
+              alignSelf: 'center',
+              textAlign: 'center',
+              marginTop: 10,
+              fontWeight: 'bold',
+            }}
+            onPress={() => handleForgot()}>
+            Quên mật khẩu?
+          </Text>
+        </TouchableOpacity>
         <Text style={styles.orTxt}>- HOẶC -</Text>
+
         <TouchableOpacity
           style={styles.facebookBtn}
-          onPress={()  => onFacebookButtonPress().then(() => console.log('Signed in with Facebook!'))}>
+          onPress={() =>
+            onFacebookButtonPress().then(() =>
+              console.log('Signed in with Facebook!'),
+            )
+          }>
           <Image
             resizeMode="cover"
             style={styles.facebook}
@@ -244,9 +300,7 @@ function LoginScreen({navigation}, route) {
       <SingUpModal
         visible={visibleRegister}
         onPressClose={() => setVisibleRegister(false)}
-        onPressSignUp={() => 
-          handleSignUp()
-        }
+        onPressSignUp={() => handleSignUp()}
         valueEmail={valueEmail}
         setValueEmail={setValueEmail}
         valuePassword={valuePassword}
@@ -257,7 +311,7 @@ function LoginScreen({navigation}, route) {
     </View>
   );
 }
-
+//#endregion
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -284,7 +338,7 @@ const styles = StyleSheet.create({
   },
   commandBtn: {
     backgroundColor: '#ffcc00',
-    marginTop: 30,
+    marginTop: 20,
     height: 50,
     width: '80%',
     alignSelf: 'center',
@@ -300,7 +354,7 @@ const styles = StyleSheet.create({
   },
   signupWrapper: {
     position: 'absolute',
-    bottom: 5,
+    bottom: 10,
     marginLeft: '23%',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -310,7 +364,7 @@ const styles = StyleSheet.create({
     color: COLOR.WHITE,
     alignSelf: 'center',
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 5,
   },
   facebookBtn: {
     alignSelf: 'center',
@@ -320,7 +374,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 40,
-    marginTop:0,
+    marginTop: 0,
   },
   logo: {
     width: 80,
