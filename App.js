@@ -1,4 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation} from '@react-navigation/native';
 import {
   StyleSheet,
 } from 'react-native';
@@ -11,6 +11,7 @@ import auth from '@react-native-firebase/auth';
 import LoginScreen from './screens/Auth/LoginScreen';
 
 function App () {
+  const navigation = useNavigation();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
@@ -29,20 +30,16 @@ function App () {
 
   if (!user) {
     return (
-      <SafeAreaProvider>
       <NavigationContainer>
         <AuthStackNavigator/>
       </NavigationContainer>
-    </SafeAreaProvider>
     );
   }
 
   return (
-    <SafeAreaProvider>
       <NavigationContainer>
         <MainStackNavigator/>
       </NavigationContainer>
-    </SafeAreaProvider>
   );
 };
 

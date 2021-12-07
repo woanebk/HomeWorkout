@@ -5,11 +5,11 @@ import {
   View,Image
 } from 'react-native';
 import auth, { firebase } from '@react-native-firebase/auth';
-import RoundButton from '../components/RoundButton';
-import { COLOR } from '../constant';
+import RoundButton from '../../components/RoundButton';
+import { COLOR } from '../../constant';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-function NotificationScreen({navigation}) {
+function NotificationDetailScreen({navigation}) {
   const [notification, setNotification] = useState({
     title: undefined,
     body: undefined,
@@ -36,7 +36,6 @@ function NotificationScreen({navigation}) {
         title: remoteMessage.notification.title,
         bigPictureUrl: remoteMessage.notification.android.imageUrl,
         smallIcon: remoteMessage.notification.android.imageUrl,
-        id:remoteMessage.messageId,
         priority:'high',
       });
       setNotification({
@@ -94,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationScreen;
+export default NotificationDetailScreen;
