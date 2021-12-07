@@ -11,7 +11,6 @@ import auth from '@react-native-firebase/auth';
 import LoginScreen from './screens/Auth/LoginScreen';
 
 function App () {
-  const navigation = useNavigation();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
@@ -42,6 +41,7 @@ function App () {
       </NavigationContainer>
   );
 };
+const navigation = useNavigation();
 
 const styles = StyleSheet.create({
   
