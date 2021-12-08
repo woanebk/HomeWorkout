@@ -1,10 +1,12 @@
 import React, {useState, useRef} from 'react';
 import {
+  Alert,
   StyleSheet,
   View,
   Image,
   TouchableWithoutFeedback,
   Text,
+  TextInput,
   StatusBar,
   Animated,
   FlatList,
@@ -17,17 +19,189 @@ import Video from 'react-native-video';
 import CustomTextInput from '../../components/CustomTextInput';
 import OTPVerifyModal from '../../components/OTPVerifyModal';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
+import SingUpModal from '../../components/SignUpModal';
+import {createIconSetFromFontello} from 'react-native-vector-icons';
+import auth, {firebase} from '@react-native-firebase/auth';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
   const [OTPCode, setOTPCode] = useState();
-  const [SDT, setSDT] = useState();
+  const [text, onChangeText] = useState('');
+  const [valueEmail, setValueEmail] = useState('');
+  const [valuePassword, setValuePassword] = useState('');
+  const [valuePasswordConfirm, setValuePasswordConfirm] = useState('');
+  //#region SignUp
+  const handleSignUp = () => {
+    console.debug('đăng kí');
 
-  const handleLogin = () => {
-    //setShowOTP(true);
-    alert(SDT)
+    if (valueEmail == '' || valuePassword == '') {
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập địa chỉ email và password',
+      );
+    } else if (valuePassword != valuePasswordConfirm)
+      Alert.alert(
+        '',
+        //body
+        'Mật khẩu không giống',
+      );
+    else {
+      console.debug('đăng kí');
+      auth()
+        .createUserWithEmailAndPassword(valueEmail, valuePasswordConfirm)
+        .then(() => {
+          Alert.alert(
+            '',
+            //body
+            'Tạo tài khoản thành công và đăng nhập',
+          );
+          console.debug('User account created & signed in!');
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.debug('That email address is already in use!');
+            Alert.alert(
+              '',
+              //body
+              'Địa chỉ email này đã được sử dụng',
+            );
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            Alert.alert(
+              '',
+              //body
+              'Vui lòng nhập địa chỉ Email xác thực',
+            );
+          }
+
+          console.debug(error);
+        });
+    }
   };
+  //#endregion
+  //#region Forgotpass
+  const handleForgot = () => {
+    console.debug('đăng kí');
 
+    if (valueEmail == '' ) {
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập địa chỉ email',
+      );
+    } else
+      auth().sendPasswordResetEmail(valueEmail)
+        .then(onforgotSuccess())
+        .catch(err => {
+          Alert.alert(
+            err.message,
+            //body
+            'Vui lòng nhập địa chỉ email',
+          );
+        });
+  };
+  const onforgotSuccess = () => {
+    Alert.alert(
+      '',
+      //body
+      'Vui lòng kiểm tra email của bạn',
+    );
+  };
+  //#endregion
+  //#region Login
+  const handleLogin = () => {
+    dosomething();
+  };
+  const dosomething = () => {
+    if (valueEmail == '' || valuePassword == '') {
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập địa chỉ email và password',
+      );
+    } else
+      auth()
+        .signInWithEmailAndPassword(valueEmail, valuePassword)
+        .then(() => {
+          Alert.alert(
+            '',
+            //body
+            'Đăng nhập thành công',
+          );
+          console.debug('User account created & signed in!');
+        })
+        .catch(error => {
+          if (error.code === 'auth/user-not-found') {
+            console.debug(
+              'The password is invalid or the user does not have a password.',
+            );
+            Alert.alert(
+              '',
+              //body
+              'Địa chỉ email hoặc mật khẩu không xác thực',
+            );
+          }
+
+          if (
+            error.code ===
+            'There is no user record corresponding to this identifier. The user may have been deleted.'
+          ) {
+            Alert.alert(
+              '',
+              //body
+              'Vui lòng nhập địa chỉ Email xác thực',
+            );
+          }
+
+          console.debug(error);
+        });
+  };
+  //#endregion
+  //#region FaceBook
+  async function onFacebookButtonPress() {
+    // Attempt login with permissions
+    console.debug('đăng kí');
+    const result = await LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+    ]);
+
+    if (result.isCancelled) {
+      throw 'User cancelled the login process';
+    }
+    console.debug('mở lên dc rồi');
+
+    // Once signed in, get the users AccesToken
+    const data = await AccessToken.getCurrentAccessToken();
+
+    if (!data) {
+      throw 'Something went wrong obtaining access token';
+    }
+
+    // Create a Firebase credential with the AccessToken
+    const facebookCredential = auth.FacebookAuthProvider.credential(
+      data.accessToken,
+    );
+
+    // Sign-in the user with the credential
+    return auth().signInWithCredential(facebookCredential);
+  }
+  //#endregion
+  const onLoginSuccess = () => {
+    this.setState({
+      error: '',
+      loading: false,
+    });
+  };
+  const [visibleRegister, setVisibleRegister] = useState(false);
+
+  const showDialog = () => {
+    setVisibleRegister(true);
+  };
+  //#region Render
   const renderSignUp = () => {
     return (
       <View style={styles.signupWrapper}>
@@ -35,7 +209,9 @@ function LoginScreen({navigation}, route) {
           Chưa có tài khoản ?{' '}
         </Text>
         <TouchableOpacity>
-          <Text style={{color: COLOR.WHITE, fontSize: 13, fontWeight: 'bold'}}>
+          <Text
+            style={{color: COLOR.WHITE, fontSize: 13, fontWeight: 'bold'}}
+            onPress={() => setVisibleRegister(true)}>
             Đăng Kí Ngay
           </Text>
         </TouchableOpacity>
@@ -56,29 +232,57 @@ function LoginScreen({navigation}, route) {
         resizeMode="cover"
         source={require('../../assets/video/login_video.mp4')}
       />
-      <Image style={styles.logo} source={require('../../assets/dumbell.jpg')} />
+      {/* <Image style={styles.logo} source={require('../../assets/dumbell.jpg')} /> */}
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 0, y: 0.85}}
         colors={[COLOR.TRANSPARENT, COLOR.BLACK]}
         style={styles.linearGradient}>
         <CustomTextInput
-        value={SDT}
-        onChangeText={(text)=>setSDT(text)}
           style={styles.textinput}
-          icon="phone"
-          placeholder="Nhập số điện thoại của bạn"
-          title="Số điện thoại"
+          value={valueEmail}
+          onChangeText={setValueEmail}
+          title="Email"
+          icon="envelope"
+          placeholder="Nhập Email để đăng nhập"
+          keyboardType="numeric"
+        />
+        <CustomTextInput
+          style={{alignSelf: 'center', marginTop: 30, width: '85%'}}
+          value={valuePassword}
+          onChangeText={setValuePassword}
+          title="Mật khẩu"
+          secureTextEntry={true}
+          icon="circle"
+          placeholder="Nhập mật khẩu"
         />
         <TouchableOpacity style={styles.commandBtn}>
           <Text style={styles.commandTxt} onPress={() => handleLogin()}>
             Đăng nhập
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity>
+          <Text
+            style={{
+              color: COLOR.WHITE,
+              alignSelf: 'center',
+              textAlign: 'center',
+              marginTop: 10,
+              fontWeight: 'bold',
+            }}
+            onPress={() => handleForgot()}>
+            Quên mật khẩu?
+          </Text>
+        </TouchableOpacity>
         <Text style={styles.orTxt}>- HOẶC -</Text>
+
         <TouchableOpacity
           style={styles.facebookBtn}
-          onPress={() => navigation.navigate('Tab')}>
+          onPress={() =>
+            onFacebookButtonPress().then(() =>
+              console.log('Signed in with Facebook!'),
+            )
+          }>
           <Image
             resizeMode="cover"
             style={styles.facebook}
@@ -93,10 +297,21 @@ function LoginScreen({navigation}, route) {
         onPressClose={() => setShowOTP(false)}
         onConfirm={() => {}}
       />
+      <SingUpModal
+        visible={visibleRegister}
+        onPressClose={() => setVisibleRegister(false)}
+        onPressSignUp={() => handleSignUp()}
+        valueEmail={valueEmail}
+        setValueEmail={setValueEmail}
+        valuePassword={valuePassword}
+        setValuePassword={setValuePassword}
+        valuePasswordConfirm={valuePasswordConfirm}
+        setValuePasswordConfirm={setValuePasswordConfirm}
+      />
     </View>
   );
 }
-
+//#endregion
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -118,12 +333,12 @@ const styles = StyleSheet.create({
   },
   textinput: {
     alignSelf: 'center',
-    marginTop: 350,
+    marginTop: 300,
     width: '85%',
   },
   commandBtn: {
     backgroundColor: '#ffcc00',
-    marginTop: 30,
+    marginTop: 20,
     height: 50,
     width: '80%',
     alignSelf: 'center',
@@ -139,7 +354,7 @@ const styles = StyleSheet.create({
   },
   signupWrapper: {
     position: 'absolute',
-    bottom: 5,
+    bottom: 10,
     marginLeft: '23%',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -149,16 +364,17 @@ const styles = StyleSheet.create({
     color: COLOR.WHITE,
     alignSelf: 'center',
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 5,
   },
   facebookBtn: {
     alignSelf: 'center',
-    marginTop: 30,
+    marginTop: 10,
   },
   facebook: {
     width: 40,
     height: 40,
     borderRadius: 40,
+    marginTop: 0,
   },
   logo: {
     width: 80,
