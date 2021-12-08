@@ -17,7 +17,7 @@ const SCREEN_HEADER_HEIGHT = 90; // height of the header contain back button
 const NOTCH_SIZE = 30;
 const LIST_EXTRA_SIZE = 120;
 
-function AllExcerciseScreen({navigation}) {
+function AllWorkoutScreen({navigation}) {
   const DATA = [
     {
       title: 'Khởi động',
@@ -299,4 +299,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllExcerciseScreen;
+export default AllWorkoutScreen;
