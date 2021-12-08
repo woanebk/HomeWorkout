@@ -144,6 +144,7 @@ function HomeScreen({navigation}) {
         renderItem={({item, index}) => (
           <View style={{paddingRight: 15}} key={index}>
             <ProgramItem
+              onPress={() => {navigation.navigate('ChallengeDetail')}} 
               style={{height: 200, width: 160}}
               title="Thử thách thay đổi bản thân 7 ngày"
               image={{
