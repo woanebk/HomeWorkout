@@ -194,9 +194,8 @@ function HomeScreen({navigation}) {
           icon="tag"
           title="Đi đến thư viện bài tập"
           backgroundColor={COLOR.GOLD}
-          onPress={async () => {
-            const res = await Test();
-            alert(res.val())
+          onPress={() => {
+            navigation.navigate('ExcerciseLibrary')
           }}
         />
       </View>
