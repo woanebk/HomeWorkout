@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import NotificationScreen from '../screens/NotificationScreen';
 import {
   Text,
   StyleSheet,
@@ -32,6 +33,16 @@ function MainTabNavigator({navigation}) {
           <Icon name='home'
           type='font-awesome-5'
           size={18} color={color} />
+        ),
+      }}
+      />
+        <MainTab.Screen name="Notification" component={NotificationScreen} 
+      options={{
+        tabBarLabel: 'Thông báo',
+        tabBarIcon: ({ color }) => (
+          <Icon name='bell'
+          type='font-awesome-5'
+          size={14} color={color} />
         ),
       }}
       />
