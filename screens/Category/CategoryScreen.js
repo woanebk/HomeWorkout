@@ -135,7 +135,7 @@ const scrollX = useRef(new Animated.Value(0)).current
         })
         return (
           <View style={[styles.imgWrapper]} key={index}>
-              <TouchableWithoutFeedback onPress={()=>navigation.navigate('AllExcercise')}>
+              <TouchableWithoutFeedback onPress={()=>navigation.navigate('AllWorkout')}>
                 <Image source={{uri:item.img}} style={styles.img}/>
               </TouchableWithoutFeedback>
           </View>

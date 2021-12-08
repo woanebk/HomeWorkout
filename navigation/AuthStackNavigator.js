@@ -9,7 +9,6 @@ import CategoryScreen from '../screens/Category/CategoryScreen';
 import ExcerciseInfoScreen from '../screens/Exercise/ExerciseInfoScreen';
 import WorkoutProgressScreen from '../screens/WorkoutScreens/WorkoutProgressScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
-import AllExcerciseScreen from '../screens/Exercise/AllExcerciseScreen';
 
 const AuthStack = createStackNavigator();
 

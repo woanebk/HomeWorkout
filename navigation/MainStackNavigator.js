@@ -9,7 +9,8 @@ import CategoryScreen from '../screens/Category/CategoryScreen';
 import ExcerciseInfoScreen from '../screens/Exercise/ExerciseInfoScreen';
 import WorkoutProgressScreen from '../screens/WorkoutScreens/WorkoutProgressScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
-import AllExcerciseScreen from '../screens/Exercise/AllExcerciseScreen';
+import AllWorkoutScreen from '../screens/WorkoutScreens/AllWorkoutScreen';
+import ExcerciseLibraryScreen from '../screens/Exercise/ExcerciseLibraryScreen';
 
 const MainStack = createStackNavigator();
 
@@ -64,8 +65,13 @@ function MainStackNavigator() {
         options={{headerTintColor: '#fff'}}
       />
       <MainStack.Screen
-        name="AllExcercise"
-        component={AllExcerciseScreen}
+        name="AllWorkout"
+        component={AllWorkoutScreen}
+        options={{headerTintColor: '#fff'}}
+      />
+       <MainStack.Screen
+        name="ExcerciseLibrary"
+        component={ExcerciseLibraryScreen}
         options={{headerTintColor: '#fff'}}
       />
     </MainStack.Navigator>
