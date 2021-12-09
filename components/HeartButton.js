@@ -24,7 +24,7 @@ function HeartButton(props) {
             <TouchableWithoutFeedback onPress={props.onButtonPress}
             >
                 <LottieView
-                 style={styles.btn} 
+                 style={[props?.heartStyle || styles.btn]} 
                  ref={animation}
                  source={require('../assets/lottie/4837-heart.json')} 
                  autoPlay={false} loop={false} />

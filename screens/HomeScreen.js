@@ -164,6 +164,7 @@ function HomeScreen({navigation}) {
         renderItem={({item}) => (
           <View style={{width: SCREEN_WIDTH, paddingRight: 30}}>
             <WorkoutItem
+              onPress={() => navigation.navigate('WorkoutInfo')}
               image={{
                 uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
               }}
@@ -180,6 +181,7 @@ function HomeScreen({navigation}) {
         renderItem={({item, index}) => (
           <View style={{paddingRight: 15}} key={index}>
             <HomeCategoryItem
+            onPress={()=>navigation.navigate('AllWorkout')}
               style={{height: 110, width: 250}}
               title="Giảm Mỡ"
               subTitle="bao gồm 20 bài tập"
@@ -193,7 +195,7 @@ function HomeScreen({navigation}) {
       <View style={styles.libraryBtnWrapper}>
         <CommandButton
           icon="tag"
-          title="Đi đến thư viện bài tập"
+          title="Đi đến thư viện kỹ thuật"
           backgroundColor={COLOR.GOLD}
           onPress={() => {
             navigation.navigate('ExcerciseLibrary')
