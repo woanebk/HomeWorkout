@@ -60,6 +60,7 @@ const database = firebase
     return await database.ref('Challenges/AllChallenges').once('value')
   }
   export const getListMyAllChallenge = async  (userId)=> {
+    console.log(userId)
     return await database.ref('Challenges/User/'+userId).once('value')
   }
 //#endregion
