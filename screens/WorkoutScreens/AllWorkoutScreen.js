@@ -11,6 +11,7 @@ import {
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import HeartButton from '../../components/HeartButton';
 import {Icon} from 'react-native-elements';
+import WorkoutRowItem from '../../components/WorkoutRowItem';
 
 const HEADER_HEIGHT = 250; // height of the image
 const SCREEN_HEADER_HEIGHT = 90; // height of the header contain back button
@@ -148,12 +149,30 @@ function AllWorkoutScreen({navigation}) {
     </Animated.View>
   );
 
+  const renderListHeader = () => {
+    return(
+      <View style={{height:30, alignItems:'center', paddingHorizontal:5, flexDirection:'row'}}>
+        <Icon
+                name="dumbbell"
+                type="font-awesome-5"
+                size={13}
+                color={COLOR.WHITE}
+                style={{marginRight:10}}
+              />
+        <Text style={{color:COLOR.WHITE, fontSize:12}}>Số lượng: {DATA?.length}</Text>
+      </View>
+    )
+  }
+
   const renderItem = item => (
     <View style={styles.itemWrapper}>
-      <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('ExcerciseInfo')}>
-        <Text style={styles.excersiseInfo}>Rep: 15</Text>
-      </TouchableWithoutFeedback>
+      <WorkoutRowItem
+              isliked={true}
+              title='Bài tập vai'
+              image={{
+                uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
+              }}
+            />
     </View>
   );
 
@@ -177,6 +196,7 @@ function AllWorkoutScreen({navigation}) {
         ]}
         data={DATA}
         keyExtractor={(item, index) => index}
+        ListHeaderComponent={renderListHeader}
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollY}}}],
@@ -258,13 +278,13 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     marginTop: -NOTCH_SIZE,
     marginBottom: -LIST_EXTRA_SIZE,
-    marginHorizontal: 20,
-    paddingHorizontal:10
+    marginHorizontal: 10,
+    paddingHorizontal: 10
   },
   itemWrapper: {
     //backgroundColor: COLOR.WHITE,
     paddingVertical: 5,
-    height:100
+    marginBottom:10
   },
   excersiseWrapper: {
     height: 70,
