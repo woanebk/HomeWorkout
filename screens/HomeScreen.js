@@ -144,6 +144,7 @@ function HomeScreen({navigation}) {
         renderItem={({item, index}) => (
           <View style={{paddingRight: 15}} key={index}>
             <ProgramItem
+              onPress={() => {navigation.navigate('ChallengeDetail')}} 
               style={{height: 200, width: 160}}
               title="Thử thách thay đổi bản thân 7 ngày"
               image={{
@@ -194,9 +195,8 @@ function HomeScreen({navigation}) {
           icon="tag"
           title="Đi đến thư viện bài tập"
           backgroundColor={COLOR.GOLD}
-          onPress={async () => {
-            const res = await Test();
-            alert(res.val())
+          onPress={() => {
+            navigation.navigate('ExcerciseLibrary')
           }}
         />
       </View>
