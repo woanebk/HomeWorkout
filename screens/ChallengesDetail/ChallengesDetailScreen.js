@@ -9,7 +9,7 @@ import RoundButton from '../../components/RoundButton';
 import { COLOR } from '../../constant';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-function NotificationDetailScreen({navigation}) {
+function ChallengesDetailScreen({navigation}) {
   const [notification, setNotification] = useState({
     title: undefined,
     body: undefined,
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationDetailScreen;
+export default ChallengesDetailScreen;

@@ -12,6 +12,8 @@ import PushNotification from 'react-native-push-notification';
 function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
+  const [id, setId] = useState("");
+
   const [notification, setNotification] = useState({
     title: undefined,
     body: undefined,
@@ -25,6 +27,8 @@ function App() {
     getToken();
     messaging().onMessage(async remoteMessage => {
       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      if (user.id=="655GM4Re42RsxluLlFwIX8YlQIF2")
+        setId(user.id)
       PushNotification.configure({
         onNotification: function (notification) {
           console.log('LOCAL NOTIFICATION ==>', notification);

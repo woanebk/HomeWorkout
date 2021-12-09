@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import NotificationScreen from '../screens/NotificationScreen';
+import ChallengesScreen from '../screens/ChallengesScreen';
 import {
   Text,
   StyleSheet,
@@ -36,11 +36,11 @@ function MainTabNavigator({navigation}) {
         ),
       }}
       />
-        <MainTab.Screen name="Notification" component={NotificationScreen} 
+        <MainTab.Screen name="Challenges" component={ChallengesScreen} 
       options={{
-        tabBarLabel: 'Thông báo',
+        tabBarLabel: 'Thử thách',
         tabBarIcon: ({ color }) => (
-          <Icon name='bell'
+          <Icon name='dumbbell'
           type='font-awesome-5'
           size={14} color={color} />
         ),
