@@ -35,5 +35,31 @@ const database = firebase
   }
 
   export const getListAllExcercise = async () => {
-    return await database.ref('Excercises/').once('value')
+    return await database.ref('Excercises').once('value')
   }
+
+//#region Challenges
+    export const addChallenge = (challenge ) => {
+    return database.ref('Challenges/AllChallenges').push(challenge);
+  }
+
+  export const updateChallenge = (id, data) => {
+    return database.ref('Challenges/AllChallenges/' + id).update(data);
+  }
+
+  export const generateNewChallenge= () => {
+    const dummyChallenge ={
+      body: 'Hãy cố gắng vượt qua thử thách',endTime: '20/12/2021',startTime:'09/12/2021',title:'Thử thách cá hồi hoang',topic:'cahoihoang',imgURL:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqEPKbkJzSFv7q6hwo2S6dKkNRYnWRWWkYTQ&usqp=CAU'
+    }
+    const ref = addChallenge(dummyChallenge);
+    updateChallenge(ref.key, {
+      id: ref.key
+    })
+  }
+  export const getListAllChallenge = async  ()=> {
+    return await database.ref('Challenges/AllChallenges').once('value')
+  }
+  export const getListMyAllChallenge = async  (userId)=> {
+    return await database.ref('Challenges/User/'+userId).once('value')
+  }
+//#endregion

@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
   useColorScheme,
+  TouchableOpacity,
   FlatList,
 } from 'react-native';
 import {COLOR} from '../constant';
@@ -16,8 +17,11 @@ import auth, {firebase} from '@react-native-firebase/auth';
 import RoundButton from '../components/RoundButton';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-
-function ChallengesScreen() {
+import Icon from 'react-native-ionicons';
+import database from '@react-native-firebase/database';
+import { generateNewChallenge,getListAllChallenge } from '../utilities/FirebaseDatabase';
+import { convertObjectToArrayWithoutKey } from '../utilities/Utilities';
+function ChallengesCategoryScreen({navigation}) {
   const DATA = [
     {
       id: 'id123',
@@ -163,66 +167,144 @@ function ChallengesScreen() {
         'https://apicms.thestar.com.my/uploads/images/2020/02/21/570850.jpg',
       text: 'Chair and Table',
     },
-
   ];
   var [allChallenges, setAllChallenges] = useState(DATA);
-  // useEffect(() => {
-  //     // setAllChallenges(DATA);
-  // });
+  var [allChallengesForUser, setAllChallengesForUser] = useState(DATA);
+  useEffect(async()=>{
+   await init()
+  },[]);
+  const init =async () => {
+      console.debug("init")
+      const res = await getListAllChallenge();      console.debug("solved");
+      setAllChallenges(convertObjectToArrayWithoutKey(res.val()))
+;      console.debug("solved");
+
+  }
   var FurnitureCard = function (_a) {
     var item = _a.item;
     var randomBool = (0, useMemo)(function () {
       return Math.random() < 0.5;
     }, []);
     return (
-      <View key={item.id} style={{marginTop: 12,marginLeft:12, flex: 1,}}>
-        <Image
-          source={{uri:item.imgURL} }
-          style={{
-            height: randomBool ? 150 : 280,
-            alignSelf: 'stretch',
-            borderRadius:20,
-
-          }}
-
-          resizeMode="cover"
-        />
-        <Text
-          style={{
-           color:COLOR.WHITE,marginTop:5
-          }}>
-          {item.text}
-        </Text>
+      <View key={item} style={{marginBottom: 12, marginLeft: 12, flex: 1,backgroundColor:COLOR.backgroundColor}}>
+        <TouchableOpacity>
+          <Image
+            source={{uri: item.imgURL}}
+            style={{
+              height: randomBool ? 80 : 100,
+              alignSelf: 'stretch',
+              borderRadius: 10,
+            }}
+            resizeMode="cover"
+          />
+          <Text
+            style={{
+              color: COLOR.WHITE,
+              marginTop: 5,
+            }}>
+            {item.title}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   };
-  var renderItem =function (_a) {
+  var renderItem = function (_a) {
     var item = _a.item;
     return <FurnitureCard item={item} />;
   };
   return (
     <View style={{flex: 1, backgroundColor: COLOR.MATTE_BLACK}}>
-      <StatusBar backgroundColor="transparent" translucent style={{height:50}} />
-        <MasonryList
-          ListHeaderComponent={<View  style={{flex: 1,marginTop:0}} >
-          <Text
+      <StatusBar
+        backgroundColor="transparent"
+        translucent
+        style={{height: 50}}
+      />
+      <View style={{flexDirection: 'row'}}>
+        <Text
           style={{
-            marginTop: 50,color:COLOR.WHITE,fontSize:20,color:COLOR.WHITE
+            marginTop: 60,
+            color: COLOR.MATTE_BLACK,
+            fontSize: 20,
+            marginLeft: 0,
+            marginBottom: 10,
+            width: 200,
+            borderBottomRightRadius: 20,
+            borderTopRightRadius: 20,
+
+            paddingLeft: 10,
+            backgroundColor: COLOR.GOLD,
           }}>
-           Danh sách thử thách
-        </Text> 
-        </View>}
+          Tất cả thử thách
+        </Text>
+        <TouchableOpacity
+          style={{marginTop: 65, position: 'absolute', right: 30, flex: 1}} onPress={()=>{ navigation.navigate("AllChallenge")}}>
+        {/* async() =>{console.debug('click');await generateNewChallenge().then(() => console.log('Data updated.'));}}> */}
+          <Text style={{color: COLOR.GOLD}}> Xem tất cả</Text>
+        </TouchableOpacity>
+      </View>
+      {/* <View style={styles.todayWorkout}>
+        <Text style={styles.todayWorkoutTxt}>Bài Tập Của Ngày</Text>
+      </View> */}
+      <View style={{flex: 1, borderRadius: 20, height: 350}}>
+        <MasonryList
+          style={{flex: 1, marginTop: 10, borderRadius: 20}}
+          // ListHeaderComponent={<View style={{flex: 1, marginTop: 0}}></View>}
           contentContainerStyle={{
             marginLeft: 12,
             marginRight: 24,
             alignSelf: 'stretch',
           }}
-          numColumns={2}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={3}
           data={allChallenges}
-          renderItem={(item=>renderItem(item))}
-          >
+          renderItem={item => renderItem(item)} onRefresh={init}></MasonryList>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <Text
+          style={{
+            marginTop: 10,
+            color: COLOR.MATTE_BLACK,
+            fontSize: 20,
+            marginLeft: 0,
+            marginBottom: 10,
+            width: 250,
+            borderBottomRightRadius: 20,
+            borderTopRightRadius: 20,
 
-          </MasonryList>
+            paddingLeft: 10,
+            backgroundColor: COLOR.GOLD,
+          }}>
+          Thử thách bạn tham gia
+        </Text>
+        <TouchableOpacity
+          style={{marginTop: 15, position: 'absolute', right: 30, flex: 1}}>
+          <Text style={{color: COLOR.GOLD}}> Xem tất cả</Text>
+        </TouchableOpacity>
+      </View>
+      {/* <Text
+        style={{
+          marginTop: 10,
+          color: COLOR.WHITE,
+          fontSize: 20,
+          color: COLOR.WHITE,
+          marginLeft: 12,
+          marginBottom: 10,
+        }}>
+      </Text> */}
+
+      <View style={{flex: 1, borderRadius: 20, height: 350, marginBottom: 10}}>
+        <MasonryList
+          style={{flex: 1, marginTop: 10, borderRadius: 20}}
+          ListHeaderComponent={<View style={{flex: 1, marginTop: 0}}></View>}
+          contentContainerStyle={{
+            marginLeft: 12,
+            marginRight: 24,
+            alignSelf: 'stretch',
+          }}
+          numColumns={3}
+          data={allChallengesForUser}
+          renderItem={item => renderItem(item)}></MasonryList>
+      </View>
     </View>
   );
 }
@@ -233,6 +315,23 @@ const styles = StyleSheet.create({
     top: 50,
     right: 15,
   },
+  todayWorkout: {
+    backgroundColor: COLOR.GOLD,
+    width: 170,
+    height: 25,
+    position: 'absolute',
+    top: 50,
+    right: 0,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    justifyContent: 'center',
+    paddingLeft: 10,
+  },
+  todayWorkoutTxt: {
+    color: COLOR.MATTE_BLACK,
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
 });
 
-export default ChallengesScreen;
+export default ChallengesCategoryScreen;

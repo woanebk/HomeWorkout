@@ -12,7 +12,7 @@ import LoginScreen from '../screens/Auth/LoginScreen';
 import AllWorkoutScreen from '../screens/WorkoutScreens/AllWorkoutScreen';
 import ExcerciseLibraryScreen from '../screens/Exercise/ExcerciseLibraryScreen';
 import ChallengeDetailScreen from '../screens/Challenge/ChallengeDetailScreen';
-
+import AllChallengeScreen from '../screens/Challenge/AllChallengeSreen';
 const MainStack = createStackNavigator();
 
 const AuthStack = createStackNavigator();
@@ -78,6 +78,15 @@ function MainStackNavigator() {
       <MainStack.Screen
         name="ChallengeDetail"
         component={ChallengeDetailScreen}
+        options={{headerTintColor: '#fff'}}
+        screenOptions={{
+          headerTitle: 'asasasd',
+          headerMode: 'float',
+        }}
+      />
+       <MainStack.Screen
+        name="AllChallenge"
+        component={AllChallengeScreen}
         options={{headerTintColor: '#fff'}}
         screenOptions={{
           headerTitle: 'asasasd',
