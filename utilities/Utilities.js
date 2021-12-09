@@ -5,3 +5,11 @@ export const handleFormatSecond = (seconds) => {
     let displaySec = sec < 10 ? '0' + sec : sec;
     return displayMin + ':' + displaySec;
   };
+
+export const convertObjectToArrayWithoutKey = (obj) => {
+  let arr =[]
+  for (let [key, value] of Object.entries(obj)) {
+    arr.push(value)
+  }
+  return arr
+}
