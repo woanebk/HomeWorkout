@@ -32,7 +32,7 @@ function App() {
       PushNotification.configure({
         onNotification: function (notification) {
           console.log('LOCAL NOTIFICATION ==>', notification);
-          navigation.navigate('Notification');
+          navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
         },
         popInitialNotification: true,
         requestPermissions: true,
@@ -54,7 +54,7 @@ function App() {
 
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
-      navigation.navigate('Notification');
+      navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
       setNotification({
         title: remoteMessage.notification.title,
         body: remoteMessage.notification.body,

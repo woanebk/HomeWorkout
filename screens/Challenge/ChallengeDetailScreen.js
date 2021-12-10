@@ -7,29 +7,51 @@ import LinearGradient from 'react-native-linear-gradient';
 import CommandButton from '../../components/CommandButton';
 import WorkoutByDayItem from '../../components/WorkoutByDayItem';
 import {COLOR, SCREEN_HEIGHT} from '../../constant';
-import { convertStringDDMMYYtoDate } from '../../utilities/Utilities';
-import { addChallengeToMyList,deleteChallengeOutToMyList ,lookupChallengeInMyList} from '../../utilities/FirebaseDatabase';
+import {convertStringDDMMYYtoDate} from '../../utilities/Utilities';
+import {
+  addChallengeToMyList,
+  deleteChallengeOutToMyList,
+  lookupChallengeInMyList,
+} from '../../utilities/FirebaseDatabase';
 const LINEAR_GRADIENT_HEIGHT = 120;
 
-function ChallengeDetailScreen({route,navigation}) {
-  const { item } = route.params;
+function ChallengeDetailScreen({route, navigation}) {
+  const {item,key} = route.params;
   const [isSubCribed, setIsSubCribed] = useState(false);
-
+  const DATA = [{
+    id: undefined,
+    imgURL:
+    undefined,
+  },];
   const [workoutListByDay, setWorkOutListByDay] = useState(item.listWorkout);
-  const[challengeDetail,setChallengeDetail]=useState(item);
-  useEffect(async() => {
-  var res=await lookupChallengeInMyList(challengeDetail);
-   setIsSubCribed(res.id!=null);
+  const [challengeDetail, setChallengeDetail] = useState(DATA);
+  useEffect(async () => {
+    if(key!=null)
+    {   
+       var res = await lookupChallengeInMyList(key);
+       setChallengeDetail(res);
+       setIsSubCribed(res.id != null);
+    }
+    else{    
+         var res = await lookupChallengeInMyList(item.id);
+      setChallengeDetail(item);    setIsSubCribed(res.id != null);
+    }
   }, []);
 
-  const handleSubcribe =async () => {
-  if(  isSubCribed){setIsSubCribed(false); await deleteChallengeOutToMyList(challengeDetail);}else{setIsSubCribed(true);await addChallengeToMyList(challengeDetail)}
-  }
+  const handleSubcribe = async () => {
+    if (isSubCribed) {
+      setIsSubCribed(false);
+      await deleteChallengeOutToMyList(challengeDetail);
+    } else {
+      setIsSubCribed(true);
+      await addChallengeToMyList(challengeDetail);
+    }
+  };
 
   const renderWorkoutByDayItem = (item, index) => {
     return (
-      <WorkoutByDayItem 
-      onPress={()=>navigation.navigate('WorkoutInfo')}
+      <WorkoutByDayItem
+        onPress={() => navigation.navigate('WorkoutInfo')}
         isDone={index == 0}
         style={{marginRight: 10}}
         title="Bài tập bụng"
@@ -61,9 +83,7 @@ function ChallengeDetailScreen({route,navigation}) {
           reducedTransparencyFallbackColor="black"
         />
         <View style={styles.titleWrapper}>
-          <Text style={styles.titleTxt}>
-          {challengeDetail.title}
-          </Text>
+          <Text style={styles.titleTxt}>{challengeDetail.title}</Text>
         </View>
         <View style={[styles.blur]}>
           <View style={styles.rowItem}>
@@ -76,11 +96,28 @@ function ChallengeDetailScreen({route,navigation}) {
               />
             </View>
             <View style={styles.rowItemTextWrapper}>
-              <Text style={styles.rowItemTitleTxt}>Thời gian:{(convertStringDDMMYYtoDate(challengeDetail.endTime).getTime()-convertStringDDMMYYtoDate(challengeDetail.startTime).getTime())/(1000 * 3600 * 24)} ngày</Text>
-              <Text style={styles.rowItemSubTxt}>{challengeDetail.spanTime!=null?challengeDetail.spanTime:"30"} phút mỗi ngày</Text>
-              <Text style={styles.rowItemSubTxt}>Ngày bắt đầu:{challengeDetail.startTime}</Text> 
-              <Text style={styles.rowItemSubTxt}>Ngày kết thúc:{challengeDetail.endTime}</Text> 
-
+              <Text style={styles.rowItemTitleTxt}>
+                Thời gian:
+               
+                {challengeDetail.endTime!=null?(convertStringDDMMYYtoDate(challengeDetail.endTime).getTime() -
+                  convertStringDDMMYYtoDate(
+                    challengeDetail.startTime,
+                  ).getTime()) /
+                  (1000 * 3600 * 24):7}{' '}
+                ngày
+              </Text>
+              <Text style={styles.rowItemSubTxt}>
+                {challengeDetail.spanTime != null
+                  ? challengeDetail.spanTime
+                  : '30'}{' '}
+                phút mỗi ngày
+              </Text>
+              <Text style={styles.rowItemSubTxt}>
+                Ngày bắt đầu:{challengeDetail.startTime}
+              </Text>
+              <Text style={styles.rowItemSubTxt}>
+                Ngày kết thúc:{challengeDetail.endTime}
+              </Text>
             </View>
           </View>
           <FlatList
@@ -92,9 +129,7 @@ function ChallengeDetailScreen({route,navigation}) {
           />
           <Text style={styles.aboutTxt}>Giới thiệu thử thách</Text>
           <ScrollView style={styles.detail}>
-            <Text style={styles.aboutContentTxt}>
-              {challengeDetail.body}
-            </Text>
+            <Text style={styles.aboutContentTxt}>{challengeDetail.body}</Text>
           </ScrollView>
         </View>
         <LinearGradient
@@ -102,15 +137,14 @@ function ChallengeDetailScreen({route,navigation}) {
           end={{x: 0, y: 0.9}}
           colors={[COLOR.TRANSPARENT, COLOR.MATTE_BLACK]}
           style={styles.linearGradient}></LinearGradient>
-      
+
         <CommandButton
-          backgroundColor={isSubCribed ?COLOR.GREY:COLOR.BLUE}
+          backgroundColor={isSubCribed ? COLOR.GREY : COLOR.BLUE}
           style={styles.commandBtn}
           hasRightIcon
-          title=  { isSubCribed ?"Hủy đăng kí":"Tham gia ngay"}
+          title={isSubCribed ? 'Hủy đăng kí' : 'Tham gia ngay'}
           onPress={handleSubcribe}
         />
-       
       </BackgroundImage>
     </View>
   );
@@ -165,7 +199,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rowItemTextWrapper: {
-    justifyContent: 'center',marginTop:15,
+    justifyContent: 'center',
+    marginTop: 15,
     marginLeft: 20,
   },
   rowItemTitleTxt: {
