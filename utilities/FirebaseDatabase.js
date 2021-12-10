@@ -1,5 +1,5 @@
 import { firebase } from '@react-native-firebase/database';
-
+import auth from '@react-native-firebase/auth';
 const database = firebase
   .app()
   .database('https://homeworkout-73750-default-rtdb.asia-southeast1.firebasedatabase.app/');
@@ -62,5 +62,21 @@ const database = firebase
   export const getListMyAllChallenge = async  (userId)=> {
     console.log(userId)
     return await database.ref('Challenges/User/'+userId).once('value')
+  }
+
+  export const addChallengeToMyList = async  (challenge)=> {
+    userId= auth().currentUser.uid;
+    console.log(challenge.id)
+    return await database.ref('Challenges/User/'+userId+'/'+challenge.id).update(challenge)
+  }
+  export const deleteChallengeOutToMyList = async  (challenge)=> {
+    userId= auth().currentUser.uid;
+    console.log(challenge.id)
+    return await database.ref('Challenges/User/'+userId+'/'+challenge.id).update(null)
+  }
+  export const lookupChallengeInMyList = async  (challenge)=> {
+    userId= auth().currentUser.uid;
+    const res= await database.ref('Challenges/User/'+userId+'/'+challenge.id).once('value');
+    return (res) ;
   }
 //#endregion

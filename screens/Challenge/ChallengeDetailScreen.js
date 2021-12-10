@@ -8,6 +8,7 @@ import CommandButton from '../../components/CommandButton';
 import WorkoutByDayItem from '../../components/WorkoutByDayItem';
 import {COLOR, SCREEN_HEIGHT} from '../../constant';
 import { convertStringDDMMYYtoDate } from '../../utilities/Utilities';
+import { addChallengeToMyList,deleteChallengeOutToMyList ,lookupChallengeInMyList} from '../../utilities/FirebaseDatabase';
 const LINEAR_GRADIENT_HEIGHT = 120;
 
 function ChallengeDetailScreen({route,navigation}) {
@@ -16,16 +17,16 @@ function ChallengeDetailScreen({route,navigation}) {
 
   const [workoutListByDay, setWorkOutListByDay] = useState(item.listWorkout);
   const[challengeDetail,setChallengeDetail]=useState(item);
-  useEffect(() => {
-
-    console.log(challengeDetail.endTime)
-    console.log(convertStringDDMMYYtoDate(challengeDetail.endTime).getTime()-convertStringDDMMYYtoDate(challengeDetail.startTime).getTime());
-    console.log(convertStringDDMMYYtoDate(challengeDetail.startTime).getTime());
-
+  useEffect(async() => {
+  var res=await lookupChallengeInMyList(challengeDetail);
+  console.log(res)
+  console.log(res == null ? true : false)
+  if(res)
+   setIsSubCribed(true);else  setIsSubCribed(false);
   }, []);
 
-  const handleSubcribe = () => {
-    isSubCribed?setIsSubCribed(false):setIsSubCribed(true);
+  const handleSubcribe =async () => {
+  if(  isSubCribed){setIsSubCribed(false); await deleteChallengeOutToMyList(challengeDetail);}else{setIsSubCribed(true);await addChallengeToMyList(challengeDetail)}
   }
 
   const renderWorkoutByDayItem = (item, index) => {
@@ -79,7 +80,10 @@ function ChallengeDetailScreen({route,navigation}) {
             </View>
             <View style={styles.rowItemTextWrapper}>
               <Text style={styles.rowItemTitleTxt}>Thời gian:{(convertStringDDMMYYtoDate(challengeDetail.endTime).getTime()-convertStringDDMMYYtoDate(challengeDetail.startTime).getTime())/(1000 * 3600 * 24)} ngày</Text>
-              <Text style={styles.rowItemSubTxt}>30 phút mỗi ngày</Text>
+              <Text style={styles.rowItemSubTxt}>{challengeDetail.spanTime!=null?challengeDetail.spanTime:"30"} phút mỗi ngày</Text>
+              <Text style={styles.rowItemSubTxt}>Ngày bắt đầu:{challengeDetail.startTime}</Text> 
+              <Text style={styles.rowItemSubTxt}>Ngày kết thúc:{challengeDetail.endTime}</Text> 
+
             </View>
           </View>
           <FlatList
@@ -164,7 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rowItemTextWrapper: {
-    justifyContent: 'center',
+    justifyContent: 'center',marginTop:15,
     marginLeft: 20,
   },
   rowItemTitleTxt: {

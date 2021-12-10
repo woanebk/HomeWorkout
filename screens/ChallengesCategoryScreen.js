@@ -42,10 +42,10 @@ function ChallengesCategoryScreen({navigation}) {
 
   }
   const initAllChallengeForCurrent =async () => {
-    console.debug("init")
+    console.debug("initmy")
     const res = await getListMyAllChallenge(auth().currentUser.uid);    
     if (res.val==null)setAllChallengesForUser( [{imgURL:undefined}] ) 
-    else setAllChallenges(convertObjectToArrayWithoutKey(res.val())); 
+    else setAllChallengesForUser(convertObjectToArrayWithoutKey(res.val())); 
   }         
 
 
@@ -172,6 +172,7 @@ function ChallengesCategoryScreen({navigation}) {
           }}
           key={(item, index) => index.toString()}
           numColumns={3}
+          onRefresh={initAllChallengeForCurrent}
           data={allChallengesForUser}
           renderItem={item => renderItem(item)}></MasonryList>
       </View>
