@@ -19,10 +19,7 @@ function ChallengeDetailScreen({route,navigation}) {
   const[challengeDetail,setChallengeDetail]=useState(item);
   useEffect(async() => {
   var res=await lookupChallengeInMyList(challengeDetail);
-  console.log(res)
-  console.log(res == null ? true : false)
-  if(res)
-   setIsSubCribed(true);else  setIsSubCribed(false);
+   setIsSubCribed(res.id!=null);
   }, []);
 
   const handleSubcribe =async () => {
