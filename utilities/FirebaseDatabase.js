@@ -77,6 +77,6 @@ const database = firebase
   export const lookupChallengeInMyList = async  (challenge)=> {
     userId= auth().currentUser.uid;
     const res= await database.ref('Challenges/User/'+userId+'/'+challenge.id).once('value');
-    return (res) ;
+    return (res.val()) ;
   }
 //#endregion
