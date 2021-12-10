@@ -46,9 +46,76 @@ function ChallengesCategoryScreen({navigation}) {
     const res = await getListMyAllChallenge(auth().currentUser.uid);    
     if (res.val==null)setAllChallengesForUser( [{imgURL:undefined}] ) 
     else setAllChallengesForUser(convertObjectToArrayWithoutKey(res.val())); 
-  }         
+  }    
+  //#region  message    
+  // const [notification, setNotification] = useState({
+  //   title: undefined,
+  //   body: undefined,
+  //   image: undefined,
+  // });
+  // const getToken = async () => {
+  //   const token = await messaging().getToken();
+  //   console.log('.........................: ', token);
+  // };
+   
+  // useEffect(() => {
+  //  // const navigation = useNavigation();
 
+  //   getToken();
+  //   messaging().onMessage(async remoteMessage => {
+  //     console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
 
+  //     PushNotification.configure({
+  //       onNotification: function (notification) {
+  //         console.log('LOCAL NOTIFICATION ==>', notification);
+  //         navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
+  //       },
+  //       popInitialNotification: true,
+  //       requestPermissions: true,
+  //     });
+  //     PushNotification.localNotification({
+  //       message: remoteMessage.notification.body,
+  //       title: remoteMessage.notification.title,
+  //       bigPictureUrl: remoteMessage.notification.android.imageUrl,
+  //       smallIcon: remoteMessage.notification.android.imageUrl,
+  //       // chanelId: remoteMessage.messageId,
+  //       priority: 'high',
+  //     });
+  //     setNotification({
+  //       title: remoteMessage.notification.title,
+  //       body: remoteMessage.notification.body,
+  //       image: remoteMessage.notification.android.imageUrl,
+  //     });
+  //   });
+
+  //   messaging().onNotificationOpenedApp(remoteMessage => {
+  //     console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
+  //     navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
+  //     setNotification({
+  //       title: remoteMessage.notification.title,
+  //       body: remoteMessage.notification.body,
+  //       image: remoteMessage.notification.android.imageUrl,
+  //     });
+  //   });
+
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then(remoteMessage => {
+  //       if (remoteMessage) {
+  //         console.log(
+  //           'Notification caused app to open from quit state:',
+  //           JSON.stringify(remoteMessage),
+  //         );
+
+  //         setNotification({
+  //           title: remoteMessage.notification.title,
+  //           body: remoteMessage.notification.body,
+  //           image: remoteMessage.notification.android.imageUrl,
+  //         });
+  //       }
+  //     });
+  // }, []);
+//#endregion
   var FurnitureCard = function (_a) {
     var item = _a.item;
     var randomBool = (0, useMemo)(function () {

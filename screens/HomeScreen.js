@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {Image, Text, StyleSheet, View, StatusBar} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {BackgroundImage} from 'react-native-elements/dist/config';
@@ -15,10 +15,81 @@ import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
 import { Test } from '../utilities/FirebaseDatabase';
+import messaging from '@react-native-firebase/messaging';
+import PushNotification from 'react-native-push-notification';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
   const [suggestedWorkouts, setSuggestedWorkouts] = useState(['1', '2', '3']);
+ //#region  message    
+ const [notification, setNotification] = useState({
+  title: undefined,
+  body: undefined,
+  image: undefined,
+});
+const getToken = async () => {
+  const token = await messaging().getToken();
+  console.log('.........................: ', token);
+};
+ 
+useEffect(() => {
+ // const navigation = useNavigation();
+
+  getToken();
+  messaging().onMessage(async remoteMessage => {
+    console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+
+    PushNotification.configure({
+      onNotification: function (notification) {
+        console.log('LOCAL NOTIFICATION ==>', notification);
+        navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
+      },
+      popInitialNotification: true,
+      requestPermissions: true,
+    });
+    PushNotification.localNotification({
+      message: remoteMessage.notification.body,
+      title: remoteMessage.notification.title,
+      bigPictureUrl: remoteMessage.notification.android.imageUrl,
+      smallIcon: remoteMessage.notification.android.imageUrl,
+      // chanelId: remoteMessage.messageId,
+      priority: 'high',
+    });
+    setNotification({
+      title: remoteMessage.notification.title,
+      body: remoteMessage.notification.body,
+      image: remoteMessage.notification.android.imageUrl,
+    });
+  });
+
+  messaging().onNotificationOpenedApp(remoteMessage => {
+    console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
+    navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
+    setNotification({
+      title: remoteMessage.notification.title,
+      body: remoteMessage.notification.body,
+      image: remoteMessage.notification.android.imageUrl,
+    });
+  });
+
+  messaging()
+    .getInitialNotification()
+    .then(remoteMessage => {
+      if (remoteMessage) {
+        console.log(
+          'Notification caused app to open from quit state:',
+          JSON.stringify(remoteMessage),
+        );
+
+        setNotification({
+          title: remoteMessage.notification.title,
+          body: remoteMessage.notification.body,
+          image: remoteMessage.notification.android.imageUrl,
+        });
+      }
+    });
+}, []);
+//#endregion
 
   const renderBanner = () => (
     <BackgroundImage

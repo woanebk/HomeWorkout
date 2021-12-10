@@ -19,22 +19,24 @@ function ChallengeDetailScreen({route, navigation}) {
   const {item,key} = route.params;
   const [isSubCribed, setIsSubCribed] = useState(false);
   const DATA = [{
-    id: undefined,
-    imgURL:
-    undefined,
+    body: 'Hãy cố gắng vượt qua thử thách',endTime: '20/12/2021',startTime:'09/12/2021',title:'Thử thách cá hồi hoang',topic:'cahoihoang',imgURL:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqEPKbkJzSFv7q6hwo2S6dKkNRYnWRWWkYTQ&usqp=CAU'
   },];
-  const [workoutListByDay, setWorkOutListByDay] = useState(item.listWorkout);
+  const [workoutListByDay, setWorkOutListByDay] = useState(DATA.listWorkout);
   const [challengeDetail, setChallengeDetail] = useState(DATA);
   useEffect(async () => {
+    console.log(key)
     if(key!=null)
     {   
        var res = await lookupChallengeInMyList(key);
        setChallengeDetail(res);
        setIsSubCribed(res.id != null);
+       setWorkOutListByDay(res.listWorkout)
+
     }
     else{    
          var res = await lookupChallengeInMyList(item.id);
       setChallengeDetail(item);    setIsSubCribed(res.id != null);
+      setWorkOutListByDay(item.listWorkout)
     }
   }, []);
 
