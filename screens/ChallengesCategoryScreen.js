@@ -106,7 +106,7 @@ function ChallengesCategoryScreen({navigation}) {
           Tất cả thử thách
         </Text>
         <TouchableOpacity
-          style={{marginTop: 65, position: 'absolute', right: 30, flex: 1}} onPress={()=>{ navigation.navigate("AllChallenge")}}>
+          style={{marginTop: 65, position: 'absolute', right: 30, flex: 1}} onPress={()=>{ navigation.navigate("AllChallenge",  { type:"All",challenges:allChallenges})}}>
         {/* async() =>{console.debug('click');await generateNewChallenge().then(() => console.log('Data updated.'));}}> */}
           <Text style={{color: COLOR.GOLD}}> Xem tất cả</Text>
         </TouchableOpacity>
@@ -146,8 +146,8 @@ function ChallengesCategoryScreen({navigation}) {
           Thử thách bạn tham gia
         </Text>
         <TouchableOpacity
-          style={{marginTop: 15, position: 'absolute', right: 30, flex: 1}}>
-          <Text style={{color: COLOR.GOLD}}> Xem tất cả</Text>
+          style={{marginTop: 15, position: 'absolute', right: 30, flex: 1}} onPress={()=>{  navigation.navigate("AllChallenge",  { type:"My",challenges:allChallengesForUser})}}>
+          <Text style={{color: COLOR.GOLD}}> Xem tất cả </Text>
         </TouchableOpacity>
       </View>
       {/* <Text
