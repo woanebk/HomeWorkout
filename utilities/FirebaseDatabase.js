@@ -17,6 +17,7 @@ const database = firebase
     return database.ref('Excercises/' + id).update(data);
   }
 
+//#region Excercise
   export const generateNewExcercise = () => {
     const dummyExcercise ={
       name: 'Tên tiếng việt',
@@ -24,7 +25,7 @@ const database = firebase
       point: 3,
       muscle_group: ['Vai', 'Ngực', 'Tay Sau'],
       level: 'normal',
-      descriptopn: 'Tay rộng bằng vai',
+      description: 'Tay rộng bằng vai',
       related_excercise : ['someId', 'someId'],
       video: 'link Video',
       tag: ['Giảm mỡ', 'Giảm cân', 'Tăng cơ'],
@@ -39,6 +40,16 @@ const database = firebase
   export const getListAllExcercise = async () => {
     return await database.ref('Excercises').once('value')
   }
+
+  // export const getExcerciseById = async (id) => {
+  //   return await database.ref('Excercises/').orderByChild('id').equalTo(id).once('value')
+  // }
+  //Hoac co the lay excercise theo path luon
+  export const getExcerciseById = async (id) => {
+    return await database.ref('Excercises/' + id ).once('value')
+  }
+
+//#region Excercise
 
 //#region Challenges
     export const addChallenge = (challenge ) => {

@@ -1,6 +1,14 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Text, StyleSheet, View, StatusBar, Image, Animated} from 'react-native';
-import {COLOR} from '../../constant';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+  StatusBar,
+  Image,
+  Animated,
+  RefreshControl,
+} from 'react-native';
+import {COLOR, SCREEN_HEIGHT} from '../../constant';
 import HeartButton from '../../components/HeartButton';
 import {Icon} from 'react-native-elements';
 import {
@@ -10,27 +18,55 @@ import {
 } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import {Searchbar} from 'react-native-paper';
-import { addExcercise, generateNewExcercise, getListAllExcercise, updateExcercise } from '../../utilities/FirebaseDatabase';
-import { convertObjectToArrayWithoutKey } from '../../utilities/Utilities';
+import {
+  addExcercise,
+  generateNewExcercise,
+  getListAllExcercise,
+  updateExcercise,
+} from '../../utilities/FirebaseDatabase';
+import {convertObjectToArrayWithoutKey} from '../../utilities/Utilities';
+import LoadingView from '../../components/LoadingView';
 
 const HEADER_HEIGHT = 170; // height of the image
 const SCREEN_HEADER_HEIGHT = 140; // height of the header contain back button
 
 function ExcerciseLibraryScreen({navigation}) {
-
-  const [listExcercise, setListExcercise] = useState([])
+  const [listExcercise, setListExcercise] = useState([]);
+  const [displayListExcercise, setDisplayListExcercise] = useState([]);
   const [textInput, setTextInput] = useState('');
+
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  useEffect(()=>{
-    getData()
-  },[])
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    searchExcercise(textInput);
+  }, [textInput]);
 
   const getData = async () => {
-    const res = await getListAllExcercise()
-    setListExcercise(convertObjectToArrayWithoutKey(res.val()))
-  }
+    const res = await getListAllExcercise();
+    setListExcercise(convertObjectToArrayWithoutKey(res.val()));
+    setDisplayListExcercise(convertObjectToArrayWithoutKey(res.val()));
+  };
+
+  const searchExcercise = input => {
+    let displayList = listExcercise?.filter(item => {
+      return item?.name?.includes(input) || item?.name_en?.includes(input);
+    });
+    setDisplayListExcercise(displayList);
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getData();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
 
   const renderHeader = () => (
     <View style={styles.header}>
@@ -60,7 +96,7 @@ function ExcerciseLibraryScreen({navigation}) {
         resizeMode="cover"></Animated.Image>
       <Animated.View style={styles.headerContentWrapper}>
         <View style={styles.headerTxtWrapper}>
-          <Text style={styles.infoTxt}>Số lượng: 40</Text>
+          <Text style={styles.infoTxt}>Số lượng: {displayListExcercise?.length}</Text>
           <Text style={styles.headerTxt}>Thư viện kỹ thuật</Text>
         </View>
         <LinearGradient
@@ -75,7 +111,7 @@ function ExcerciseLibraryScreen({navigation}) {
   const renderItem = item => (
     <View style={styles.itemWrapper}>
       <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('ExcerciseInfo')}>
+        onPress={() => navigation.navigate('ExcerciseInfo', {excersise: item})}>
         <View style={styles.excersiseWrapper}>
           <Image
             resizeMode="cover"
@@ -101,7 +137,7 @@ function ExcerciseLibraryScreen({navigation}) {
             bottom: 10,
             right: 20,
             backgroundColor: COLOR.WHITE,
-            borderRadius:50,
+            borderRadius: 50,
             elevation: 5,
             shadowColor: '#fff',
             shadowOffset: {width: 10, height: 2},
@@ -112,9 +148,9 @@ function ExcerciseLibraryScreen({navigation}) {
           },
         ]}>
         <TouchableOpacity
-        onPress={()=>{
-          generateNewExcercise()
-        }}
+          onPress={() => {
+            generateNewExcercise();
+          }}
           style={{
             width: '100%',
             height: '100%',
@@ -128,8 +164,7 @@ function ExcerciseLibraryScreen({navigation}) {
             size={20}
             color={COLOR.BLACK}
           />
-          <Text
-            style={{marginLeft: 15, fontSize: 16, fontWeight: 'bold'}}>
+          <Text style={{marginLeft: 15, fontSize: 16, fontWeight: 'bold'}}>
             Bộ Lọc
           </Text>
         </TouchableOpacity>
@@ -142,7 +177,7 @@ function ExcerciseLibraryScreen({navigation}) {
       <StatusBar backgroundColor="transparent" translucent />
       <Animated.FlatList
         style={styles.flatlist}
-        data={listExcercise}
+        data={displayListExcercise}
         keyExtractor={(item, index) => index}
         scrollEventThrottle={16}
         onScroll={Animated.event(
@@ -151,8 +186,15 @@ function ExcerciseLibraryScreen({navigation}) {
         )}
         ListHeaderComponent={renderHeader()}
         renderItem={({item}) => renderItem(item)}
-        ListFooterComponent={()=>(<View style={{height:50}}/>)}
-        ></Animated.FlatList>
+        ListFooterComponent={() => <View style={{height: 50}} />}
+        ListEmptyComponent={() => (
+          <View style={{height: SCREEN_HEIGHT - HEADER_HEIGHT - 50}}>
+            <LoadingView />
+          </View>
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }></Animated.FlatList>
       <Animated.View
         style={[
           styles.screenHeader,
@@ -203,17 +245,10 @@ function ExcerciseLibraryScreen({navigation}) {
           style={{height: 40}}
           placeholder="Tìm kiếm động tác"
           value={textInput}
-          onChangeText={setTextInput}
+          onChangeText={t => setTextInput(t)}
         />
       </Animated.View>
-      {/* <RoundButton
-            icon="sort"
-            buttonWidth={50}
-            buttonHeight={50}
-            size={10}
-            style={styles.sortBtn}
-          /> */}
-        {renderSortButton()}
+      {/* {renderSortButton()} */}
     </View>
   );
 }
