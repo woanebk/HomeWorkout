@@ -1,4 +1,10 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import {
   Text,
   StyleSheet,
@@ -18,15 +24,15 @@ function WorkoutStatus(props, ref) {
   useImperativeHandle(
     ref,
     () => ({
-      scrollBack : () => {
+      scrollBack: () => {
         currentExcerciseListRef.current.scrollTo({
           x: 0,
           y: 0,
           animated: true,
-        })
-      }
+        });
+      },
     }),
-    []
+    [],
   );
 
   return (
@@ -54,7 +60,10 @@ function WorkoutStatus(props, ref) {
                 flexDirection: 'row',
               }}>
               <View style={styles.background} />
-              <Image style={styles.excersiseImg} source={{uri: item.img}} />
+              <Image
+                style={styles.excersiseImg}
+                source={{uri: item?.data?.image}}
+              />
 
               <View style={styles.excersiseItemDesWrapper}>
                 <TextTicker
@@ -63,32 +72,40 @@ function WorkoutStatus(props, ref) {
                   bounce
                   loop
                   marqueeDelay={1000}>
-                  {item.name}
+                  {item?.data?.name}
                 </TextTicker>
                 <Text style={[styles.excersisesSmallDesTxt]}>
-                  Thời gian nghỉ: {item.restTime}
+                  Thời gian nghỉ: {item?.rest}s
                 </Text>
               </View>
               <View style={styles.nextExcercise}>
                 <TouchableOpacity
                   style={{alignItems: 'center'}}
-                  onPress={() =>{
+                  onPress={() => {
                     currentExcerciseListRef.current.scrollTo({
                       x: SCREEN_WIDTH,
                       y: 0,
                       animated: true,
-                    })
-                  }
-                  }>
+                    });
+                  }}>
                   <Image
                     style={styles.nextExcersiseImg}
-                    source={{uri: props.data[index + 1]?.img || 'https://hips.hearstapps.com/ame-prod-menshealth-assets.s3.amazonaws.com/main/thumbs/39579/workout_finished.jpg'}}
+                    source={{
+                      uri:
+                        props.data[index + 1]?.data?.image ||
+                        'https://hips.hearstapps.com/ame-prod-menshealth-assets.s3.amazonaws.com/main/thumbs/39579/workout_finished.jpg',
+                    }}
                   />
-                  <Text style={{color:COLOR.WHITE, marginTop:5, fontSize:13, fontWeight:'bold'}}>
-                    Next 
+                  <Text
+                    style={{
+                      color: COLOR.WHITE,
+                      marginTop: 5,
+                      fontSize: 13,
+                      fontWeight: 'bold',
+                    }}>
+                    Next
                   </Text>
                 </TouchableOpacity>
-                
               </View>
             </View>
           );
@@ -98,13 +115,13 @@ function WorkoutStatus(props, ref) {
               style={{
                 width: SCREEN_WIDTH,
                 height: HORIZONTAL_LIST_HEIGHT,
-                //backgroundColor: COLOR.KELLY_GREEN,
                 flexDirection: 'row',
               }}>
               <View style={styles.background} />
               <BackgroundImage
-                style={styles.nextExcersiseImg2}  imageStyle={{borderRadius:5}}
-                source={{uri: item?.img}}>
+                style={styles.nextExcersiseImg2}
+                imageStyle={{borderRadius: 5}}
+                source={{uri: item?.data?.image}}>
                 <LinearGradient
                   style={styles.nextExcersiseItemDesWrapper}
                   start={{x: 0.7, y: 0}}
@@ -118,15 +135,21 @@ function WorkoutStatus(props, ref) {
                     marqueeDelay={1000}>
                     {item.name}
                   </TextTicker>
+                  {item?.time ? (
+                    <Text style={[styles.excersisesSmallDesTxt]}>
+                      Thời gian thực hiện: {item?.time}s
+                    </Text>
+                  ) : (
+                    <Text style={[styles.excersisesSmallDesTxt]}>
+                      Số reps: {item?.reps}
+                    </Text>
+                  )}
                   <Text style={[styles.excersisesSmallDesTxt]}>
-                    Số reps: {item.restTime}
-                  </Text>
-                  <Text style={[styles.excersisesSmallDesTxt]}>
-                    Thời gian nghỉ: {item.restTime}
+                    Thời gian nghỉ: {item?.rest}s
                   </Text>
                 </LinearGradient>
                 <View style={styles.tag}>
-                    <Text style={styles.tagTxt}>Động tác tiếp theo</Text>
+                  <Text style={styles.tagTxt}>Động tác tiếp theo</Text>
                 </View>
               </BackgroundImage>
             </View>
@@ -142,13 +165,13 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 10,
     marginLeft: 20,
-    top:70
+    top: 70,
   },
   excersiseItemDesWrapper: {
-    top:10,
+    top: 10,
     marginLeft: 10,
-    flex:1,
-    top:70
+    flex: 1,
+    top: 70,
   },
   excersiseDesTxt: {
     color: COLOR.WHITE,
@@ -165,12 +188,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   nextExcercise: {
-    width:100,
+    width: 100,
     height: '100%',
     alignItems: 'flex-end',
-    position:'absolute',
-    right:10,
-    top:35
+    position: 'absolute',
+    right: 10,
+    top: 35,
     //paddingRight:10,
     //backgroundColor: COLOR.RED,
   },
@@ -184,7 +207,7 @@ const styles = StyleSheet.create({
     height: 110,
     borderRadius: 10,
     marginHorizontal: 10,
-    top:20
+    top: 20,
   },
   nextExcersiseItemDesWrapper: {
     flex: 1,
@@ -200,23 +223,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#555',
     bottom: 0,
   },
-  tag:{
-    backgroundColor:COLOR.BLACK,
-    height:25,
-    width:120,
-    position:'absolute',
-    right:30,
-    top:5,
-    opacity:0.7,
-    alignItems:'center',
-    justifyContent:'center',
-    borderRadius:5
-},
-    tagTxt:{
-        color:COLOR.WHITE,
-        fontSize:13,
-        fontWeight:'bold'
-    },
+  tag: {
+    backgroundColor: COLOR.BLACK,
+    height: 25,
+    width: 120,
+    position: 'absolute',
+    right: 30,
+    top: 5,
+    opacity: 0.7,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+  },
+  tagTxt: {
+    color: COLOR.WHITE,
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
 });
 
 export default forwardRef(WorkoutStatus);

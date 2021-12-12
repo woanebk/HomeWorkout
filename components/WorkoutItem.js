@@ -10,6 +10,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
 import { BackgroundImage } from 'react-native-elements/dist/config';
+import { convertToUserLevel, handleArrayToString } from '../utilities/Utilities';
 
 function WorkoutItem(props) {
 
@@ -21,7 +22,7 @@ function WorkoutItem(props) {
           <BackgroundImage
           style={styles.img}
           imageStyle={styles.img}
-          source={props.image}
+          source={{uri: props?.workout?.image}}
           >
             <LinearGradient 
             start={{x:1, y:0.2}}
@@ -35,7 +36,7 @@ function WorkoutItem(props) {
                         type='font-awesome-5'
                         size={12}
                         color={COLOR.WHITE}/>
-                        <Text style={styles.tagTxt}>Set: x4</Text>
+                        <Text style={styles.tagTxt}>Rounds: x{props?.workout?.rounds?.length}</Text>
                     </View>
                     <View style={styles.tag}>
                         <Icon
@@ -43,18 +44,18 @@ function WorkoutItem(props) {
                         type='font-awesome-5'
                         size={12}
                         color={COLOR.WHITE}/>
-                        <Text style={styles.tagTxt}>Thời gian: 1.5 giờ</Text>
+                        <Text style={styles.tagTxt}>Thời gian: {props?.workout?.estimate_time} phút</Text>
                     </View>
                 </View>
             </LinearGradient>
           </BackgroundImage>
           <View style={styles.infoWrapper}>
-            <Text numberOfLines={1} style={styles.titleTxt}>Xây dựng cơ ngực với chống đẩy</Text>
-            <Text numberOfLines={1} >Nhóm cơ tác động: Ngực, Vai, Lưng, Xô</Text>
+            <Text numberOfLines={1} style={styles.titleTxt}>{props?.workout?.name}</Text>
+            <Text numberOfLines={1} >Nhóm cơ tác động: {handleArrayToString(props?.workout?.muscle_group)}</Text>
           </View>
           
         <View style={styles.level}>
-            <Text style={styles.levelTxt}>Người mới tập</Text>
+            <Text style={styles.levelTxt}>{props?.workout?.level}</Text>
         </View>
       </View>
       </TouchableWithoutFeedback>
