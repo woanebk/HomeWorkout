@@ -30,4 +30,49 @@ export const COLOR = {
     LIGHT_BLACK : '#484848',
 }
 
+export const MUSCLE_GROUP = {
+  TAY_SAU: 'Tay sau',
+  NGUC: 'Ngực',
+  VAI: 'Vai',
+  CHAN: 'Chân',
+  BUNG: 'Bụng',
+  DUI: 'Đùi',
+  MONG: 'Mông',
+  TAY_TRUOC: 'Tay trước',
+  LIEN_SUON: 'Liên sườn',
+  LUNG: 'Lưng',
+  XO: 'Xô',
+  CANG_TAY: 'Cẳng tay',
+}
+
+export const LEVEL = {
+  EASY:{
+    name : 'Easy',
+    en: 'Easy',
+    vi: 'Dễ',
+    userLevel: {
+      en: 'Beginner',
+      vi: 'Người mới tập'
+    }
+  },
+  NORMAL:{
+    name : 'Normal',
+    en: 'Normal',
+    vi: 'Trung bình',
+    userLevel: {
+      en: 'Intermediate',
+      vi: 'Người tập lâu'
+    }
+  },
+  HARD:{
+    name : 'Hard',
+    en: 'Hard',
+    vi: 'Khó',
+    userLevel: {
+      en: 'Pro',
+      vi: 'Pro'
+    }
+  },
+}
+
 export const HORIZONTAL_LIST_HEIGHT = 200; //left view 130

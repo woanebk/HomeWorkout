@@ -7,7 +7,7 @@ import {COLOR} from '../../constant';
 import {getExcerciseById} from '../../utilities/FirebaseDatabase';
 
 function ExcerciseInfoScreen({route, navigation}) {
-  const {excersise} = route.params;
+  const {excercise} = route.params;
 
   const [suggestExcercises, setSuggestExcercises] = useState([]);
 
@@ -17,8 +17,8 @@ function ExcerciseInfoScreen({route, navigation}) {
 
   const getRelatedExcercise = async () => {
     let list = [];
-    for (let i = 0; i < excersise?.related_excercise?.length; i++) {
-      const id = excersise?.related_excercise[i];
+    for (let i = 0; i < excercise?.related_excercise?.length; i++) {
+      const id = excercise?.related_excercise[i];
       const res = await getExcerciseById(id);
       res.val() && list.push(res.val());
     }
@@ -41,7 +41,7 @@ function ExcerciseInfoScreen({route, navigation}) {
               key={index}>
               <SuggestExcercise
                 onPress={() => {
-                  navigation.navigate('ExcerciseInfo', {excersise: item});
+                  navigation.navigate('ExcerciseInfo', {excercise: item});
                 }}
                 style={styles.suggestItem}
                 image={{uri: item?.image}}
@@ -63,7 +63,7 @@ function ExcerciseInfoScreen({route, navigation}) {
       />
       <View style={styles.backgroundVideo}>
         <Video
-          source={{uri: excersise?.video}}
+          source={{uri: excercise?.video}}
           repeat
           style={styles.backgroundVideo}
           resizeMode="cover"
@@ -71,7 +71,7 @@ function ExcerciseInfoScreen({route, navigation}) {
       </View>
       <View style={styles.titleWrapper}>
         <Text numberOfLines={2} style={styles.title}>
-          {excersise?.name}
+          {excercise?.name}
         </Text>
       </View>
       <View style={styles.section}>
@@ -81,8 +81,8 @@ function ExcerciseInfoScreen({route, navigation}) {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.tagScroll}>
-        {excersise?.muscle_group &&
-          excersise?.muscle_group?.map((item, index) => (
+        {excercise?.muscle_group &&
+          excercise?.muscle_group?.map((item, index) => (
             <View
               style={[styles.tag, index == 0 ? {marginLeft: 20} : {}]}
               key={index}>
@@ -92,7 +92,7 @@ function ExcerciseInfoScreen({route, navigation}) {
       </ScrollView>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Những lưu ý khi tập:</Text>
-        <Text style={styles.desTxt}>{excersise?.description}</Text>
+        <Text style={styles.desTxt}>{excercise?.description}</Text>
       </View>
       {suggestExcercises?.length > 0 && renderSuggestedExcercises()}
     </ScrollView>

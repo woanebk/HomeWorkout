@@ -1,6 +1,7 @@
 import { firebase } from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
+import moment from 'moment';
 
 const database = firebase
   .app()
@@ -23,18 +24,22 @@ const database = firebase
       name: 'Tên tiếng việt',
       name_en: 'Tên tiếng anh',
       point: 3,
-      muscle_group: ['Vai', 'Ngực', 'Tay Sau'],
-      level: 'normal',
+      muscle_group: ['Vai', 'Ngực', 'Tay sau'],
+      level: 'Normal',
       description: 'Tay rộng bằng vai',
       related_excercise : ['someId', 'someId'],
       video: 'link Video',
       tag: ['Giảm mỡ', 'Giảm cân', 'Tăng cơ'],
-      image:'link image'
+      image:'link image',
+      createdAt: moment().toISOString()
     }
     const ref = addExcercise(dummyExcercise);
-    updateExcercise(ref.key, {
-      id: ref.key
-    })
+    const updateID = setTimeout(() => {
+      updateExcercise(ref.key, {
+        id: ref.key
+      })
+      clearTimeout(updateID)
+    }, 2000);
   }
 
   export const getListAllExcercise = async () => {
@@ -49,7 +54,7 @@ const database = firebase
     return await database.ref('Excercises/' + id ).once('value')
   }
 
-//#region Excercise
+//#end region
 
 //#region Challenges
     export const addChallenge = (challenge ) => {
@@ -94,4 +99,78 @@ const database = firebase
     const res= await database.ref('Challenges/User/'+userId+'/'+id).once('value');
     return (res.val()) ;
   }
+//#endregion
+
+//#region Workouts===============================================================================================================
+
+export const addWorkout = (workout) => {
+  return database.ref('Workouts/').push(workout);
+}
+
+export const updateWorkout = (id, data) => {
+  return database.ref('Workouts/' + id).update(data);
+}
+
+export const generateNewWorkout = () => {
+  const listExcercises = [
+    {
+      id: '-MqOBkWKtBkwEK7V9K5-',
+      reps: 10,
+      time: 0,
+      rest: 30,
+    },
+    {
+      id: '-MqV3xEkUMewBe4zTXCU',
+      reps: 0,
+      time: 30,
+      rest: 60,
+    }
+  ]
+
+  const dummyWorkout ={
+    name: 'Tên tiếng việt',
+    name_en: 'Tên tiếng anh',
+    point: 3,
+    muscle_group: ['Vai', 'Ngực', 'Tay sau'],
+    level: 'Normal',
+    description: 'Mô tả',
+    tag: ['Giảm mỡ', 'Giảm cân', 'Tăng cơ'],
+    image:'link image',
+    estimate_time : 45,
+    likes: 0,
+    createdAt: moment().toISOString(),
+    rounds: [
+      {
+        name: 'Khởi động',
+        set: 1,
+        order : 0,
+        rest : 2,
+        excercises: listExcercises
+      },
+      {
+        name: 'Round 1',
+        set: 2,
+        order : 0,
+        rest : 2,
+        excercises: listExcercises
+      },
+    ]
+  }
+
+  const ref = addWorkout(dummyWorkout);
+  const updateID = setTimeout(() => {
+    updateWorkout(ref.key, {
+      id: ref.key
+    })
+    clearTimeout(updateID)
+  }, 2000);
+}
+
+export const getListAllWorkout = async () => {
+  return await database.ref('Workouts').once('value')
+}
+
+export const getWorkoutById = async (id) => {
+  return await database.ref('Workouts/' + id ).once('value')
+}
 //#endregion

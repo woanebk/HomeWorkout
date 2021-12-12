@@ -29,14 +29,17 @@ import CommandButton from '../../components/CommandButton';
 import ProgressingListExcerciseItem from '../../components/ProgressingListExcerciseItem';
 import Timer from '../../components/Timer';
 import ModalIconDone from '../../components/ModalIconDone';
+import {cloneArrayOrObject} from '../../utilities/Utilities';
+import { BottomNavigation, IconButton } from 'react-native-paper';
 
 const STOP_WATCH_HEIGHT = 100;
 
-function WorkoutProgressScreen(props, route) {
+function WorkoutProgressScreen({route, navigation}, props) {
+  const {workoutData} = route.params;
+
   const [currentExcersise, setCurrentExcersise] = useState({});
-  const [time, setTime] = useState(5);
   const [isCounting, setIsCounting] = useState(true);
-  const [workout, setWorkout] = useState(['1', '2', '3']);
+  const [listExcercise, setListExcercise] = useState([]);
   const [isRest, setIsRest] = useState(false);
   const [showListAll, setShowListAll] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -48,60 +51,6 @@ function WorkoutProgressScreen(props, route) {
   const flatListRef = useRef();
 
   const scrollX = useRef(new Animated.Value(0)).current;
-
-  const dummyDATA = [
-    {
-      name: 'Đẩy vai qua đầu',
-      img: 'https://cdn.shopify.com/s/files/1/0866/7664/articles/image2_f2c3ca07-e2b8-402e-b67b-8824e6ce1a4d_2048x.jpg?v=1607671623',
-      total: 5,
-      restTime: 10,
-    },
-    {
-      name: 'Cơ Ngực',
-      img: 'https://onnitacademy.imgix.net/wp-content/uploads/2020/06/sizzlchestBIG-1333x1000.jpg',
-      total: 5,
-      restTime: 0,
-    },
-    {
-      name: 'Tay Trước',
-      img: 'https://manofmany.com/wp-content/uploads/2020/06/best-bicep-exercises.jpg',
-      total: 5,
-      restTime: 30,
-    },
-    {
-      name: 'Tay Sau',
-      img: 'https://s35247.pcdn.co/wp-content/uploads/2019/07/tw5.jpg.optimal.jpg',
-      total: 5,
-      restTime: 40,
-    },
-    {
-      name: 'Cơ Chân',
-      img: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bring-it-all-the-way-up-here-royalty-free-image-1625750638.jpg?crop=0.601xw:0.946xh;0.397xw,0.0103xh&resize=640:*',
-      total: 5,
-      restTime: 50,
-    },
-    {
-      name: 'Cơ Lưng Xô',
-      img: 'https://www.bodybuilding.com/images/2017/december/your-blueprint-for-building-a-bigger-back-tall-v2-MUSCLETECH.jpg',
-      total: 5,
-      restTime: 60,
-    },
-    {
-      name: 'Cơ Bụng',
-      img: 'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bodybuilders-abdominal-muscles-royalty-free-image-1608761464.?crop=0.668xw:1.00xh;0.332xw,0&resize=640:*',
-      total: 5,
-      restTime: 30,
-    },
-  ];
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    setIsRest(false);
-    setCurrentExcersise(dummyDATA[currentIndex]);
-    currentExcersiseTimerRef?.current?.reset();
-  }, [currentIndex]);
-
   const opacity = scrollX.interpolate({
     inputRange: [
       (currentIndex - 1) * SCREEN_WIDTH,
@@ -116,26 +65,57 @@ function WorkoutProgressScreen(props, route) {
       currentIndex * SCREEN_WIDTH,
       (currentIndex + 1) * SCREEN_WIDTH,
     ],
-    outputRange: [0.9, 1, 1.1],
+    outputRange: [0.9, 1, 0.9],
   });
-  
+
+  useEffect(() => {
+    generateListExcercise();
+  }, [workoutData]);
+
+  useEffect(() => {
+    setIsRest(false);
+    setCurrentExcersise(listExcercise[currentIndex]);
+    currentExcersiseTimerRef?.current?.reset();
+  }, [currentIndex, listExcercise]);
+
+  const generateListExcercise = () => {
+    let arr = [];
+    workoutData?.rounds?.map(round => {
+      for (let i = 0; i < round?.set; i++) {
+        arr = arr.concat(round?.excercises);
+      }
+    });
+    console.log('DATA', arr);
+    const cloneArr = cloneArrayOrObject(arr); // tranh loi isDone sau khi back ve
+    setListExcercise([...cloneArr]);
+  };
+
+  const onHideDoneIcon = () => {
+    if (!isRest) {
+      setIsRest(true);
+      listExcercise[currentIndex].isDone = true;
+      //Ghi nhan du lieu
+    } else {
+      startNextExcercise();
+    }
+  };
   const startNextExcercise = () => {
-    let nextIndex = currentIndex + 1
-    if(nextIndex < dummyDATA?.length) {
+    let nextIndex = currentIndex + 1;
+    if (nextIndex < listExcercise?.length) {
       flatListRef?.current?.scrollToIndex({
         animated: true,
         index: nextIndex,
-      })
-      excersiseStatusRef?.current?.scrollBack()
-      setCurrentIndex(nextIndex)
-      setCurrentExcersise(dummyDATA[nextIndex])
-    }
-    else alert('stop')
-  }
+      });
+      excersiseStatusRef?.current?.scrollBack();
+      setCurrentIndex(nextIndex);
+      setCurrentExcersise(listExcercise[nextIndex]);
+    } else alert('stop');
+  };
 
   const onFinishPress = () => {
     doneIconRef?.current?.start();
-  }
+    //Xu ly su kien sau khi icon bien mat o function onHideDoneIcon
+  };
 
   const CountClock = item => (
     <CountdownCircleTimer
@@ -168,25 +148,30 @@ function WorkoutProgressScreen(props, route) {
     return (
       <>
         {isRest ? (
-          <View style={{marginTop: 20}}>{CountClock()}</View>
+          <View style={{marginTop: 20, height: 200}}>{CountClock()}</View>
         ) : (
           <View style={{marginTop: 20}}>
             <Video
+              resizeMode="cover"
               style={styles.video}
               repeat
-              source={require('../../assets/5svideo.mp4')}
+              source={{uri: currentExcersise?.data?.video}}
               onLoad={() => currentExcersiseTimerRef?.current?.reset()}
             />
             <Timer
               ref={currentExcersiseTimerRef}
               style={{position: 'absolute', right: 30, top: 10}}
-              warningTime={currentExcersise?.restTime}
+              warningTime={currentExcersise?.rest}
             />
           </View>
         )}
         <View style={styles.nameWrapper}>
-          <Text style={styles.nameTxt}>{currentExcersise?.name}</Text>
-          <Text style={styles.repTxt}>{currentExcersise?.total} Reps</Text>
+          <Text style={styles.nameTxt}>{currentExcersise?.data?.name}</Text>
+          {currentExcersise?.time ? (
+            <Text style={styles.repTxt}>{currentExcersise?.time} Giây</Text>
+          ) : (
+            <Text style={styles.repTxt}>{currentExcersise?.reps} Reps</Text>
+          )}
         </View>
       </>
     );
@@ -205,11 +190,12 @@ function WorkoutProgressScreen(props, route) {
         <View style={styles.listAllExcercise}>
           <ScrollView style={{flex: 1, backgroundColor: COLOR.GREY}}>
             <Text style={modalStyles.title}>Quá trình tập luyện</Text>
-            {dummyDATA?.map((item, index) => {
+            {listExcercise?.map((item, index) => {
               const isSelected = index === currentIndex;
-              const isDone = true;
+              const isDone = item?.isDone;
               return (
                 <ProgressingListExcerciseItem
+                  key={index}
                   selected={isSelected}
                   isDone={isDone}
                   item={item}
@@ -274,11 +260,21 @@ function WorkoutProgressScreen(props, route) {
             initialNumToRender={1}
             horizontal
             pagingEnabled
-            data={dummyDATA}
+            data={listExcercise}
             renderItem={({item, index}) => {
               return (
-                <View style={{width: SCREEN_WIDTH}} key={index}>
-                  {/* {isRest ? CountClock() : renderCurrentExcercise(item)} */}
+                <View
+                  style={{
+                    width: SCREEN_WIDTH,
+                    paddingTop: 400,
+                    paddingHorizontal: 40,
+                  }}
+                  key={index}>
+                  <ScrollView>
+                    <Text style={{color: COLOR.WHITE, textAlign: 'center'}}>
+                      {item?.data?.description}
+                    </Text>
+                  </ScrollView>
                 </View>
               );
             }}
@@ -294,20 +290,38 @@ function WorkoutProgressScreen(props, route) {
       <WorkoutStatus
         ref={excersiseStatusRef}
         currentIndex={currentIndex}
-        data={dummyDATA}
+        data={listExcercise}
       />
       <RoundButton
         style={styles.seeAllBtnWrapper}
         icon="tag"
         onPress={() => setShowListAll(true)}
       />
-      <CommandButton
-        title="Hoàn thành"
-        icon="tag"
-        style={styles.commandBtn}
-        onPress={onFinishPress}
-      />
-      <ModalIconDone ref={doneIconRef} timeOut={1500} onHide={startNextExcercise}/>
+      {currentExcersise?.isDone && !isRest ? (
+        <CommandButton
+          title={'Đã hoàn thành'}
+          hasRightIcon
+          rightIcon="check-circle"
+          rightIconSize={23}
+          backgroundColor={COLOR.GREY}
+          style={styles.commandBtn}
+          onPress={() => setShowListAll(true)}
+        />
+      ) : (
+        <CommandButton
+          title={isRest ? 'Nghỉ Xong' : 'Hoàn thành'}
+          icon="tag"
+          style={styles.commandBtn}
+          onPress={onFinishPress}
+          backgroundColor={isRest && COLOR.KELLY_GREEN}
+        />
+      )}
+      <ModalIconDone ref={doneIconRef} timeOut={1500} onHide={onHideDoneIcon} />
+      <IconButton icon="close"
+      style={styles.exitBtn}
+    color={COLOR.WHITE}
+    size={25}
+    onPress={() => navigation.pop()}/>
     </View>
   );
 }
@@ -321,7 +335,7 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: 'center',
     borderRadius: 15,
-    backgroundColor:COLOR.MATTE_BLACK
+    backgroundColor: COLOR.MATTE_BLACK,
   },
   nameTxt: {
     fontSize: 30,
@@ -365,6 +379,11 @@ const styles = StyleSheet.create({
   mainTimer: {
     alignSelf: 'center',
     marginTop: 40,
+  },
+  exitBtn:{
+    position:'absolute',
+    top:35,
+    left:10
   },
 });
 

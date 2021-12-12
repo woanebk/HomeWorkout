@@ -30,7 +30,7 @@ function ProgramItem(props) {
         <View style={styles.tag}>
           <Icon
           type='font-awesome-5'
-          name='play'
+          name='dumbbell'
           size={12}
           color={COLOR.WHITE}
           />
@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
   },
   tag: {
     position: 'absolute',
-    backgroundColor: '#ff6666',
+    //backgroundColor: '#ff6666',
+    backgroundColor: COLOR.BLUE,
     borderRadius: 10,
     bottom: '30%',
     right: 5,

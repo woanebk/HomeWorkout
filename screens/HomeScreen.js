@@ -14,9 +14,10 @@ import {COLOR, SCREEN_WIDTH} from '../constant';
 import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
-import { Test } from '../utilities/FirebaseDatabase';
+import { getListAllWorkout, Test } from '../utilities/FirebaseDatabase';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
+import { convertObjectToArrayWithoutKey, shuffle } from '../utilities/Utilities';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
@@ -91,6 +92,25 @@ useEffect(() => {
 }, []);
 //#endregion
 
+  useEffect(()=>{
+    getSuggestedWorkout(5)
+  }, [])
+
+  const getSuggestedWorkout = async (n) =>{
+    try{
+      const res = await getListAllWorkout()
+      if(!res) throw('CANNOT GET LIST WORKOUTS')
+      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()))
+      if(randomList?.length > n){
+        setSuggestedWorkouts(randomList?.slice(0, n))
+      }
+      else setSuggestedWorkouts(randomList)
+    }
+    catch (e){
+      console.log(e)
+    }
+  }
+
   const renderBanner = () => (
     <BackgroundImage
       style={styles.banner}
@@ -113,7 +133,7 @@ useEffect(() => {
         <View style={styles.bannerBtnWrapper}>
           <TouchableOpacity
             style={styles.bannerBtn}
-            onPress={() => navigation.navigate('WorkoutInfo')}>
+            onPress={() => navigation.navigate('WorkoutInfo', {workoutData: {}})}>
             <Icon
               name="dumbbell"
               type="font-awesome-5"
@@ -215,7 +235,6 @@ useEffect(() => {
         renderItem={({item, index}) => (
           <View style={{paddingRight: 15}} key={index}>
             <ProgramItem
-              onPress={() => {navigation.navigate('ChallengeDetail')}} 
               style={{height: 200, width: 160}}
               title="Thử thách thay đổi bản thân 7 ngày"
               image={{
@@ -225,7 +244,7 @@ useEffect(() => {
           </View>
         )}
       />
-      <HomeSection title="Đề xuất cho bạn" onPress={() => {}} />
+      <HomeSection title="Đề xuất cho bạn" onPress={() => navigation.navigate('AllWorkout')} />
       <FlatList
         pagingEnabled
         horizontal
@@ -235,15 +254,16 @@ useEffect(() => {
         renderItem={({item}) => (
           <View style={{width: SCREEN_WIDTH, paddingRight: 30}}>
             <WorkoutItem
-              onPress={() => navigation.navigate('WorkoutInfo')}
+              onPress={() => navigation.navigate('WorkoutInfo', {workoutData : item})}
               image={{
-                uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
+                uri: item?.image,
               }}
+              workout = {item}
             />
           </View>
         )}
       />
-      <HomeSection title="Lựa chọn cách tập của riêng bạn" onPress={() => {}} />
+      <HomeSection title="Lựa chọn cách tập của riêng bạn" onPress={() => navigation.navigate('Category')} />
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
