@@ -12,9 +12,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import { COLOR } from '../../constant';
 import HeartButton from '../../components/HeartButton';
 import StartButton from '../../components/StartButton';
-function WorkoutInfoScreen({navigation}) {
+function WorkoutInfoScreen({navigation, route}) {
 
-  const [muscleTag, setMuscleTag] = useState(['Vai', 'Cầu vai', 'Tay trước', 'Tay sau'])
+  const { workoutData } = route.params;
+
   const [liked, setLiked] = useState(false)
 
   const renderHeader = ()=>(
@@ -35,19 +36,19 @@ function WorkoutInfoScreen({navigation}) {
             end={{x:0, y:1}}
             colors={[COLOR.TRANSPARENT, COLOR.BLACK]} 
             style={styles.linearGradient}>
-                <Text style={styles.levelTxt} numberOfLines={1}>Level: Beginer</Text>
-                <Text style={styles.title} numberOfLines={2}>Bài tập Vai</Text>
+                <Text style={styles.levelTxt} numberOfLines={1}>Level: {workoutData?.level}</Text>
+                <Text style={styles.title} numberOfLines={2}>{workoutData?.name}</Text>
                 <ScrollView horizontal style={styles.tagScroll}>
-                  {muscleTag &&
-                    muscleTag.map((item, index)=>(
+                  {workoutData?.muscle_group &&
+                    workoutData?.muscle_group?.map((item, index)=>(
                       <View style={[styles.tag, index==0?{marginLeft:20}:{}]} key={index}>
                         <Text style={styles.tagTxt}>{item}</Text>
                       </View>
                     ))
                   }
                 </ScrollView>
-                <Text style={styles.levelTxt}>Thời gian ước tính : 45 phút</Text>
-                <Text style={styles.levelTxt}>Số Set : x4</Text>
+                <Text style={styles.levelTxt}>Thời gian ước tính : {workoutData?.estimate_time} phút</Text>
+                <Text style={styles.levelTxt}>Số Round : x{workoutData?.rounds?.length}</Text>
             </LinearGradient>
         </ImageBackground>
     </View>
@@ -58,7 +59,7 @@ function WorkoutInfoScreen({navigation}) {
         <StatusBar barStyle='light-content' translucent backgroundColor='transparent'></StatusBar>
         {renderHeader()}
         <View style={styles.btnWrapper}>
-          <StartButton title='Bắt Đầu' onButtonPress={()=>navigation.navigate('WorkoutDetail') }></StartButton>
+          <StartButton title='Bắt Đầu' onButtonPress={()=>navigation.navigate('WorkoutDetail', {workoutData: workoutData}) }></StartButton>
         </View>
     </View>
   );
@@ -72,8 +73,8 @@ const styles = StyleSheet.create({
     height:120
   },
   linearGradient: {
-    height:200,
-    //justifyContent:'flex-start',
+    height:300,
+    justifyContent:'flex-end',
   },
   levelTxt:{
     fontSize:15,

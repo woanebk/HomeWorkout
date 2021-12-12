@@ -7,6 +7,7 @@ import {
   Image,
   Animated,
   RefreshControl,
+  LayoutAnimation,
 } from 'react-native';
 import {COLOR, SCREEN_HEIGHT} from '../../constant';
 import HeartButton from '../../components/HeartButton';
@@ -39,6 +40,25 @@ function ExcerciseLibraryScreen({navigation}) {
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
+  const CustomLayoutSpring = {
+    duration: 500,
+    create: {
+      type: LayoutAnimation.Types.easeIn,
+      property: LayoutAnimation.Properties.scaleY,
+      springDamping: 1,
+    },
+    update: {
+      type: LayoutAnimation.Types.spring,
+      property: LayoutAnimation.Properties.opacity,
+      springDamping: 0.7,
+    },
+    delete: {
+      type: LayoutAnimation.Types.spring,
+      property: LayoutAnimation.Properties.opacity,
+      springDamping: 2,
+    },
+  };
+
   useEffect(() => {
     getData();
   }, []);
@@ -50,18 +70,24 @@ function ExcerciseLibraryScreen({navigation}) {
   const getData = async () => {
     const res = await getListAllExcercise();
     setListExcercise(convertObjectToArrayWithoutKey(res.val()));
+    LayoutAnimation.configureNext(CustomLayoutSpring);
     setDisplayListExcercise(convertObjectToArrayWithoutKey(res.val()));
   };
 
   const searchExcercise = input => {
     let displayList = listExcercise?.filter(item => {
-      return item?.name?.includes(input) || item?.name_en?.includes(input);
+      return (
+        item?.name?.toLowerCase().includes(input.toLowerCase()) ||
+        item?.name_en?.toLowerCase().includes(input.toLowerCase())
+      );
     });
+    LayoutAnimation.configureNext(CustomLayoutSpring);
     setDisplayListExcercise(displayList);
   };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    setTextInput('');
     getData();
     setTimeout(() => {
       setRefreshing(false);
@@ -96,7 +122,9 @@ function ExcerciseLibraryScreen({navigation}) {
         resizeMode="cover"></Animated.Image>
       <Animated.View style={styles.headerContentWrapper}>
         <View style={styles.headerTxtWrapper}>
-          <Text style={styles.infoTxt}>Số lượng: {displayListExcercise?.length}</Text>
+          <Text style={styles.infoTxt}>
+            Số lượng: {displayListExcercise?.length}
+          </Text>
           <Text style={styles.headerTxt}>Thư viện kỹ thuật</Text>
         </View>
         <LinearGradient
@@ -109,9 +137,9 @@ function ExcerciseLibraryScreen({navigation}) {
   );
 
   const renderItem = item => (
-    <View style={styles.itemWrapper}>
+    <Animated.View style={styles.itemWrapper}>
       <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('ExcerciseInfo', {excersise: item})}>
+        onPress={() => navigation.navigate('ExcerciseInfo', {excercise: item})}>
         <View style={styles.excersiseWrapper}>
           <Image
             resizeMode="cover"
@@ -125,7 +153,7 @@ function ExcerciseLibraryScreen({navigation}) {
           </View>
         </View>
       </TouchableWithoutFeedback>
-    </View>
+    </Animated.View>
   );
 
   const renderSortButton = () => {
@@ -187,11 +215,15 @@ function ExcerciseLibraryScreen({navigation}) {
         ListHeaderComponent={renderHeader()}
         renderItem={({item}) => renderItem(item)}
         ListFooterComponent={() => <View style={{height: 50}} />}
-        ListEmptyComponent={() => (
-          <View style={{height: SCREEN_HEIGHT - HEADER_HEIGHT - 50}}>
-            <LoadingView />
-          </View>
-        )}
+        ListEmptyComponent={() => {
+          return !listExcercise?.length > 0 ? (
+            <View style={{height: SCREEN_HEIGHT - HEADER_HEIGHT - 50}}>
+              <LoadingView />
+            </View>
+          ) : (
+            <></>
+          );
+        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }></Animated.FlatList>

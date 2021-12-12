@@ -10,23 +10,23 @@ import {COLOR} from '../constant';
 
 function ProgressingListExcerciseItem(props) {
   return (
-    <View
+    <View key={props?.key}
       style={[
         styles.container,
         props.selected ? {backgroundColor: COLOR.MATTE_BLACK} : {},
       ]}>
-      <Image source={{uri: props.item.img}} style={styles.img} />
+      <Image source={{uri: props?.item?.data?.image}} style={styles.img} />
       <View style={{marginLeft: 15, flex: 1}}>
         <Text numberOfLines={1} style={[styles.title, props?.selected && {color: COLOR.WHITE}]}>
-          {props.item?.name}
+          {props.item?.data?.name}
         </Text>
         <Text
           style={[styles.subTitle, props?.selected && {color: COLOR.WHITE}]}>
-          Số rep: {props.item?.total}
+          Số rep: {props.item?.reps}
         </Text>
         <Text
           style={[styles.subTitle, props?.selected && {color: COLOR.WHITE}]}>
-          Thời gian nghỉ: {props.item?.total}
+          Thời gian nghỉ: {props.item?.rest}
         </Text>
       </View>
       {props.isDone && (
