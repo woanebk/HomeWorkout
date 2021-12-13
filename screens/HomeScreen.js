@@ -27,6 +27,7 @@ function HomeScreen({navigation}) {
     undefined,
   },];
   const [suggestedWorkouts, setSuggestedWorkouts] = useState(['1', '2', '3']);
+  const [workoutOfTheDay, setWorkOutOfTheDay] = useState({})
   const [suggestedChallenges, setSuggestedChallenges] = useState(['1', '2', '3']);
   const [allChallenges, setAllChallenges] = useState(DATA);
 
@@ -110,6 +111,7 @@ useEffect(() => {
     try{
       const res = await getListAllWorkout()
       if(!res) throw('CANNOT GET LIST WORKOUTS')
+      setWorkOutOfTheDay(convertObjectToArrayWithoutKey(res.val())[0])
       const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()))
       if(randomList?.length > n){
         setSuggestedWorkouts(randomList?.slice(0, n))
@@ -154,11 +156,11 @@ useEffect(() => {
         colors={[COLOR.TRANSPARENT, COLOR.MATTE_BLACK]}></LinearGradient>
 
       <View style={styles.bannerLeft}>
-        <Text style={styles.bannerTxt}>Bài tập bụng giúp xây dựng sức bền</Text>
+        <Text style={styles.bannerTxt}>{workoutOfTheDay?.name}</Text>
         <View style={styles.bannerBtnWrapper}>
           <TouchableOpacity
             style={styles.bannerBtn}
-            onPress={() => navigation.navigate('WorkoutInfo', {workoutData: {}})}>
+            onPress={() => navigation.navigate('WorkoutInfo', {workoutData: workoutOfTheDay})}>
             <Icon
               name="dumbbell"
               type="font-awesome-5"
@@ -172,11 +174,11 @@ useEffect(() => {
 
       <View style={styles.bannerRight}>
         <View style={styles.bannerRightInsider}>
-          <Text style={styles.bannerRightTxt}>3</Text>
-          <Text style={styles.bannerRightSmallTxt}>Số set</Text>
-          <Text style={styles.bannerRightTxt}>30m</Text>
+          <Text style={styles.bannerRightTxt}>{workoutOfTheDay?.rounds?.length}</Text>
+          <Text style={styles.bannerRightSmallTxt}>Số round</Text>
+          <Text style={styles.bannerRightTxt}>{workoutOfTheDay?.estimate_time}m</Text>
           <Text style={styles.bannerRightSmallTxt}>Thời gian</Text>
-          <Text style={[styles.bannerRightTxt, {fontSize: 15}]}>Medium</Text>
+          <Text style={[styles.bannerRightTxt, {fontSize: 15}]}>{workoutOfTheDay?.level}</Text>
           <Text style={styles.bannerRightSmallTxt}>Level</Text>
         </View>
       </View>

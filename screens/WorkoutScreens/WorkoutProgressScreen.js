@@ -19,9 +19,6 @@ import {
   SCREEN_WIDTH,
 } from '../../constant';
 import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
-import WorkoutItem from '../../components/WorkoutItem';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Icon} from 'react-native-elements';
 import RoundButton from '../../components/RoundButton';
 import TextTicker from 'react-native-text-ticker';
 import WorkoutStatus from '../../components/WorkoutStatus';
@@ -30,7 +27,10 @@ import ProgressingListExcerciseItem from '../../components/ProgressingListExcerc
 import Timer from '../../components/Timer';
 import ModalIconDone from '../../components/ModalIconDone';
 import {cloneArrayOrObject} from '../../utilities/Utilities';
-import { BottomNavigation, IconButton } from 'react-native-paper';
+import {IconButton} from 'react-native-paper';
+import WorkoutProgressBar from '../../components/WorkoutProgressBar';
+import CustomModal from '../../components/CustomModal';
+import ProgressCircle from 'react-native-progress-circle';
 
 const STOP_WATCH_HEIGHT = 100;
 
@@ -44,6 +44,8 @@ function WorkoutProgressScreen({route, navigation}, props) {
   const [showListAll, setShowListAll] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mainTimerRunning, setMainTimerRunning] = useState(true);
+  const [showModalExit, setShowModalExit] = useState(false);
+  const [showModalConfirmFinish, setshowModalConfirmFinish] = useState(false);
 
   const excersiseStatusRef = useRef();
   const currentExcersiseTimerRef = useRef();
@@ -92,9 +94,13 @@ function WorkoutProgressScreen({route, navigation}, props) {
 
   const onHideDoneIcon = () => {
     if (!isRest) {
-      setIsRest(true);
+      //Ghi nhan du lieu:
+      listExcercise[currentIndex].doneTime =
+        currentExcersiseTimerRef?.current?.currentTime;
       listExcercise[currentIndex].isDone = true;
-      //Ghi nhan du lieu
+      // setIsRest phai duoc dat sau ghi nhan du lieu
+      setIsRest(true);
+      setIsCounting(true);
     } else {
       startNextExcercise();
     }
@@ -109,10 +115,46 @@ function WorkoutProgressScreen({route, navigation}, props) {
       excersiseStatusRef?.current?.scrollBack();
       setCurrentIndex(nextIndex);
       setCurrentExcersise(listExcercise[nextIndex]);
-    } else alert('stop');
+    } else handleFinishWorkout();
   };
 
-  const onFinishPress = () => {
+  const handleFinishWorkout = () => {
+    if (
+      listExcercise?.some(item => {
+        return !item?.isDone;
+      })
+    ) {
+      setshowModalConfirmFinish(true)
+    } else {
+      alert('Done');
+    }
+  };
+
+  const onFinishWorkout = () => {
+   //Luu du lieu
+   navigation.navigate('Home')
+  };
+
+  const goToExcercise = index => {
+    flatListRef?.current?.scrollToIndex({
+      animated: true,
+      index: index,
+    });
+    excersiseStatusRef?.current?.scrollBack();
+    setCurrentIndex(index);
+    setCurrentExcersise(listExcercise[index]);
+  };
+
+  const calculateWorkoutPercentage = () => {
+    let listDone = listExcercise?.filter(item => {
+      return item?.isDone === true;
+    });
+    console.log(listDone?.length);
+    console.log(listExcercise?.length);
+    return (listDone?.length / listExcercise?.length) * 100;
+  };
+
+  const onDonePress = () => {
     doneIconRef?.current?.start();
     //Xu ly su kien sau khi icon bien mat o function onHideDoneIcon
   };
@@ -123,7 +165,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
       size={120}
       strokeWidth={5}
       strokeLinecap="square"
-      duration={item?.restTime || 0}
+      duration={item?.rest || 10}
       trailColor={isCounting ? COLOR.WHITE : COLOR.RED}
       onComplete={() => {
         // do your stuff here
@@ -137,7 +179,8 @@ function WorkoutProgressScreen({route, navigation}, props) {
       ]}>
       {({remainingTime, elapsedTime, animatedColor}) => (
         <Animated.Text
-          style={{color: animatedColor, fontSize: 80, fontWeight: 'bold'}}>
+          adjustsFontSizeToFit
+          style={{color: animatedColor, fontSize: 60, fontWeight: 'bold'}}>
           {remainingTime}
         </Animated.Text>
       )}
@@ -148,7 +191,15 @@ function WorkoutProgressScreen({route, navigation}, props) {
     return (
       <>
         {isRest ? (
-          <View style={{marginTop: 20, height: 200}}>{CountClock()}</View>
+          <View
+            style={{
+              marginTop: 20,
+              height: 200,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            {CountClock(currentExcersise)}
+          </View>
         ) : (
           <View style={{marginTop: 20}}>
             <Video
@@ -178,6 +229,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
   };
 
   const renderListAllExcercise = () => {
+    let percentage = calculateWorkoutPercentage().toFixed();
     return (
       <Modal
         animationType="slide"
@@ -189,12 +241,40 @@ function WorkoutProgressScreen({route, navigation}, props) {
         }}>
         <View style={styles.listAllExcercise}>
           <ScrollView style={{flex: 1, backgroundColor: COLOR.GREY}}>
-            <Text style={modalStyles.title}>Quá trình tập luyện</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingLeft: 20,
+                marginBottom: 10,
+              }}>
+              <ProgressCircle
+                percent={percentage}
+                radius={18}
+                borderWidth={4}
+                color="#fff"
+                shadowColor="#999"
+                bgColor={COLOR.GREY}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    color: COLOR.WHITE,
+                  }}>
+                  {percentage + '%'}
+                </Text>
+              </ProgressCircle>
+              <Text style={modalStyles.title}>Quá trình tập luyện</Text>
+            </View>
             {listExcercise?.map((item, index) => {
               const isSelected = index === currentIndex;
               const isDone = item?.isDone;
               return (
                 <ProgressingListExcerciseItem
+                  onPress={() => {
+                    goToExcercise(index);
+                    setShowListAll(false);
+                  }}
                   key={index}
                   selected={isSelected}
                   isDone={isDone}
@@ -203,6 +283,15 @@ function WorkoutProgressScreen({route, navigation}, props) {
               );
             })}
           </ScrollView>
+          <View style={styles.finishAllWrapper}>
+            <CommandButton
+              title={'Kết thúc bài tập'}
+              hasRightIcon
+              backgroundColor={COLOR.GOLD}
+              style={{width: '80%', height: 50}}
+              onPress={handleFinishWorkout}
+            />
+          </View>
           <RoundButton
             icon="close"
             buttonWidth={30}
@@ -250,6 +339,11 @@ function WorkoutProgressScreen({route, navigation}, props) {
               textStyle={{color: COLOR.WHITE, fontWeight: 'bold'}}
               style={styles.mainTimer}
             />
+            <WorkoutProgressBar
+              length={listExcercise?.length}
+              currentIndex={currentIndex}
+              listExcercise={listExcercise}
+            />
             {renderCurrentExcercise()}
           </View>
           <Animated.FlatList
@@ -266,7 +360,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
                 <View
                   style={{
                     width: SCREEN_WIDTH,
-                    paddingTop: 400,
+                    paddingTop: 430,
                     paddingHorizontal: 40,
                   }}
                   key={index}>
@@ -312,16 +406,36 @@ function WorkoutProgressScreen({route, navigation}, props) {
           title={isRest ? 'Nghỉ Xong' : 'Hoàn thành'}
           icon="tag"
           style={styles.commandBtn}
-          onPress={onFinishPress}
+          onPress={onDonePress}
           backgroundColor={isRest && COLOR.KELLY_GREEN}
         />
       )}
       <ModalIconDone ref={doneIconRef} timeOut={1500} onHide={onHideDoneIcon} />
-      <IconButton icon="close"
-      style={styles.exitBtn}
-    color={COLOR.WHITE}
-    size={25}
-    onPress={() => navigation.pop()}/>
+      <CustomModal
+        visible={showModalExit}
+        title="Bạn chưa hoàn thành bài tập, bạn có chắc muốn thoát ?"
+        onConfirm={() => {
+          navigation.pop();
+          setShowModalExit(false);
+        }}
+        onCancel={() => setShowModalExit(false)}
+      />
+      <CustomModal
+        visible={showModalConfirmFinish}
+        title="Bạn chưa hoàn thành bài tập, bạn có chắc muốn kết thúc ?"
+        onConfirm={() => {
+          setshowModalConfirmFinish(false);
+          onFinishWorkout();
+        }}
+        onCancel={() => setshowModalConfirmFinish(false)}
+      />
+      <IconButton
+        icon="close"
+        style={styles.exitBtn}
+        color={COLOR.WHITE}
+        size={25}
+        onPress={() => setShowModalExit(true)}
+      />
     </View>
   );
 }
@@ -380,10 +494,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 40,
   },
-  exitBtn:{
-    position:'absolute',
-    top:35,
-    left:10
+  exitBtn: {
+    position: 'absolute',
+    top: 35,
+    left: 10,
+  },
+  finishAllWrapper: {
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: STOP_WATCH_HEIGHT,
   },
 });
 
@@ -392,8 +512,7 @@ const modalStyles = StyleSheet.create({
     color: COLOR.WHITE,
     fontSize: 23,
     fontWeight: 'bold',
-    marginLeft: 20,
-    marginBottom: 30,
+    marginLeft: 10,
   },
 });
 
