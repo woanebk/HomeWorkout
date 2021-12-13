@@ -14,15 +14,23 @@ import {COLOR, SCREEN_WIDTH} from '../constant';
 import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
-import { getListAllWorkout, Test } from '../utilities/FirebaseDatabase';
+import { getListAllChallenge, getListAllWorkout, Test } from '../utilities/FirebaseDatabase';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import { convertObjectToArrayWithoutKey, shuffle } from '../utilities/Utilities';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
+  const DATA = [{
+    id: undefined,
+    imgURL:
+    undefined,
+  },];
   const [suggestedWorkouts, setSuggestedWorkouts] = useState(['1', '2', '3']);
   const [workoutOfTheDay, setWorkOutOfTheDay] = useState({})
+  const [suggestedChallenges, setSuggestedChallenges] = useState(['1', '2', '3']);
+  const [allChallenges, setAllChallenges] = useState(DATA);
+
  //#region  message    
  const [notification, setNotification] = useState({
   title: undefined,
@@ -95,6 +103,8 @@ useEffect(() => {
 
   useEffect(()=>{
     getSuggestedWorkout(5)
+    getSuggestedChallenges(5)
+
   }, [])
 
   const getSuggestedWorkout = async (n) =>{
@@ -107,6 +117,21 @@ useEffect(() => {
         setSuggestedWorkouts(randomList?.slice(0, n))
       }
       else setSuggestedWorkouts(randomList)
+    }
+    catch (e){
+      console.log(e)
+    }
+  }
+  const getSuggestedChallenges = async (n) =>{
+    try{
+      const res = await getListAllChallenge()
+      if(!res) throw('CANNOT GET LIST CHALLENGE')
+      setAllChallenges(convertObjectToArrayWithoutKey(res.val()));
+      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()))
+      if(randomList?.length > n){
+        setSuggestedChallenges(randomList?.slice(0, n))
+      }
+      else setSuggestedChallenges(randomList)
     }
     catch (e){
       console.log(e)
@@ -228,20 +253,23 @@ useEffect(() => {
         translucent></StatusBar>
       {renderBanner()}
       {renderUserInfo()}
-      <HomeSection title="Tham gia thử thách" onPress={() => {}} />
+      <HomeSection title="Tham gia thử thách"  onPress={()=>{
+        navigation.navigate("AllChallenge",  { type:"All",challenges:allChallenges})
+        }} />
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.horizontalList}
-        data={suggestedWorkouts}
+        data={suggestedChallenges}
         renderItem={({item, index}) => (
           <View style={{paddingRight: 15}} key={index}>
             <ProgramItem
               style={{height: 200, width: 160}}
-              title="Thử thách thay đổi bản thân 7 ngày"
+              title={item.title}
               image={{
-                uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
+                uri: item.imgURL,
               }}
+              onPress={()=>{navigation.navigate("ChallengeDetail",{item})}}
             />
           </View>
         )}
