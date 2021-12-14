@@ -12,9 +12,11 @@ function RoundButton(props) {
           {
             width: props.buttonWidth ? props.buttonWidth : 50,
             height: props.buttonHeight?props.buttonHeight:50,
+            backgroundColor:props.backgroundColor?props.backgroundColor:COLOR.WHITE
           },
         ]}
-        onPress={props.onPress}>
+        onPress={props.onPress}      
+         >
         <Icon
           name={props.icon}
           type="font-awesome"
@@ -28,7 +30,6 @@ function RoundButton(props) {
 
 const styles = StyleSheet.create({
   roundBtn: {
-    backgroundColor: COLOR.WHITE,
     borderRadius: 1000,
     justifyContent: 'center',
   },
