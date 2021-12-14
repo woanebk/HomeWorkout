@@ -186,6 +186,6 @@ export const updateBMIInfo = async (heigh, weight) => {
   var text=(currentdate.toISOString()).toString()
   await database.ref('User/' + auth().currentUser.uid).update({heigh: heigh,weight:weight});
   console.log(Math.round(weight/heigh/heigh*1000000)/100)
-  return await database.ref('User/' + auth().currentUser.uid + "/listBMI/" +  text.substring(0,10)).update({x: text.substring(0,10),y:Math.round(weight/heigh/heigh*100000)/10});
+  return await database.ref('User/' + auth().currentUser.uid + "/listBMI/" +  text.substring(0,10)).update({x: text.substring(0,10),y:Math.round(weight/heigh/heigh*1000000)/100});
 }
 //#endregion
