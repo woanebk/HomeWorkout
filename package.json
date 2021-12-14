@@ -38,6 +38,7 @@
     "react-native-linear-gradient": "^2.5.6",
     "react-native-paper": "^4.9.2",
     "react-native-pure-chart": "^0.0.24",
+    "react-native-progress-circle": "^2.1.0",
     "react-native-push-notification": "^8.1.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.6.0",

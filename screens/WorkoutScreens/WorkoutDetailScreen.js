@@ -127,7 +127,7 @@ function WorkoutDetailScreen({navigation, route}) {
         {item?.excercises?.map((itemExcercise, index) => {
           return renderItem(itemExcercise, index);
         })}
-        {renderRest(item?.rest)}
+        {/* {renderRest(item?.rest)} */}
       </View>
     );
   };
