@@ -76,11 +76,17 @@ const handleUpdateBMI= async()=>
   else 
   {  
     console.log("update")
-    await updateBMIInfo(parseInt(valueHeigh), parseInt(valueWeight)).then(Alert.alert(
+    await updateBMIInfo(parseInt(valueHeigh), parseInt(valueWeight)).then(async()=>{Alert.alert(
     '',
     //body
     'Cập nhật thành công',
-  ))
+  ) 
+  ;await initUser();}).catch((er)=>{Alert.alert(
+    '',
+    //body
+    'Vui lòng thử lại',)})
+  
+
   }
 }
 const renderAdminButton = () => {
@@ -144,7 +150,7 @@ const renderUserInfo = () => (
           BMI
         </Text>
         <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE }}>
-          2.5
+         {user.weight&&user.heigh?Math.round(user.weight/user.heigh/user.heigh*1000000)/100:"---"}
         </Text>
       </View>
     </View>
