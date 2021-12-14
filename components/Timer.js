@@ -14,7 +14,8 @@ function Timer(props, ref) {
     // they can execute code directly, or call a local method
     toggle: () => { toggle() },
     reset: () => { reset() },
-    stop: () => { stop() }
+    stop: () => { stop() },
+    currentTime : seconds
   }))
 
   const toggle = () => {
