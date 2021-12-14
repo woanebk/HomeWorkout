@@ -34,7 +34,9 @@ function CustomTextInput(props) {
         style={{width: '80%', marginLeft: 10, color:COLOR.WHITE,fontSize:18}}
         placeholderTextColor={COLOR.WHITE}
         secureTextEntry={props.secureTextEntry}
-        placeholder={props.placeholder}
+        // keyboardType='numeric'
+        keyboardType={props.keyboardType?props.keyboardType:'default'}
+
       />
       <TouchableOpacity onPress={()=>inputRef.current.clear()}>
         <Icon
