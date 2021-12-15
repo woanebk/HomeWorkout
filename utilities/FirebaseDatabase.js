@@ -3,6 +3,7 @@ import { firebase } from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
+import { cloneArrayOrObject } from './Utilities';
 
 const database = firebase
   .app()
@@ -174,7 +175,20 @@ export const getListAllWorkout = async () => {
 export const getWorkoutById = async (id) => {
   return await database.ref('Workouts/' + id).once('value')
 }
+
+export const submitWorkout = async (userId, workoutId, workoutTime, percentage = 0, workoutData = {}) => {
+  const submitData = {
+    id: workoutId,
+    time: workoutTime,
+    percentage: percentage,
+    workoutData: cloneArrayOrObject(workoutData),
+    updatedTime: moment().toISOString(),
+  }
+  const ref = await database.ref('User/' + userId + '/completedWorkouts/' + workoutId).set(submitData)
+  return ref
+}
 //#endregion
+
 //#region UserInfo
 export const getUserInfo = async () => {
   var currentdate = new Date();

@@ -23,11 +23,11 @@ function WorkoutRowItem(props) {
           imageStyle={[props?.imageStyle, styles.image]}
           source={props?.image}
           resizeMode="cover">
-          <Text style={styles.desTxt}>Level: Beginner</Text>
+          <Text style={styles.desTxt}>Level: {props?.item?.level}</Text>
           <Text style={styles.titleTxt}>{props?.title}</Text>
           <ScrollView horizontal style={styles.tagScroll} showsHorizontalScrollIndicator={false}>
-            {muscleTag &&
-              muscleTag?.map((item, index) => (
+            {props?.item?.muscle_group &&
+              props?.item?.muscle_group?.map((item, index) => (
                 <View
                   style={[styles.tag, index == 0 ? {marginLeft: 10} : {}]}
                   key={index}>

@@ -9,6 +9,7 @@ import auth from '@react-native-firebase/auth';
 import LoginScreen from './screens/Auth/LoginScreen';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
+import Toast from 'react-native-toast-message';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
@@ -40,6 +41,7 @@ function App({navigation}) {
     return (
       <NavigationContainer>
         <AuthStackNavigator />
+        <Toast />
       </NavigationContainer>
     );
   }
@@ -47,6 +49,7 @@ function App({navigation}) {
   return (
     <NavigationContainer>
       <MainStackNavigator />
+      <Toast />
     </NavigationContainer>
   );
   

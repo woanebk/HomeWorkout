@@ -40,7 +40,7 @@ function ProgressingListExcerciseItem(props) {
               <Text
                 style={{color: COLOR.WHITE, fontSize: 17, fontWeight: 'bold'}}>
                 {' '}
-                {props?.item?.doneTime}s
+                {props?.item?.doneTime || 0}s
               </Text>
             </View>
           )}

@@ -61,7 +61,7 @@ function WorkoutDetailScreen({navigation, route}) {
             ],
           },
         ]}
-        source={require('../../assets/banner/shoulder_banner.jpg')}
+        source={{uri: workout?.image}}
         resizeMode="cover"></Animated.Image>
       <Animated.View style={styles.headerContentWrapper}>
         <View style={styles.headerTxtWrapper}>

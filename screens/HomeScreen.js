@@ -10,7 +10,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import HomeSection from '../components/HomeSection';
 import WorkoutItem from '../components/WorkoutItem';
-import {COLOR, SCREEN_WIDTH} from '../constant';
+import {COLOR, SCREEN_WIDTH, WORKOUT_TAG_COLLECTION} from '../constant';
 import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
@@ -298,16 +298,16 @@ useEffect(() => {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.horizontalList}
-        data={suggestedWorkouts}
+        data={WORKOUT_TAG_COLLECTION}
         renderItem={({item, index}) => (
           <View style={{paddingRight: 15}} key={index}>
             <HomeCategoryItem
-            onPress={()=>navigation.navigate('AllWorkout')}
+            onPress={()=>navigation.navigate('AllWorkout', {collectionData: item})}
               style={{height: 110, width: 250}}
-              title="Giảm Mỡ"
-              subTitle="bao gồm 20 bài tập"
+              title={item?.tag}
+              subTitle={item?.description}
               image={{
-                uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
+                uri: item?.image || 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
               }}
             />
           </View>
