@@ -9,7 +9,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {COLOR} from '../constant';
 
-function SuggestExcercise(props) {
+function SuggestExercise(props) {
 
   return (
     <TouchableWithoutFeedback onPress={props.onPress}>
@@ -66,4 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SuggestExcercise;
+export default SuggestExercise;

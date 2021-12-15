@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import {getExcerciseById} from '../../utilities/FirebaseDatabase';
+import {getExerciseById} from '../../utilities/FirebaseDatabase';
 import LoadingView from '../../components/LoadingView';
 
 const HEADER_HEIGHT = 300; // height of the image
@@ -30,10 +30,10 @@ function WorkoutDetailScreen({navigation, route}) {
   const getData = async () => {
     setIsLoading(true);
     for (let i = 0; i < workout?.rounds?.length; i++) {
-      for (let j = 0; j < workout?.rounds[i]?.excercises?.length; j++) {
-        const excerciseId = workout?.rounds[i]?.excercises[j]?.id;
-        const res = await getExcerciseById(excerciseId);
-        if (res) workout.rounds[i].excercises[j].data = res.val();
+      for (let j = 0; j < workout?.rounds[i]?.exercises?.length; j++) {
+        const exerciseId = workout?.rounds[i]?.exercises[j]?.id;
+        const res = await getExerciseById(exerciseId);
+        if (res) workout.rounds[i].exercises[j].data = res.val();
       }
     }
     setIsLoading(false);
@@ -94,7 +94,7 @@ function WorkoutDetailScreen({navigation, route}) {
   const renderItem = (item, index) => (
     <View style={styles.itemWrapper} key={index}>
       <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('ExcerciseInfo', {excercise: item?.data})}>
+        onPress={() => navigation.navigate('ExerciseInfo', {exercise: item?.data})}>
         <View style={styles.excersiseWrapper}>
           <Image
             resizeMode="cover"
@@ -124,8 +124,8 @@ function WorkoutDetailScreen({navigation, route}) {
           <View style={styles.dot}></View>
           <Text style={styles.sectionTxt}>Số Set: {item?.set}</Text>
         </View>
-        {item?.excercises?.map((itemExcercise, index) => {
-          return renderItem(itemExcercise, index);
+        {item?.exercises?.map((itemExercise, index) => {
+          return renderItem(itemExercise, index);
         })}
         {/* {renderRest(item?.rest)} */}
       </View>

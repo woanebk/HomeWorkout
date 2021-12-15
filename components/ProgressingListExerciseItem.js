@@ -10,7 +10,7 @@ import {
 import {Icon} from 'react-native-elements';
 import {COLOR} from '../constant';
 
-function ProgressingListExcerciseItem(props) {
+function ProgressingListExerciseItem(props) {
   return (
     <TouchableWithoutFeedback onPress={props?.onPress}>
       <View
@@ -125,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProgressingListExcerciseItem;
+export default ProgressingListExerciseItem;

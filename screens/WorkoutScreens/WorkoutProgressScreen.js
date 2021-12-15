@@ -23,7 +23,7 @@ import RoundButton from '../../components/RoundButton';
 import TextTicker from 'react-native-text-ticker';
 import WorkoutStatus from '../../components/WorkoutStatus';
 import CommandButton from '../../components/CommandButton';
-import ProgressingListExcerciseItem from '../../components/ProgressingListExcerciseItem';
+import ProgressingListExerciseItem from '../../components/ProgressingListExerciseItem';
 import Timer from '../../components/Timer';
 import ModalIconDone from '../../components/ModalIconDone';
 import {cloneArrayOrObject} from '../../utilities/Utilities';
@@ -42,7 +42,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
 
   const [currentExcersise, setCurrentExcersise] = useState({});
   const [isCounting, setIsCounting] = useState(true);
-  const [listExcercise, setListExcercise] = useState([]);
+  const [listExercise, setListExercise] = useState([]);
   const [isRest, setIsRest] = useState(false);
   const [showListAll, setShowListAll] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -76,56 +76,56 @@ function WorkoutProgressScreen({route, navigation}, props) {
   });
 
   useEffect(() => {
-    generateListExcercise();
+    generateListExercise();
   }, [workoutData]);
 
   useEffect(() => {
     setIsRest(false);
-    setCurrentExcersise(listExcercise[currentIndex]);
+    setCurrentExcersise(listExercise[currentIndex]);
     currentExcersiseTimerRef?.current?.reset();
-  }, [currentIndex, listExcercise]);
+  }, [currentIndex, listExercise]);
 
-  const generateListExcercise = () => {
+  const generateListExercise = () => {
     let arr = [];
     workoutData?.rounds?.map(round => {
       for (let i = 0; i < round?.set; i++) {
-        arr = arr.concat(round?.excercises);
+        arr = arr.concat(round?.exercises);
       }
     });
     console.log('DATA', arr);
     const cloneArr = cloneArrayOrObject(arr); // tranh loi isDone sau khi back ve
-    setListExcercise([...cloneArr]);
+    setListExercise([...cloneArr]);
   };
 
   const onHideDoneIcon = () => {
     if (!isRest) {
       //Ghi nhan du lieu:
-      listExcercise[currentIndex].doneTime =
+      listExercise[currentIndex].doneTime =
         currentExcersiseTimerRef?.current?.currentTime;
-      listExcercise[currentIndex].isDone = true;
+      listExercise[currentIndex].isDone = true;
       // setIsRest phai duoc dat sau ghi nhan du lieu
       setIsRest(true);
       setIsCounting(true);
     } else {
-      startNextExcercise();
+      startNextExercise();
     }
   };
-  const startNextExcercise = () => {
+  const startNextExercise = () => {
     let nextIndex = currentIndex + 1;
-    if (nextIndex < listExcercise?.length) {
+    if (nextIndex < listExercise?.length) {
       flatListRef?.current?.scrollToIndex({
         animated: true,
         index: nextIndex,
       });
       excersiseStatusRef?.current?.scrollBack();
       setCurrentIndex(nextIndex);
-      setCurrentExcersise(listExcercise[nextIndex]);
+      setCurrentExcersise(listExercise[nextIndex]);
     } else handleFinishWorkout();
   };
 
   const handleFinishWorkout = () => {
     if (
-      listExcercise?.some(item => {
+      listExercise?.some(item => {
         return !item?.isDone;
       })
     ) {
@@ -166,21 +166,21 @@ function WorkoutProgressScreen({route, navigation}, props) {
     }
   };
 
-  const goToExcercise = index => {
+  const goToExercise = index => {
     flatListRef?.current?.scrollToIndex({
       animated: true,
       index: index,
     });
     excersiseStatusRef?.current?.scrollBack();
     setCurrentIndex(index);
-    setCurrentExcersise(listExcercise[index]);
+    setCurrentExcersise(listExercise[index]);
   };
 
   const calculateWorkoutPercentage = () => {
-    let listDone = listExcercise?.filter(item => {
+    let listDone = listExercise?.filter(item => {
       return item?.isDone === true;
     });
-    return (listDone?.length / listExcercise?.length) * 100;
+    return (listDone?.length / listExercise?.length) * 100;
   };
 
   const onDonePress = () => {
@@ -216,7 +216,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
     </CountdownCircleTimer>
   );
 
-  const renderCurrentExcercise = () => {
+  const renderCurrentExercise = () => {
     return (
       <>
         {isRest ? (
@@ -257,7 +257,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
     );
   };
 
-  const renderListAllExcercise = () => {
+  const renderListAllExercise = () => {
     let percentage = calculateWorkoutPercentage().toFixed();
     return (
       <Modal
@@ -268,7 +268,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
         onRequestClose={() => {
           setShowListAll(false);
         }}>
-        <View style={styles.listAllExcercise}>
+        <View style={styles.listAllExercise}>
           <ScrollView style={{flex: 1, backgroundColor: COLOR.GREY}}>
             <View
               style={{
@@ -295,13 +295,13 @@ function WorkoutProgressScreen({route, navigation}, props) {
               </ProgressCircle>
               <Text style={modalStyles.title}>Quá trình tập luyện</Text>
             </View>
-            {listExcercise?.map((item, index) => {
+            {listExercise?.map((item, index) => {
               const isSelected = index === currentIndex;
               const isDone = item?.isDone;
               return (
-                <ProgressingListExcerciseItem
+                <ProgressingListExerciseItem
                   onPress={() => {
-                    goToExcercise(index);
+                    goToExercise(index);
                     setShowListAll(false);
                   }}
                   key={index}
@@ -370,11 +370,11 @@ function WorkoutProgressScreen({route, navigation}, props) {
               style={styles.mainTimer}
             />
             <WorkoutProgressBar
-              length={listExcercise?.length}
+              length={listExercise?.length}
               currentIndex={currentIndex}
-              listExcercise={listExcercise}
+              listExercise={listExercise}
             />
-            {renderCurrentExcercise()}
+            {renderCurrentExercise()}
           </View>
           <Animated.FlatList
             ref={flatListRef}
@@ -384,7 +384,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
             initialNumToRender={1}
             horizontal
             pagingEnabled
-            data={listExcercise}
+            data={listExercise}
             renderItem={({item, index}) => {
               return (
                 <View
@@ -409,12 +409,12 @@ function WorkoutProgressScreen({route, navigation}, props) {
             )}
           />
         </View>
-        {renderListAllExcercise()}
+        {renderListAllExercise()}
       </Animated.View>
       <WorkoutStatus
         ref={excersiseStatusRef}
         currentIndex={currentIndex}
-        data={listExcercise}
+        data={listExercise}
       />
       <RoundButton
         style={styles.seeAllBtnWrapper}
@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
     bottom: HORIZONTAL_LIST_HEIGHT - 40,
     left: 10,
   },
-  listAllExcercise: {
+  listAllExercise: {
     backgroundColor: COLOR.GREY,
     height: '100%',
     marginTop: STOP_WATCH_HEIGHT,
