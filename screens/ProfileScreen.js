@@ -7,7 +7,7 @@ import RoundButton from '../components/RoundButton';
 import {COLOR} from '../constant';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
-  generateNewExcercise,
+  generateNewExercise,
   generateNewWorkout,
 } from '../utilities/FirebaseDatabase';
 import PureChart from 'react-native-pure-chart';
@@ -110,9 +110,9 @@ function ProfileScreen() {
             marginTop: 20,
           }}
           onPress={() => {
-            generateNewExcercise();
+            generateNewExercise();
           }}>
-          <Text>Generate Excercise</Text>
+          <Text>Generate Exercise</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{

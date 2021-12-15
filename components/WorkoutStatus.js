@@ -19,13 +19,13 @@ import TextTicker from 'react-native-text-ticker';
 import {COLOR, HORIZONTAL_LIST_HEIGHT, SCREEN_WIDTH} from '../constant';
 
 function WorkoutStatus(props, ref) {
-  const currentExcerciseListRef = useRef();
+  const currentExerciseListRef = useRef();
 
   useImperativeHandle(
     ref,
     () => ({
       scrollBack: () => {
-        currentExcerciseListRef.current.scrollTo({
+        currentExerciseListRef.current.scrollTo({
           x: 0,
           y: 0,
           animated: true,
@@ -37,7 +37,7 @@ function WorkoutStatus(props, ref) {
 
   return (
     <ScrollView
-      ref={currentExcerciseListRef}
+      ref={currentExerciseListRef}
       pagingEnabled
       showsHorizontalScrollIndicator={false}
       horizontal
@@ -78,11 +78,11 @@ function WorkoutStatus(props, ref) {
                   Thời gian nghỉ: {item?.rest}s
                 </Text>
               </View>
-              <View style={styles.nextExcercise}>
+              <View style={styles.nextExercise}>
                 <TouchableOpacity
                   style={{alignItems: 'center'}}
                   onPress={() => {
-                    currentExcerciseListRef.current.scrollTo({
+                    currentExerciseListRef.current.scrollTo({
                       x: SCREEN_WIDTH,
                       y: 0,
                       animated: true,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     color: COLOR.WHITE,
     fontSize: 14,
   },
-  nextExcercise: {
+  nextExercise: {
     width: 100,
     height: '100%',
     alignItems: 'flex-end',

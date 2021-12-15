@@ -20,10 +20,10 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {Searchbar} from 'react-native-paper';
 import {
-  addExcercise,
-  generateNewExcercise,
-  getListAllExcercise,
-  updateExcercise,
+  addExercise,
+  generateNewExercise,
+  getListAllExercise,
+  updateExercise,
 } from '../../utilities/FirebaseDatabase';
 import {convertObjectToArrayWithoutKey} from '../../utilities/Utilities';
 import LoadingView from '../../components/LoadingView';
@@ -31,9 +31,9 @@ import LoadingView from '../../components/LoadingView';
 const HEADER_HEIGHT = 170; // height of the image
 const SCREEN_HEADER_HEIGHT = 140; // height of the header contain back button
 
-function ExcerciseLibraryScreen({navigation}) {
-  const [listExcercise, setListExcercise] = useState([]);
-  const [displayListExcercise, setDisplayListExcercise] = useState([]);
+function ExerciseLibraryScreen({navigation}) {
+  const [listExercise, setListExercise] = useState([]);
+  const [displayListExercise, setDisplayListExercise] = useState([]);
   const [textInput, setTextInput] = useState('');
 
   const [refreshing, setRefreshing] = React.useState(false);
@@ -64,25 +64,25 @@ function ExcerciseLibraryScreen({navigation}) {
   }, []);
 
   useEffect(() => {
-    searchExcercise(textInput);
+    searchExercise(textInput);
   }, [textInput]);
 
   const getData = async () => {
-    const res = await getListAllExcercise();
-    setListExcercise(convertObjectToArrayWithoutKey(res.val()));
+    const res = await getListAllExercise();
+    setListExercise(convertObjectToArrayWithoutKey(res.val()));
     LayoutAnimation.configureNext(CustomLayoutSpring);
-    setDisplayListExcercise(convertObjectToArrayWithoutKey(res.val()));
+    setDisplayListExercise(convertObjectToArrayWithoutKey(res.val()));
   };
 
-  const searchExcercise = input => {
-    let displayList = listExcercise?.filter(item => {
+  const searchExercise = input => {
+    let displayList = listExercise?.filter(item => {
       return (
         item?.name?.toLowerCase().includes(input.toLowerCase()) ||
         item?.name_en?.toLowerCase().includes(input.toLowerCase())
       );
     });
     LayoutAnimation.configureNext(CustomLayoutSpring);
-    setDisplayListExcercise(displayList);
+    setDisplayListExercise(displayList);
   };
 
   const onRefresh = useCallback(() => {
@@ -123,7 +123,7 @@ function ExcerciseLibraryScreen({navigation}) {
       <Animated.View style={styles.headerContentWrapper}>
         <View style={styles.headerTxtWrapper}>
           <Text style={styles.infoTxt}>
-            Số lượng: {displayListExcercise?.length}
+            Số lượng: {displayListExercise?.length}
           </Text>
           <Text style={styles.headerTxt}>Thư viện kỹ thuật</Text>
         </View>
@@ -139,7 +139,7 @@ function ExcerciseLibraryScreen({navigation}) {
   const renderItem = item => (
     <Animated.View style={styles.itemWrapper}>
       <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('ExcerciseInfo', {excercise: item})}>
+        onPress={() => navigation.navigate('ExerciseInfo', {exercise: item})}>
         <View style={styles.excersiseWrapper}>
           <Image
             resizeMode="cover"
@@ -177,7 +177,7 @@ function ExcerciseLibraryScreen({navigation}) {
         ]}>
         <TouchableOpacity
           onPress={() => {
-            generateNewExcercise();
+            generateNewExercise();
           }}
           style={{
             width: '100%',
@@ -205,7 +205,7 @@ function ExcerciseLibraryScreen({navigation}) {
       <StatusBar backgroundColor="transparent" translucent />
       <Animated.FlatList
         style={styles.flatlist}
-        data={displayListExcercise}
+        data={displayListExercise}
         keyExtractor={(item, index) => index}
         scrollEventThrottle={16}
         onScroll={Animated.event(
@@ -216,7 +216,7 @@ function ExcerciseLibraryScreen({navigation}) {
         renderItem={({item}) => renderItem(item)}
         ListFooterComponent={() => <View style={{height: 50}} />}
         ListEmptyComponent={() => {
-          return !listExcercise?.length > 0 ? (
+          return !listExercise?.length > 0 ? (
             <View style={{height: SCREEN_HEIGHT - HEADER_HEIGHT - 50}}>
               <LoadingView />
             </View>
@@ -388,4 +388,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExcerciseLibraryScreen;
+export default ExerciseLibraryScreen;
