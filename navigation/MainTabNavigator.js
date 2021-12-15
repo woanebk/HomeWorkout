@@ -50,7 +50,7 @@ function MainTabNavigator({navigation}) {
       options={{
         tabBarLabel: 'Cá Nhân',
         tabBarIcon: ({ color }) => (
-          <Icon name='person-outline'
+          <Icon name='person'
           type='ionicon'
           size={18} color={color} />
         ),
