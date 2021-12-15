@@ -319,7 +319,7 @@ useEffect(() => {
           title="Đi đến thư viện kỹ thuật"
           backgroundColor={COLOR.GOLD}
           onPress={() => {
-            navigation.navigate('ExcerciseLibrary')
+            navigation.navigate('ExerciseLibrary')
           }}
         />
       </View>
