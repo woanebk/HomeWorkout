@@ -15,7 +15,7 @@ function WorkoutProgressBar(props) {
           justifyContent: 'space-between',
           paddingHorizontal: 16,
         }}>
-        {props?.listExcercise.map((item, index) => {
+        {props?.listExercise.map((item, index) => {
           return (
             <View
               style={{

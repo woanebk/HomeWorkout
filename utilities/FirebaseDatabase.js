@@ -3,7 +3,7 @@ import { firebase } from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
-import { cloneArrayOrObject } from './Utilities';
+import { cloneArrayOrObject, convertObjectToArrayWithoutKey } from './Utilities';
 
 const database = firebase
   .app()
@@ -12,48 +12,48 @@ const database = firebase
 export const Test = async () => {
   return await database.ref('test').once('value')
 }
-export const addExcercise = (excercise) => {
-  return database.ref('Excercises').push(excercise);
+export const addExercise = (exercise) => {
+  return database.ref('Exercises').push(exercise);
 }
 
-export const updateExcercise = (id, data) => {
-  return database.ref('Excercises/' + id).update(data);
+export const updateExercise = (id, data) => {
+  return database.ref('Exercises/' + id).update(data);
 }
 
-//#region Excercise
-export const generateNewExcercise = () => {
-  const dummyExcercise = {
+//#region Exercise
+export const generateNewExercise = () => {
+  const dummyExercise = {
     name: 'Tên tiếng việt',
     name_en: 'Tên tiếng anh',
     point: 3,
     muscle_group: ['Vai', 'Ngực', 'Tay sau'],
     level: 'Normal',
     description: 'Tay rộng bằng vai',
-    related_excercise: ['someId', 'someId'],
+    related_exercise: ['someId', 'someId'],
     video: 'link Video',
     tag: ['Giảm mỡ', 'Giảm cân', 'Tăng cơ'],
     image: 'link image',
     createdAt: moment().toISOString()
   }
-  const ref = addExcercise(dummyExcercise);
+  const ref = addExercise(dummyExercise);
   const updateID = setTimeout(() => {
-    updateExcercise(ref.key, {
+    updateExercise(ref.key, {
       id: ref.key
     })
     clearTimeout(updateID)
   }, 2000);
 }
 
-export const getListAllExcercise = async () => {
-  return await database.ref('Excercises').once('value')
+export const getListAllExercise = async () => {
+  return await database.ref('Exercises').once('value')
 }
 
-// export const getExcerciseById = async (id) => {
-//   return await database.ref('Excercises/').orderByChild('id').equalTo(id).once('value')
+// export const getExerciseById = async (id) => {
+//   return await database.ref('Exercises/').orderByChild('id').equalTo(id).once('value')
 // }
-//Hoac co the lay excercise theo path luon
-export const getExcerciseById = async (id) => {
-  return await database.ref('Excercises/' + id).once('value')
+//Hoac co the lay exercise theo path luon
+export const getExerciseById = async (id) => {
+  return await database.ref('Exercises/' + id).once('value')
 }
 
 //#end region
@@ -114,7 +114,7 @@ export const updateWorkout = (id, data) => {
 }
 
 export const generateNewWorkout = () => {
-  const listExcercises = [
+  const listExercises = [
     {
       id: '-MqOBkWKtBkwEK7V9K5-',
       reps: 10,
@@ -147,14 +147,14 @@ export const generateNewWorkout = () => {
         set: 1,
         order: 0,
         rest: 2,
-        excercises: listExcercises
+        exercises: listExercises
       },
       {
         name: 'Round 1',
         set: 2,
         order: 0,
         rest: 2,
-        excercises: listExcercises
+        exercises: listExercises
       },
     ]
   }

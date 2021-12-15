@@ -2,30 +2,30 @@ import React, {useEffect, useState} from 'react';
 import {Text, StyleSheet, View, StatusBar} from 'react-native';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import Video from 'react-native-video';
-import SuggestExcercise from '../../components/SuggestExcercise';
+import SuggestExercise from '../../components/SuggestExercise';
 import {COLOR} from '../../constant';
-import {getExcerciseById} from '../../utilities/FirebaseDatabase';
+import {getExerciseById} from '../../utilities/FirebaseDatabase';
 
-function ExcerciseInfoScreen({route, navigation}) {
-  const {excercise} = route.params;
+function ExerciseInfoScreen({route, navigation}) {
+  const {exercise} = route.params;
 
-  const [suggestExcercises, setSuggestExcercises] = useState([]);
+  const [suggestExercises, setSuggestExercises] = useState([]);
 
   useEffect(() => {
-    getRelatedExcercise();
+    getRelatedExercise();
   }, []);
 
-  const getRelatedExcercise = async () => {
+  const getRelatedExercise = async () => {
     let list = [];
-    for (let i = 0; i < excercise?.related_excercise?.length; i++) {
-      const id = excercise?.related_excercise[i];
-      const res = await getExcerciseById(id);
+    for (let i = 0; i < exercise?.related_exercise?.length; i++) {
+      const id = exercise?.related_exercise[i];
+      const res = await getExerciseById(id);
       res.val() && list.push(res.val());
     }
-    setSuggestExcercises(list);
+    setSuggestExercises(list);
   };
 
-  const renderSuggestedExcercises = () => {
+  const renderSuggestedExercises = () => {
     return (
       <>
         <View style={styles.section}>
@@ -35,13 +35,13 @@ function ExcerciseInfoScreen({route, navigation}) {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={{marginBottom: 20}}>
-          {suggestExcercises.map((item, index) => (
+          {suggestExercises.map((item, index) => (
             <View
               style={[{marginRight: 15}, index == 0 ? {marginLeft: 20} : {}]}
               key={index}>
-              <SuggestExcercise
+              <SuggestExercise
                 onPress={() => {
-                  navigation.navigate('ExcerciseInfo', {excercise: item});
+                  navigation.navigate('ExerciseInfo', {exercise: item});
                 }}
                 style={styles.suggestItem}
                 image={{uri: item?.image}}
@@ -63,7 +63,7 @@ function ExcerciseInfoScreen({route, navigation}) {
       />
       <View style={styles.backgroundVideo}>
         <Video
-          source={{uri: excercise?.video}}
+          source={{uri: exercise?.video}}
           repeat
           style={styles.backgroundVideo}
           resizeMode="cover"
@@ -71,7 +71,7 @@ function ExcerciseInfoScreen({route, navigation}) {
       </View>
       <View style={styles.titleWrapper}>
         <Text numberOfLines={2} style={styles.title}>
-          {excercise?.name}
+          {exercise?.name}
         </Text>
       </View>
       <View style={styles.section}>
@@ -81,8 +81,8 @@ function ExcerciseInfoScreen({route, navigation}) {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.tagScroll}>
-        {excercise?.muscle_group &&
-          excercise?.muscle_group?.map((item, index) => (
+        {exercise?.muscle_group &&
+          exercise?.muscle_group?.map((item, index) => (
             <View
               style={[styles.tag, index == 0 ? {marginLeft: 20} : {}]}
               key={index}>
@@ -92,9 +92,9 @@ function ExcerciseInfoScreen({route, navigation}) {
       </ScrollView>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Những lưu ý khi tập:</Text>
-        <Text style={styles.desTxt}>{excercise?.description}</Text>
+        <Text style={styles.desTxt}>{exercise?.description}</Text>
       </View>
-      {suggestExcercises?.length > 0 && renderSuggestedExcercises()}
+      {suggestExercises?.length > 0 && renderSuggestedExercises()}
     </ScrollView>
   );
 }
@@ -149,4 +149,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExcerciseInfoScreen;
+export default ExerciseInfoScreen;

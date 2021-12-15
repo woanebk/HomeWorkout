@@ -6,11 +6,11 @@ import MainTabNavigator from './MainTabNavigator';
 import WorkoutInfoScreen from '../screens/WorkoutScreens/WorkoutInfoScreen';
 import WorkoutDetailScreen from '../screens/WorkoutScreens/WorkoutDetailScreen';
 import CategoryScreen from '../screens/Category/CategoryScreen';
-import ExcerciseInfoScreen from '../screens/Exercise/ExerciseInfoScreen';
+import ExerciseInfoScreen from '../screens/Exercise/ExerciseInfoScreen';
 import WorkoutProgressScreen from '../screens/WorkoutScreens/WorkoutProgressScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
 import AllWorkoutScreen from '../screens/WorkoutScreens/AllWorkoutScreen';
-import ExcerciseLibraryScreen from '../screens/Exercise/ExcerciseLibraryScreen';
+import ExerciseLibraryScreen from '../screens/Exercise/ExerciseLibraryScreen';
 import ChallengeDetailScreen from '../screens/Challenge/ChallengeDetailScreen';
 import AllChallengeScreen from '../screens/Challenge/AllChallengeSreen';
 const MainStack = createStackNavigator();
@@ -51,8 +51,8 @@ function MainStackNavigator() {
         options={{headerTintColor: '#fff'}}
       />
       <MainStack.Screen
-        name="ExcerciseInfo"
-        component={ExcerciseInfoScreen}
+        name="ExerciseInfo"
+        component={ExerciseInfoScreen}
         options={{headerTintColor: '#fff'}}
       />
       <MainStack.Screen
@@ -73,8 +73,8 @@ function MainStackNavigator() {
         options={{headerTintColor: '#fff'}}
       />
        <MainStack.Screen
-        name="ExcerciseLibrary"
-        component={ExcerciseLibraryScreen}
+        name="ExerciseLibrary"
+        component={ExerciseLibraryScreen}
         options={{headerTintColor: '#fff'}}
       />
       <MainStack.Screen
