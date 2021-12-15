@@ -1,10 +1,18 @@
-import React from 'react';
-import {Text, StyleSheet, View} from 'react-native';
-import auth, {firebase} from '@react-native-firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { Text, StyleSheet, View, StatusBar,Alert } from 'react-native';
+import { Icon } from 'react-native-elements';
+
+import auth, { firebase } from '@react-native-firebase/auth';
 import RoundButton from '../components/RoundButton';
-import {COLOR} from '../constant';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {generateNewExcercise, generateNewWorkout} from '../utilities/FirebaseDatabase';
+import { COLOR } from '../constant';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { generateNewExcercise, generateNewWorkout } from '../utilities/FirebaseDatabase';
+import PureChart from 'react-native-pure-chart';
+const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }]
+import CustomTextInput from '../components/CustomTextInput';
+import CommandButton from '../components/CommandButton';
+import { updateBMIInfo,getUserInfo } from '../utilities/FirebaseDatabase';
+import { convertObjectToArrayWithoutKey,convertObjectToArrayWithoutKeySort } from '../utilities/Utilities';
 
 const onPressSignOut = () => {
   auth()
@@ -18,19 +26,82 @@ const onPressSignOut = () => {
     );
 };
 
+
+function ProfileScreen() {
+  const sampleData = [
+    { x: '2018-01-01', y: 18 },
+    { x: '2018-01-02', y: 20 },
+    { x: '2018-01-03', y: 17 },
+    { x: '2018-01-04', y: 29 },
+    { x: '2018-01-05', y: 15 }
+  ]
+  const [valueHeigh, setValueHeigh] = useState("")
+  const [valueWeight, setValueWeight] = useState("")
+  const [user, setUser] = useState({abc:"abc"})
+  const [listBMI, setListBMI] = useState(sampleData)
+
+  useEffect(async()=>{
+    await initUser()
+    await initBMI()
+   },[]);
+   const initUser= async()=> 
+{
+  var res= await getUserInfo();
+  console.log(res)
+  setUser(res.val());
+  setValueHeigh(res.val().heigh.toString())
+  setValueWeight(res.val().weight.toString())
+  
+  console.log(convertObjectToArrayWithoutKey(res.val().listBMI))
+  setListBMI(convertObjectToArrayWithoutKeySort(res.val().listBMI))
+}
+const initBMI= async()=> 
+{
+ // getUserInfo()
+}
+const handleUpdateBMI= async()=> 
+{
+  if(valueHeigh==""||valueWeight=="")       Alert.alert(
+    '',
+    //body
+    'Vui lòng nhập lại cân nặng và chiều cao',
+  );
+  else 
+  if(!parseInt(valueHeigh)|| !parseInt(valueWeight))
+  Alert.alert(
+    '',
+    //body
+    'Vui lòng nhập lại cân nặng và chiều cao',
+  );
+  else 
+  {  
+    console.log("update")
+    await updateBMIInfo(parseInt(valueHeigh), parseInt(valueWeight)).then(async()=>{Alert.alert(
+    '',
+    //body
+    'Cập nhật thành công',
+  ) 
+  ;await initUser();}).catch((er)=>{Alert.alert(
+    '',
+    //body
+    'Vui lòng thử lại',)})
+  
+
+  }
+}
 const renderAdminButton = () => {
   return (
     <View>
-      <Text style={{color:COLOR.WHITE}}>Đừng nhấn lung tung nha</Text>
+      <Text style={{ color: COLOR.WHITE }}>Đừng nhấn lung tung nha</Text>
       <TouchableOpacity
-        style={{height: 50, backgroundColor: COLOR.WHITE, justifyContent:'center', padding:10, marginTop:20}}
+        style={{ height: 50, backgroundColor: COLOR.WHITE, justifyContent: 'center', padding: 10, marginTop: 20 }}
         onPress={() => {
           generateNewExcercise();
         }}>
         <Text>Generate Excercise</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={{height: 50, backgroundColor: COLOR.WHITE, justifyContent:'center', padding:10, marginTop:20}}
+        style={{ height: 50, backgroundColor: COLOR.WHITE, justifyContent: 'center', padding: 10, marginTop: 20 }}
         onPress={() => {
           generateNewWorkout();
         }}>
@@ -39,26 +110,148 @@ const renderAdminButton = () => {
     </View>
   );
 };
-function ProfileScreen() {
+//#region  render
+const renderUserInfo = () => (
+  <View style={styles.userStatus}>
+    <View style={styles.userTagWrapper}>
+      <View style={[styles.userTag, { borderColor: COLOR.WHITE }]}>
+        <Icon
+          name="account"
+          type="material-community"
+          size={14}
+          color={COLOR.WHITE}
+        />
+        <Text style={[styles.userTagTxt, { color: COLOR.WHITE }]}>
+          Người mới tập
+        </Text>
+      </View>
+      <View style={[styles.userTag, { borderColor: COLOR.WHITE }]}>
+        <Icon
+          name="account"
+          type="material-community"
+          size={14}
+          color={COLOR.WHITE}
+        />
+        <Text style={[styles.userTagTxt, { color: COLOR.WHITE }]}>Tăng cơ</Text>
+      </View>
+    </View>
+
+    <View style={{ flexDirection: 'row', paddingVertical: 5 }}>
+      <View style={{ flex: 5 }}>
+        <Text style={[styles.numberTxt, {}]}>{user.name?user.name:"Người Dùng Mới"}</Text>
+        <Text style={styles.silverTxt}>
+          Chiều Cao: <Text style={styles.numberTxt}>{ user.heigh?user.heigh:"---"+"cm"}</Text> - Cân nặng:{' '}
+          <Text style={styles.numberTxt}>{ user.weight?user.weight:"---"+"kg"}</Text>
+        </Text>
+      </View>
+      <View style={{ flex: 1, alignItems: 'center', marginTop: -20 }}>
+        <Text
+          style={{ fontWeight: 'bold', fontSize: 20, color: COLOR.DARK_BROWN }}>
+          BMI
+        </Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE }}>
+         {user.weight&&user.heigh?Math.round(user.weight/user.heigh/user.heigh*1000000)/100:"---"}
+        </Text>
+      </View>
+    </View>
+  </View>
+);
   return (
     <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: COLOR.MATTE_BLACK,
-      }}>
-        {renderAdminButton()}
+      style={{ flex: 1, backgroundColor: COLOR.MATTE_BLACK, }}>
+      {/* {renderAdminButton()} */}
+      <StatusBar
+        backgroundColor="transparent"
+        translucent
+        style={{ height: 50, }}
+      />
+      <View style={{ marginTop: 100 }}>
+        <Text
+          style={{
+            position: 'absolute',
+            color: COLOR.MATTE_BLACK,
+            fontSize: 20,
+            marginLeft: 0,
+            marginBottom: 10,
+            width: 200,
+            borderBottomRightRadius: 20,
+            borderTopRightRadius: 20,
+            paddingLeft: 10,
+            backgroundColor: COLOR.GOLD,
+          }}>
+          Chỉ Số Của Bạn
+        </Text>
+      </View>
+      <View style={{ flex: 1, marginTop: 30 }} >
+        <PureChart data={listBMI} type='line' style={{ flex: 1 }} backgroundColor={COLOR.LIGHT_BLUE} width={'100%'}
+          height={200} numberOfYAxisGuideLine={4} Alert="you sh" />
+        {renderUserInfo()}
+      </View>
+      <View style={{ flex: 1, marginTop: 100, backgroundColor: COLOR.MATTE_BLACK, bottom: 20 }}>
+        <Text
+          style={{
+            position: 'absolute',
+
+            color: COLOR.MATTE_BLACK,
+            fontSize: 20,
+            marginLeft: 0,
+            marginBottom: 10,
+            marginTop: 0,
+            width: 250,
+            borderBottomRightRadius: 20,
+            borderTopRightRadius: 20,
+            paddingLeft: 10,
+            backgroundColor: COLOR.GOLD,
+          }}>
+          Cập Nhật Chỉ Số Ngay
+        </Text>
+        <CustomTextInput
+          style={{ alignSelf: 'center', width: '85%', marginTop: 50 }}
+          value={valueWeight}
+          onChangeText={setValueWeight}
+          title="Cân Nặng"
+          secureTextEntry={false}
+          icon="user"
+          keyboardType='numeric'
+          placeholder="Nhập cân nặng hiện tại (kg)"
+        />
+        <CustomTextInput
+          style={{ alignSelf: 'center', width: '85%', marginTop: 30 }}
+          value={valueHeigh}
+          onChangeText={setValueHeigh}
+          title="Chiều Cao"
+          secureTextEntry={false}
+          icon="user"
+          keyboardType='numeric'
+          placeholder="Nhập chiều cao hiện tại (cm)"
+        />
+        <View style={{
+          height: 50,
+          marginTop: 20,
+          paddingHorizontal: 60,
+        }}>
+          <CommandButton
+            height={20}
+            icon="upload"
+            title="Cập nhật"
+            backgroundColor={COLOR.GOLD}
+            onPress={() => handleUpdateBMI()}
+          />
+
+        </View>
+      </View>
       <RoundButton
         icon="user-times"
         buttonWidth={40}
         buttonHeight={40}
-        size={40}
+        iconSize={20}
         style={styles.closeBtnWrapper}
+        backgroundColor={COLOR.GOLD}
         onPress={() => onPressSignOut()}
       />
     </View>
   );
+  //#endregion
 }
 
 const styles = StyleSheet.create({
@@ -66,6 +259,57 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     right: 15,
+
+  },
+  userStatus: {
+    width: '100%',
+    alignSelf: 'center',
+    paddingTop: 20,
+    marginBottom: 20,
+    paddingHorizontal: 15,
+    height: 110,
+    backgroundColor: COLOR.BLACK,
+    borderRadius: 0
+  },
+  userTagWrapper: {
+    flexDirection: 'row',
+  }, userTag: {
+    height: 20,
+    borderWidth: 1,
+    borderRadius: 7,
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    flexDirection: 'row',
+    marginRight: 10,
+    justifyContent: 'space-between',
+  },
+
+  userTagTxt: {
+    fontSize: 11,
+    marginLeft: 3,
+  }, userBtn: {
+    width: '100%',
+    height: 40,
+    backgroundColor: COLOR.LIGHT_BROWN,
+    borderRadius: 20,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  userBtnTxt: {
+    color: COLOR.WHITE,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  numberTxt: {
+    color: COLOR.WHITE,
+    fontSize: 15,
+  },
+  silverTxt: {
+    fontSize: 13,
+    color: '#aaa9ad',
   },
 });
 

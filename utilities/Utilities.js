@@ -15,7 +15,13 @@ export const convertObjectToArrayWithoutKey = obj => {
   }
   return arr;
 };
-
+export const convertObjectToArrayWithoutKeySort = obj => {
+  let arr = [];
+  for (let [key, value] of Object.entries(obj).sort()) {
+    arr.push(value);
+  }
+  return arr;
+};
 export const convertObjectToArray = obj => {
   let arr = [];
   for (let [key, value] of Object.values(obj)) {
