@@ -230,7 +230,7 @@ function LoginScreen({navigation}, route) {
         muted
         repeat
         resizeMode="cover"
-        source={require('../../assets/video/login_video.mp4')}
+        source={require('../../assets/video/Intro.mp4')}
       />
       {/* <Image style={styles.logo} source={require('../../assets/dumbell.jpg')} /> */}
       <LinearGradient

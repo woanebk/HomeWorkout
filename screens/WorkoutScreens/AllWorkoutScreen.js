@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -12,89 +12,37 @@ import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import HeartButton from '../../components/HeartButton';
 import {Icon} from 'react-native-elements';
 import WorkoutRowItem from '../../components/WorkoutRowItem';
+import {getListAllWorkout} from '../../utilities/FirebaseDatabase';
+import {convertObjectToArrayWithoutKey, filterListWorkoutByTag} from '../../utilities/Utilities';
 
 const HEADER_HEIGHT = 250; // height of the image
 const SCREEN_HEADER_HEIGHT = 90; // height of the header contain back button
 const NOTCH_SIZE = 30;
 const LIST_EXTRA_SIZE = 120;
 
-function AllWorkoutScreen({navigation}) {
-  const DATA = [
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-    {
-      title: 'Khởi động',
-    },
-  ];
+function AllWorkoutScreen({navigation, route}) {
+  const [listWorkout, setListWorkout] = useState([]);
+  const {collectionData} =  route.params || {}
 
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    getAllWorkoutData();
+  }, []);
+
+  const getAllWorkoutData = async () => {
+    try {
+      const res = await getListAllWorkout();
+      if (!res) throw 'CANNOT GET LIST WORKOUTS';
+      if (collectionData){
+        const listFilterByTag = filterListWorkoutByTag(convertObjectToArrayWithoutKey(res.val()), collectionData?.tag)
+        setListWorkout(listFilterByTag)
+      }
+      else setListWorkout(convertObjectToArrayWithoutKey(res.val()));
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const renderHeader = () => (
     <Animated.View
@@ -129,50 +77,67 @@ function AllWorkoutScreen({navigation}) {
             ],
           },
         ]}
-        source={{uri:'https://upload.wikimedia.org/wikipedia/vi/4/45/Divide_cover.png'}}
+        source={{
+          uri: collectionData?.image || 'https://upload.wikimedia.org/wikipedia/vi/4/45/Divide_cover.png',
+        }}
         resizeMode="cover"></Animated.Image>
-      <Animated.View style={[styles.headerContentWrapper,{
-          transform: [
-            {
-              translateY: scrollY.interpolate({
-                inputRange: [0, HEADER_HEIGHT, 99999],
-                outputRange: [0, -HEADER_HEIGHT, HEADER_HEIGHT],
-              }),
-            },
-          ],
-      }]}>
+      <Animated.View
+        style={[
+          styles.headerContentWrapper,
+          {
+            transform: [
+              {
+                translateY: scrollY.interpolate({
+                  inputRange: [0, HEADER_HEIGHT, 99999],
+                  outputRange: [0, -HEADER_HEIGHT, HEADER_HEIGHT],
+                }),
+              },
+            ],
+          },
+        ]}>
         <View style={styles.headerTxtWrapper}>
           <Text style={styles.headerTxt}>Thư viện bài tập</Text>
-          <Text style={styles.infoTxt}>Số lượng: {DATA?.length}</Text>
+          <Text style={styles.headerTxt}>{collectionData?.name}</Text>
+          <Text style={styles.infoTxt}>Số lượng: {listWorkout?.length}</Text>
         </View>
       </Animated.View>
     </Animated.View>
   );
 
   const renderListHeader = () => {
-    return(
-      <View style={{height:30, alignItems:'center', paddingHorizontal:5, flexDirection:'row'}}>
+    return (
+      <View
+        style={{
+          height: 30,
+          alignItems: 'center',
+          paddingHorizontal: 5,
+          flexDirection: 'row',
+        }}>
         <Icon
-                name="dumbbell"
-                type="font-awesome-5"
-                size={13}
-                color={COLOR.WHITE}
-                style={{marginRight:10}}
-              />
-        <Text style={{color:COLOR.WHITE, fontSize:12}}>Số lượng: {DATA?.length}</Text>
+          name="dumbbell"
+          type="font-awesome-5"
+          size={13}
+          color={COLOR.WHITE}
+          style={{marginRight: 10}}
+        />
+        <Text style={{color: COLOR.WHITE, fontSize: 12}}>
+          Số lượng: {listWorkout?.length}
+        </Text>
       </View>
-    )
-  }
+    );
+  };
 
   const renderItem = item => (
     <View style={styles.itemWrapper}>
       <WorkoutRowItem
-              isliked={true}
-              title='Bài tập vai'
-              image={{
-                uri: 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
-              }}
-            />
+        onPress={() => navigation.navigate('WorkoutInfo', {workoutData: item})}
+        isliked={true}
+        title={item?.name}
+        image={{
+          uri: item?.image,
+        }}
+        item={item}
+      />
     </View>
   );
 
@@ -194,7 +159,7 @@ function AllWorkoutScreen({navigation}) {
             ],
           },
         ]}
-        data={DATA}
+        data={listWorkout}
         keyExtractor={(item, index) => index}
         ListHeaderComponent={renderListHeader}
         scrollEventThrottle={16}
@@ -202,7 +167,7 @@ function AllWorkoutScreen({navigation}) {
           [{nativeEvent: {contentOffset: {y: scrollY}}}],
           {useNativeDriver: true},
         )}
-        renderItem={item => renderItem(item)}></Animated.FlatList>
+        renderItem={({item}) => renderItem(item)}></Animated.FlatList>
       <Animated.View style={[styles.screenHeader]}>
         <Animated.Text
           numberOfLines={1}
@@ -270,7 +235,7 @@ const styles = StyleSheet.create({
   infoTxt: {
     color: COLOR.WHITE,
     fontSize: 15,
-    fontWeight:'400'
+    fontWeight: '400',
   },
   flatlist: {
     flex: 1,
@@ -279,12 +244,12 @@ const styles = StyleSheet.create({
     marginTop: -NOTCH_SIZE,
     marginBottom: -LIST_EXTRA_SIZE,
     marginHorizontal: 10,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   itemWrapper: {
     //backgroundColor: COLOR.WHITE,
     paddingVertical: 5,
-    marginBottom:10
+    marginBottom: 10,
   },
   excersiseWrapper: {
     height: 70,

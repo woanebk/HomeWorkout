@@ -73,3 +73,9 @@ export const handleArrayToString = (array) => {
 export const cloneArrayOrObject = (arr) => {
   return JSON.parse(JSON.stringify(arr))
 }
+
+export const filterListWorkoutByTag = (arr, tag) => {
+  return convertObjectToArrayWithoutKey(arr?.filter((item)=>{
+    return item?.tag?.includes(tag)
+  }))
+}

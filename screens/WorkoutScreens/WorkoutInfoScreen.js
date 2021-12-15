@@ -21,7 +21,7 @@ function WorkoutInfoScreen({navigation, route}) {
   const renderHeader = ()=>(
     <View style= {styles.banner}>
         <ImageBackground
-        source={require('../../assets/banner/shoulder_banner.jpg')}
+        source={{uri: workoutData?.image}}
         resizeMode='cover'
         style={{flex:1, justifyContent:'space-between'}}>
           <LinearGradient 
