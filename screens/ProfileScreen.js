@@ -131,62 +131,6 @@ function ProfileScreen() {
     );
   };
   //#region  render
-  const renderUserInfo = () => (
-    <View style={styles.userStatus}>
-      <View style={styles.userTagWrapper}>
-        <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-          <Icon
-            name="account"
-            type="material-community"
-            size={14}
-            color={COLOR.WHITE}
-          />
-          <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
-            Người mới tập
-          </Text>
-        </View>
-        <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-          <Icon
-            name="account"
-            type="material-community"
-            size={14}
-            color={COLOR.WHITE}
-          />
-          <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>Tăng cơ</Text>
-        </View>
-      </View>
-
-      <View style={{flexDirection: 'row', paddingVertical: 5}}>
-        <View style={{flex: 5}}>
-          <Text style={[styles.numberTxt, {}]}>
-            {user.name ? user.name : 'Người Dùng Mới'}
-          </Text>
-          <Text style={styles.silverTxt}>
-            Chiều Cao:{' '}
-            <Text style={styles.numberTxt}>
-              {user.heigh ? user.heigh : '---' + 'cm'}
-            </Text>{' '}
-            - Cân nặng:{' '}
-            <Text style={styles.numberTxt}>
-              {user.weight ? user.weight : '---' + 'kg'}
-            </Text>
-          </Text>
-        </View>
-        <View style={{flex: 1, alignItems: 'center', marginTop: -20}}>
-          <Text
-            style={{fontWeight: 'bold', fontSize: 20, color: COLOR.DARK_BROWN}}>
-            BMI
-          </Text>
-          <Text style={{fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE}}>
-            {user.weight && user.heigh
-              ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
-                100
-              : '---'}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
   return (
     <ScrollView style={{flex: 1, backgroundColor: COLOR.MATTE_BLACK}}>
       {/* {renderAdminButton()} */}
@@ -224,7 +168,7 @@ function ProfileScreen() {
           backgroundColor={COLOR.LIGHT_BLUE}
           width={'100%'}
           height={200}
-          numberOfYAxisGuideLine={4}
+          numberOfYAxisGuideLine={5}
           Alert="you sh"
         />
       </View>
