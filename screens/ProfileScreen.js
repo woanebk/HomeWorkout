@@ -212,8 +212,11 @@ function ProfileScreen() {
           Chỉ Số Của Bạn
         </Text>
       </View>
-      <UserStatus/>
-      <View style={{flex: 1, marginTop: 30}}>
+      <UserStatus height={user.heigh} weight={user.weight} name={user.name} bmi={user.weight && user.heigh
+              ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
+                100
+              : '---'}/>
+      <View style={{flex: 1, marginTop: 10}}>
         <PureChart
           data={listBMI}
           type="line"
@@ -228,7 +231,7 @@ function ProfileScreen() {
       <View
         style={{
           flex: 1,
-          marginTop: 100,
+          marginTop: 30,
           backgroundColor: COLOR.MATTE_BLACK,
           bottom: 20,
         }}>
