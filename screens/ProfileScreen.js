@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, StatusBar, Alert, ScrollView} from 'react-native';
+import {Text, StyleSheet, View, StatusBar, Alert, ScrollView,Modal} from 'react-native';
 import {Icon} from 'react-native-elements';
 
 import auth, {firebase} from '@react-native-firebase/auth';
@@ -45,6 +45,8 @@ function ProfileScreen() {
   const [valueWeight, setValueWeight] = useState('');
   const [user, setUser] = useState({abc: 'abc'});
   const [listBMI, setListBMI] = useState(sampleData);
+  const [visible, setVisible] = useState(false);
+  const [valueName, setValueName] = useState('');
 
   useEffect(async () => {
     await initUser();
@@ -57,7 +59,9 @@ function ProfileScreen() {
     setUser(res.val());
     setValueHeigh(res.val().heigh.toString());
     setValueWeight(res.val().weight.toString());
+    setValueName(res.val().name.toString());
 
+    
     console.log(convertObjectToArrayWithoutKey(res.val().listBMI));
     setListBMI(convertObjectToArrayWithoutKeySort(res.val().listBMI));
   };
@@ -159,7 +163,7 @@ function ProfileScreen() {
       <UserStatus height={user.heigh} weight={user.weight} name={user.name} bmi={user.weight && user.heigh
               ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
                 100
-              : '---'}/>
+              : '---'} onPress={()=>setVisible(true)}/>
       <View style={{flex: 1, marginTop: 10}}>
         <PureChart
           data={listBMI}
@@ -230,7 +234,7 @@ function ProfileScreen() {
             onPress={() => handleUpdateBMI()}
           />
         </View>
-      </View>
+      </View> 
       <RoundButton
         icon="user-times"
         buttonWidth={40}
@@ -240,6 +244,38 @@ function ProfileScreen() {
         backgroundColor={COLOR.GOLD}
         onPress={() => onPressSignOut()}
       />
+        <Modal
+      animationType="slide"
+      transparent
+      statusBarTranslucent
+      visible={visible}
+      >
+      <View style={styles.content}>
+      <CustomTextInput
+          style={{alignSelf: 'center', width: '85%', marginTop: 50}}
+          value={valueName}
+          onChangeText={setValueName}
+          title="Họ Tên"
+          secureTextEntry={false}
+          icon="user"
+          placeholder="Nhập họ tên của bạn"
+        />
+        <TouchableOpacity style={styles.commandBtn}>
+          <Text onPress={()=>{}}>
+            Đăng Kí
+          </Text>
+        </TouchableOpacity>
+      
+        <RoundButton
+          icon="close"
+          buttonWidth={25}
+          buttonHeight={25}
+          size={10}
+          style={styles.closeBtnWrapper2}
+          onPress={()=>{setVisible(false)}}
+        />
+      </View>
+    </Modal>
     </ScrollView>
   );
   //#endregion
@@ -302,6 +338,30 @@ const styles = StyleSheet.create({
   silverTxt: {
     fontSize: 13,
     color: '#aaa9ad',
+  },
+  content: {
+    backgroundColor: COLOR.LIGHT_MATTE_BLACK,
+    height: '100%',
+    marginTop: 160,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    marginHorizontal: 15,
+    paddingTop: 50, 
+    
+    
+  },commandBtn: {
+    backgroundColor: '#ffcc00',
+    marginTop: 50,
+    height: 50,
+    width: '80%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+  },closeBtnWrapper2: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
   },
 });
 
