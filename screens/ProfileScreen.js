@@ -14,7 +14,7 @@ import PureChart from 'react-native-pure-chart';
 const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
 import CustomTextInput from '../components/CustomTextInput';
 import CommandButton from '../components/CommandButton';
-import { updateBMIInfo, getUserInfo } from '../utilities/FirebaseDatabase';
+import { updateBMIInfo, getUserInfo,updateUserInfo } from '../utilities/FirebaseDatabase';
 import {
   convertObjectToArrayWithoutKey,
   convertObjectToArrayWithoutKeySort,
@@ -101,6 +101,33 @@ function ProfileScreen() {
     else {
       console.log('update');
       await updateBMIInfo(parseInt(valueHeigh), parseInt(valueWeight))
+        .then(async () => {
+          Alert.alert(
+            '',
+            //body
+            'Cập nhật thành công',
+          );
+          await initUser();
+        })
+        .catch(er => {
+          Alert.alert(
+            '',
+            //body
+            'Vui lòng thử lại',
+          );
+        });
+    }
+  };
+  const handleUpdateInfo = async () => {
+    if (valueName == '')
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập lại tên',
+      );
+    else {
+      console.log('update');
+      await updateUserInfo(value,value2,valueName)
         .then(async () => {
           Alert.alert(
             '',
@@ -268,18 +295,11 @@ function ProfileScreen() {
         visible={visible}
       >
         <View style={styles.content}>
-          <CustomTextInput
-            style={{ alignSelf: 'center', width: '85%', marginTop: 50 }}
-            value={valueName}
-            onChangeText={setValueName}
-            title="Họ Tên"
-            secureTextEntry={false}
-            icon="user"
-            placeholder="Nhập họ tên của bạn"
-            backgroundColor="#292D3E"
-          />
+         
           <View style={{ marginTop: 20, flex: 1, width: '85%', alignSelf: "center" }}>
-            <DropDownPicker style={{ marginTop: 0, alignSelf: 'center' }}
+          <Text style={styles.titleTxt} color={COLOR.LIGHT_GREY}>Chọn Loại Người Dùng</Text>
+
+            <DropDownPicker style={{ marginTop: 5, alignSelf: 'center' }}
             backgroundColor={COLOR.GREY}
             searchPlaceholderTextColor={COLOR.GOLD}
               open={open}
@@ -290,9 +310,21 @@ function ProfileScreen() {
               setItems={setItems}
               placeholder="Chọn loại người tập"
               theme="DARK"
-            />
-            <View style={{ marginTop: 20, alignSelf: 'center' }}></View>
-             <DropDownPicker style={{ marginTop: 0, alignSelf: 'center' }}
+            /> 
+             <CustomTextInput
+            style={{ alignSelf: 'center', marginTop: 40 }}
+            value={valueName}
+            onChangeText={setValueName}
+            title="Họ Tên"
+            secureTextEntry={false}
+            icon="user"
+            placeholder="Nhập họ tên của bạn"
+            backgroundColor="#292D3E"
+          />
+            <View style={{ marginTop: 15, alignSelf: 'center' }}>
+            <Text style={[styles.titleTxt,{marginBottom:5}]} color={COLOR.LIGHT_GREY}>Chọn Loại Bài Tập</Text>
+
+             <DropDownPicker style={{ marginTop: 0,alignSelf: 'center' }}
             backgroundColor={COLOR.GREY}
             searchPlaceholderTextColor={COLOR.GOLD}
               open={open2}
@@ -305,16 +337,14 @@ function ProfileScreen() {
               theme="DARK"
             />
             </View>
-            <View style={{ marginTop: 20, flex: 1, width: '85%', alignSelf: "center" }}>
-           
-            
-            </View>
-
             <TouchableOpacity style={styles.commandBtn}>
-            <Text onPress={() => { }}>
+            <Text onPress={() => {handleUpdateInfo() }}>
               Cập Nhật
             </Text>
           </TouchableOpacity>
+            </View>
+            
+          
 
           <RoundButton
             icon="close"
@@ -413,6 +443,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 15,
     right: 15,
+  },titleTxt: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginLeft:18,
+    color: COLOR.LIGHT_BLUE
   },
 });
 

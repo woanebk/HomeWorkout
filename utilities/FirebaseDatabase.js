@@ -202,4 +202,8 @@ export const updateBMIInfo = async (heigh, weight) => {
   console.log(Math.round(weight/heigh/heigh*1000000)/100)
   return await database.ref('User/' + auth().currentUser.uid + "/listBMI/" +  text.substring(0,10)).update({x: text.substring(0,10),y:Math.round(weight/heigh/heigh*1000000)/100});
 }
+export const updateUserInfo = async (valueType, valueType2,name) => {
+  await database.ref('User/' + auth().currentUser.uid).update({type: valueType,typeUser:valueType2,name:name});
+}
+updateUserInfo
 //#endregion
