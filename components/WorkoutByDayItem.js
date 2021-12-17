@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import {COLOR} from '../constant';
 import {Icon} from 'react-native-elements';
+import { handleArrayToString } from '../utilities/Utilities';
 
 function WorkoutByDayItem(props) {
   return (
@@ -15,10 +16,10 @@ function WorkoutByDayItem(props) {
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <View>
           <Text numberOfLines={1} style={styles.dayTxt}>
-            Ngày 1
+            Ngày {props?.index + 1}
           </Text>
           <Text numberOfLines={1} style={styles.day2Txt}>
-            Vai, Ngực
+            {handleArrayToString(props?.item?.data?.muscle_group)}
           </Text>
         </View>
         {props?.isDone && (

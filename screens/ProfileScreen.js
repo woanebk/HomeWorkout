@@ -53,12 +53,10 @@ function ProfileScreen() {
 
   const initUser = async () => {
     var res = await getUserInfo();
-    console.log(res);
     setUser(res.val());
     setValueHeigh(res.val().heigh.toString());
     setValueWeight(res.val().weight.toString());
 
-    console.log(convertObjectToArrayWithoutKey(res.val().listBMI));
     setListBMI(convertObjectToArrayWithoutKeySort(res.val().listBMI));
   };
   const initBMI = async () => {

@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     height: 170,
     borderRadius: 15,
     alignItems: 'center',
+    elevation:100
   },
   icon: {
     width: 120,
