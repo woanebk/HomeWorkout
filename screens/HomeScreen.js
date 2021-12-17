@@ -14,7 +14,7 @@ import {COLOR, SCREEN_WIDTH, WORKOUT_TAG_COLLECTION} from '../constant';
 import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
-import { getListAllChallenge, getListAllWorkout, Test } from '../utilities/FirebaseDatabase';
+import { getListAllChallenge, getListAllWorkout, Test ,getUserInfo} from '../utilities/FirebaseDatabase';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import { convertObjectToArrayWithoutKey, shuffle } from '../utilities/Utilities';
@@ -30,6 +30,7 @@ function HomeScreen({navigation}) {
   const [workoutOfTheDay, setWorkOutOfTheDay] = useState({})
   const [suggestedChallenges, setSuggestedChallenges] = useState(['1', '2', '3']);
   const [allChallenges, setAllChallenges] = useState(DATA);
+  const [user, setUser] = useState({abc: 'abc'});
 
  //#region  message    
  const [notification, setNotification] = useState({
@@ -104,9 +105,12 @@ useEffect(() => {
   useEffect(()=>{
     getSuggestedWorkout(5)
     getSuggestedChallenges(5)
-
+    initUser();
   }, [])
-
+  const initUser = async () => {
+    var res = await getUserInfo();
+    setUser(res.val());
+  };
   const getSuggestedWorkout = async (n) =>{
     try{
       const res = await getListAllWorkout()
@@ -212,10 +216,10 @@ useEffect(() => {
 
       <View style={{flexDirection: 'row', paddingVertical: 5}}>
         <View style={{flex: 5}}>
-          <Text style={styles.numberTxt}>Đào Duy Nam</Text>
+          <Text style={styles.numberTxt}>{user.name?user.name:"Người dùng mới"}</Text>
           <Text style={styles.silverTxt}>
-            Chiều Cao: <Text style={styles.numberTxt}>173cm</Text> - Cân nặng:{' '}
-            <Text style={styles.numberTxt}>63.5 kg</Text>
+            Chiều Cao: <Text style={styles.numberTxt}>{user.heigh?user.heigh:"---"}cm</Text> - Cân nặng:{' '}
+            <Text style={styles.numberTxt}>{user.weight?user.weight:"---"} kg</Text>
           </Text>
         </View>
         <View style={{flex: 1, alignItems: 'center', marginTop: -20}}>
@@ -224,14 +228,16 @@ useEffect(() => {
             BMI
           </Text>
           <Text style={{fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE}}>
-            2.5
-          </Text>
+          {user.weight && user.heigh
+              ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
+                100
+              : '---'}         </Text>
         </View>
       </View>
 
       <TouchableOpacity
         style={styles.userBtn}
-        onPress={() => navigation.navigate('Category')}>
+        onPress={() => navigation.navigate('Profile')}>
         <Icon
           name="chart-line"
           type="material-community"

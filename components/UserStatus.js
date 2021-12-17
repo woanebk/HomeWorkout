@@ -30,21 +30,21 @@ function UserStatus(props) {
                 source={props.image?props.image:{uri:defaultPfp}}
                 ></Image>
                 <View style={{marginLeft:20}}>
-                    <Text style={[styles.nameTxt,{fontSize:13}]}>Đào Duy Nam</Text>
+                    <Text style={[styles.nameTxt,{fontSize:13}]}>{props.name?props.name:"Người dùng mới"}</Text>
                     <View style={{flexDirection:'row', alignItems:'center'}}>
                         <Icon
                         name='heart'
                         type='ionicon'
                         size={18}
                         color={COLOR.WHITE}/>
-                        <Text style={[styles.nameTxt, {fontSize:12}]}> BMI: 2.0</Text>
+                        <Text style={[styles.nameTxt, {fontSize:12}]}> BMI: {props.bmi?props.bmi:"--"}</Text>
                     </View>
                 </View>
               </View>
 
               <View style={{marginLeft:60, marginTop:-8}}>
-                  <Text style={styles.desTxt}>CÂN NẶNG HIỆN TẠI: 63 KG</Text>
-                  <Text style={styles.desTxt}>CHIỀU CAO HIỆN TẠI: 173 CM</Text>
+                  <Text style={styles.desTxt}>CÂN NẶNG HIỆN TẠI: {props.weight?props.weight:"---"} KG</Text>
+                  <Text style={styles.desTxt}>CHIỀU CAO HIỆN TẠI: {props.height?props.height:"---"} CM</Text>
               </View>
 
               <View style={styles.btnWrapper}>
@@ -54,7 +54,7 @@ function UserStatus(props) {
                     type='ionicon'
                     size={27}
                     color={COLOR.LIGHT_BLUE_2}/>
-                    <Text style={[styles.btnTxt,{marginLeft:5}]}>Cập nhật thông số ngay</Text>
+                    <Text style={[styles.btnTxt,{marginLeft:5}]}>Cập nhật thông tin ngay</Text>
                 </TouchableOpacity>
               </View>
             </LinearGradient>

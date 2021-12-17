@@ -1,25 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, StatusBar, Alert, ScrollView} from 'react-native';
-import {Icon} from 'react-native-elements';
+import React, { useEffect, useState } from 'react';
+import { Text, StyleSheet, View, StatusBar, Alert, ScrollView, Modal, Picker } from 'react-native';
+import { Icon } from 'react-native-elements';
 
-import auth, {firebase} from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import RoundButton from '../components/RoundButton';
-import {COLOR} from '../constant';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { COLOR } from '../constant';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import {
   generateNewExercise,
   generateNewWorkout,
 } from '../utilities/FirebaseDatabase';
 import PureChart from 'react-native-pure-chart';
-const data = [{value: 50}, {value: 80}, {value: 90}, {value: 70}];
+const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
 import CustomTextInput from '../components/CustomTextInput';
 import CommandButton from '../components/CommandButton';
-import {updateBMIInfo, getUserInfo} from '../utilities/FirebaseDatabase';
+import { updateBMIInfo, getUserInfo,updateUserInfo } from '../utilities/FirebaseDatabase';
 import {
   convertObjectToArrayWithoutKey,
   convertObjectToArrayWithoutKeySort,
 } from '../utilities/Utilities';
 import UserStatus from '../components/UserStatus';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const onPressSignOut = () => {
   auth()
@@ -35,16 +36,34 @@ const onPressSignOut = () => {
 
 function ProfileScreen() {
   const sampleData = [
-    {x: '2018-01-01', y: 18},
-    {x: '2018-01-02', y: 20},
-    {x: '2018-01-03', y: 17},
-    {x: '2018-01-04', y: 29},
-    {x: '2018-01-05', y: 15},
+    { x: '2018-01-01', y: 18 },
+    { x: '2018-01-02', y: 20 },
+    { x: '2018-01-03', y: 17 },
+    { x: '2018-01-04', y: 29 },
+    { x: '2018-01-05', y: 15 },
   ];
   const [valueHeigh, setValueHeigh] = useState('');
   const [valueWeight, setValueWeight] = useState('');
-  const [user, setUser] = useState({abc: 'abc'});
+  const [user, setUser] = useState({ abc: 'abc' });
   const [listBMI, setListBMI] = useState(sampleData);
+  const [visible, setVisible] = useState(false);
+  const [valueName, setValueName] = useState('');
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("Người dùng mới");
+  const [items, setItems] = useState([
+    { label: 'Người dùng mới', value: 'Người dùng mới' },
+    { label: 'Người dùng thành thục', value: 'Người dùng thành thục' },
+    { label: 'Người dùng chuyên nghiệp', value: 'Người dùng chuyên nghiệp' },
+
+  ]);
+  const [open2, setOpen2] = useState(false);
+  const [value2, setValue2] = useState("Bài tập giảm mỡ");
+  const [items2, setItems2] = useState([
+    { label: 'Bài tập giảm mỡ', value: 'Bài tập giảm mỡ' },
+    { label: 'Bài tập tăng cơ', value: 'Bài tập tăng cơ' },
+    { label: 'Bài tập giảm cân', value: 'Bài tập giảm cân' },
+
+  ]);
 
   useEffect(async () => {
     await initUser();
@@ -56,6 +75,8 @@ function ProfileScreen() {
     setUser(res.val());
     setValueHeigh(res.val().heigh.toString());
     setValueWeight(res.val().weight.toString());
+    setValueName(res.val().name.toString());
+
 
     setListBMI(convertObjectToArrayWithoutKeySort(res.val().listBMI));
   };
@@ -95,10 +116,37 @@ function ProfileScreen() {
         });
     }
   };
+  const handleUpdateInfo = async () => {
+    if (valueName == '')
+      Alert.alert(
+        '',
+        //body
+        'Vui lòng nhập lại tên',
+      );
+    else {
+      console.log('update');
+      await updateUserInfo(value,value2,valueName)
+        .then(async () => {
+          Alert.alert(
+            '',
+            //body
+            'Cập nhật thành công',
+          );
+          await initUser();
+        })
+        .catch(er => {
+          Alert.alert(
+            '',
+            //body
+            'Vui lòng thử lại',
+          );
+        });
+    }
+  };
   const renderAdminButton = () => {
     return (
       <View>
-        <Text style={{color: COLOR.WHITE}}>Đừng nhấn lung tung nha</Text>
+        <Text style={{ color: COLOR.WHITE }}>Đừng nhấn lung tung nha</Text>
         <TouchableOpacity
           style={{
             height: 50,
@@ -129,71 +177,15 @@ function ProfileScreen() {
     );
   };
   //#region  render
-  const renderUserInfo = () => (
-    <View style={styles.userStatus}>
-      <View style={styles.userTagWrapper}>
-        <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-          <Icon
-            name="account"
-            type="material-community"
-            size={14}
-            color={COLOR.WHITE}
-          />
-          <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
-            Người mới tập
-          </Text>
-        </View>
-        <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-          <Icon
-            name="account"
-            type="material-community"
-            size={14}
-            color={COLOR.WHITE}
-          />
-          <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>Tăng cơ</Text>
-        </View>
-      </View>
-
-      <View style={{flexDirection: 'row', paddingVertical: 5}}>
-        <View style={{flex: 5}}>
-          <Text style={[styles.numberTxt, {}]}>
-            {user.name ? user.name : 'Người Dùng Mới'}
-          </Text>
-          <Text style={styles.silverTxt}>
-            Chiều Cao:{' '}
-            <Text style={styles.numberTxt}>
-              {user.heigh ? user.heigh : '---' + 'cm'}
-            </Text>{' '}
-            - Cân nặng:{' '}
-            <Text style={styles.numberTxt}>
-              {user.weight ? user.weight : '---' + 'kg'}
-            </Text>
-          </Text>
-        </View>
-        <View style={{flex: 1, alignItems: 'center', marginTop: -20}}>
-          <Text
-            style={{fontWeight: 'bold', fontSize: 20, color: COLOR.DARK_BROWN}}>
-            BMI
-          </Text>
-          <Text style={{fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE}}>
-            {user.weight && user.heigh
-              ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
-                100
-              : '---'}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
   return (
-    <ScrollView style={{flex: 1, backgroundColor: COLOR.MATTE_BLACK}}>
+    <ScrollView style={{ flex: 1, backgroundColor: COLOR.MATTE_BLACK }}>
       {/* {renderAdminButton()} */}
       <StatusBar
         backgroundColor="transparent"
         translucent
-        style={{height: 50}}
+        style={{ height: 50 }}
       />
-      <View style={{marginTop: 100}}>
+      <View style={{ marginTop: 100 }}>
         <Text
           style={{
             position: 'absolute',
@@ -210,23 +202,26 @@ function ProfileScreen() {
           Chỉ Số Của Bạn
         </Text>
       </View>
-      <UserStatus/>
-      <View style={{flex: 1, marginTop: 30}}>
+      <UserStatus height={user.heigh} weight={user.weight} name={user.name} bmi={user.weight && user.heigh
+        ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
+        100
+        : '---'} onPress={() => setVisible(true)} />
+      <View style={{ flex: 1, marginTop: 10 }}>
         <PureChart
           data={listBMI}
           type="line"
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           backgroundColor={COLOR.LIGHT_BLUE}
           width={'100%'}
           height={200}
-          numberOfYAxisGuideLine={4}
+          numberOfYAxisGuideLine={5}
           Alert="you sh"
         />
       </View>
       <View
         style={{
           flex: 1,
-          marginTop: 100,
+          marginTop: 30,
           backgroundColor: COLOR.MATTE_BLACK,
           bottom: 20,
         }}>
@@ -248,7 +243,7 @@ function ProfileScreen() {
           Cập Nhật Chỉ Số Ngay
         </Text>
         <CustomTextInput
-          style={{alignSelf: 'center', width: '85%', marginTop: 50}}
+          style={{ alignSelf: 'center', width: '85%', marginTop: 50 }}
           value={valueWeight}
           onChangeText={setValueWeight}
           title="Cân Nặng"
@@ -258,7 +253,7 @@ function ProfileScreen() {
           placeholder="Nhập cân nặng hiện tại (kg)"
         />
         <CustomTextInput
-          style={{alignSelf: 'center', width: '85%', marginTop: 30}}
+          style={{ alignSelf: 'center', width: '85%', marginTop: 30 }}
           value={valueHeigh}
           onChangeText={setValueHeigh}
           title="Chiều Cao"
@@ -291,6 +286,75 @@ function ProfileScreen() {
         backgroundColor={COLOR.GOLD}
         onPress={() => onPressSignOut()}
       />
+      <Modal
+        animationType="slide"
+        transparent
+        statusBarTranslucent
+        visible={visible}
+      >
+        <View style={styles.content}>
+         
+          <View style={{ marginTop: 20, flex: 1, width: '85%', alignSelf: "center" }}>
+          <Text style={styles.titleTxt} color={COLOR.LIGHT_GREY}>Chọn Loại Người Dùng</Text>
+
+            <DropDownPicker style={{ marginTop: 5, alignSelf: 'center' }}
+            backgroundColor={COLOR.GREY}
+            searchPlaceholderTextColor={COLOR.GOLD}
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+              placeholder="Chọn loại người tập"
+              theme="DARK"
+            /> 
+             <CustomTextInput
+            style={{ alignSelf: 'center', marginTop: 40 }}
+            value={valueName}
+            onChangeText={setValueName}
+            title="Họ Tên"
+            secureTextEntry={false}
+            icon="user"
+            placeholder="Nhập họ tên của bạn"
+            backgroundColor="#292D3E"
+          />
+            <View style={{ marginTop: 15, alignSelf: 'center' }}>
+            <Text style={[styles.titleTxt,{marginBottom:5}]} color={COLOR.LIGHT_GREY}>Chọn Loại Bài Tập</Text>
+
+             <DropDownPicker style={{ marginTop: 0,alignSelf: 'center' }}
+            backgroundColor={COLOR.GREY}
+            searchPlaceholderTextColor={COLOR.GOLD}
+              open={open2}
+              value={value2}
+              items={items2}
+              setOpen={setOpen2}
+              setValue={setValue2}
+              setItems={setItems2}
+              placeholder="Chọn loại người tập"
+              theme="DARK"
+            />
+            </View>
+            <TouchableOpacity style={styles.commandBtn}>
+            <Text onPress={() => {handleUpdateInfo() }}>
+              Cập Nhật
+            </Text>
+          </TouchableOpacity>
+            </View>
+            
+          
+
+          <RoundButton
+            icon="close"
+            buttonWidth={25}
+            buttonHeight={25}
+            size={10}
+            style={styles.closeBtnWrapper2}
+            onPress={() => { setVisible(false) }}
+          />
+
+        </View>
+      </Modal>
     </ScrollView>
   );
   //#endregion
@@ -353,6 +417,35 @@ const styles = StyleSheet.create({
   silverTxt: {
     fontSize: 13,
     color: '#aaa9ad',
+  },
+  content: {
+    backgroundColor: COLOR.LIGHT_MATTE_BLACK,
+    height: '100%',
+    marginTop: 160,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    marginHorizontal: 15,
+    paddingTop: 50,
+
+
+  }, commandBtn: {
+    backgroundColor: '#ffcc00',
+    marginTop: 100,
+    height: 50,
+    width: '80%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+  }, closeBtnWrapper2: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+  },titleTxt: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginLeft:18,
+    color: COLOR.LIGHT_BLUE
   },
 });
 
