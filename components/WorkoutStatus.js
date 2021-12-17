@@ -133,7 +133,7 @@ function WorkoutStatus(props, ref) {
                     bounce
                     loop
                     marqueeDelay={1000}>
-                    {item.name}
+                    {item?.data?.name}
                   </TextTicker>
                   {item?.time ? (
                     <Text style={[styles.excersisesSmallDesTxt]}>
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   excersiseItemDesWrapper: {
     top: 10,
     marginLeft: 10,
-    flex: 1,
+    flex: 0.7,
     top: 70,
   },
   excersiseDesTxt: {

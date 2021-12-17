@@ -6,59 +6,117 @@ import {BackgroundImage} from 'react-native-elements/dist/config';
 import LinearGradient from 'react-native-linear-gradient';
 import CommandButton from '../../components/CommandButton';
 import WorkoutByDayItem from '../../components/WorkoutByDayItem';
-import {COLOR, SCREEN_HEIGHT} from '../../constant';
+import CustomModal from '../../components/CustomModal';
+import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import {convertStringDDMMYYtoDate} from '../../utilities/Utilities';
+import Toast from 'react-native-toast-message';
 import {
   addChallengeToMyList,
-  deleteChallengeOutToMyList,
+  deleteChallengeOutOfMyList,
+  getUserChallengeById,
+  getWorkoutById,
   lookupChallengeInMyList,
 } from '../../utilities/FirebaseDatabase';
+import LoadingView from '../../components/LoadingView';
 const LINEAR_GRADIENT_HEIGHT = 120;
 
 function ChallengeDetailScreen({route, navigation}) {
-  const {item,key} = route.params;
+  const {item, key} = route.params;
   const [isSubCribed, setIsSubCribed] = useState(false);
-  const DATA = [{
-    body: 'Hãy cố gắng vượt qua thử thách',endTime: '20/12/2021',startTime:'09/12/2021',title:'Thử thách cá hồi hoang',topic:'cahoihoang',imgURL:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqEPKbkJzSFv7q6hwo2S6dKkNRYnWRWWkYTQ&usqp=CAU'
-  },];
-  const [workoutListByDay, setWorkOutListByDay] = useState(DATA.listWorkout);
-  const [challengeDetail, setChallengeDetail] = useState(DATA);
-  useEffect(async () => {
-    console.log(key)
-    if(key!=null)
-    {   
-       var res = await lookupChallengeInMyList(key);
-       setChallengeDetail(res);
-       setIsSubCribed(res.id != null);
-       setWorkOutListByDay(res.listWorkout)
+  const [challengeDetail, setChallengeDetail] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModalConfirm, setShowModalConfirm] = useState(false);
 
-    }
-    else{    
-         var res = await lookupChallengeInMyList(item.id);
-      setChallengeDetail(item);    setIsSubCribed(res.id != null);
-      setWorkOutListByDay(item.listWorkout)
-    }
+  useEffect(() => {
+    handleGetData();
   }, []);
 
-  const handleSubcribe = async () => {
+  const handleGetData = async () => {
+    try {
+      setIsLoading(true);
+      if (key != null) {
+        var res = await getUserChallengeById(key);
+        const challengeWithDaysData = await getListWorkoutByDay(res);
+        setChallengeDetail(challengeWithDaysData);
+        await checkSubcribedOrNot();
+      } else {
+        var res = await getUserChallengeById(item.id);
+        const challengeWithDaysData = await getListWorkoutByDay(res);
+        setChallengeDetail(challengeWithDaysData);
+        await checkSubcribedOrNot();
+      }
+    } catch (e) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const checkSubcribedOrNot = async () => {
+    const res = await lookupChallengeInMyList(key);
+    setIsSubCribed(res !== null);
+  };
+
+  const getListWorkoutByDay = async challenge => {
+    let challengeWithData = challenge;
+    for (let i = 0; i < challenge?.listWorkout?.length; i++) {
+      const res = await getWorkoutById(challenge?.listWorkout[i]?.workoutId);
+      challenge.listWorkout[i].data = res.val();
+    }
+    return challengeWithData;
+  };
+
+  const handleOnSubcribePress = async () => {
     if (isSubCribed) {
-      setIsSubCribed(false);
-      await deleteChallengeOutToMyList(challengeDetail);
+      setShowModalConfirm(true);
     } else {
-      setIsSubCribed(true);
+      await subcribeChallenge();
+    }
+  };
+
+  const subcribeChallenge = async () => {
+    try {
+      setIsLoading(true);
       await addChallengeToMyList(challengeDetail);
+      setIsSubCribed(true);
+    } catch {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const unSubcribeChallenge = async () => {
+    try {
+      setIsLoading(true);
+      await deleteChallengeOutOfMyList(challengeDetail);
+      setIsSubCribed(false);
+      handleGetData()
+    } catch {
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const renderWorkoutByDayItem = (item, index) => {
     return (
       <WorkoutByDayItem
-        onPress={() => navigation.navigate('WorkoutInfo')}
-        isDone={index == 0}
+        onPress={() => {
+          isSubCribed
+            ? navigation.navigate('WorkoutInfo', {workoutId: item?.workoutId, challengeId: challengeDetail?.id, dayIndex: index})
+            : Toast.show({
+                type: 'info',
+                text1: 'Thông báo',
+                text2:
+                  'Bạn cần tham gia thử thách để có thể tập luyện bài tập này 👋',
+              });
+        }}
+        isDone={item?.isDone}
         style={{marginRight: 10}}
-        title="Bài tập bụng"
+        title={item?.data?.name}
+        item={item}
+        index={index}
         image={{
-          uri: 'https://images.pexels.com/photos/2294361/pexels-photo-2294361.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+          uri:
+            item?.data?.image ||
+            'https://images.pexels.com/photos/2294361/pexels-photo-2294361.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
         }}
       />
     );
@@ -73,19 +131,19 @@ function ChallengeDetailScreen({route, navigation}) {
       }}>
       <BackgroundImage
         source={{
-          uri: challengeDetail.imgURL,
+          uri: challengeDetail?.imgURL,
         }}
         imageStyle={styles.img}
         style={[styles.img]}>
         <BlurView
           overlayColor={'#00000010'}
           style={styles.blur}
-          blurType="light"
-          blurAmount={5}
+          blurType="dark"
+          blurAmount={15}
           reducedTransparencyFallbackColor="black"
         />
         <View style={styles.titleWrapper}>
-          <Text style={styles.titleTxt}>{challengeDetail.title}</Text>
+          <Text style={styles.titleTxt}>{challengeDetail?.title}</Text>
         </View>
         <View style={[styles.blur]}>
           <View style={styles.rowItem}>
@@ -99,39 +157,43 @@ function ChallengeDetailScreen({route, navigation}) {
             </View>
             <View style={styles.rowItemTextWrapper}>
               <Text style={styles.rowItemTitleTxt}>
-                Thời gian:
-               
-                {challengeDetail.endTime!=null?(convertStringDDMMYYtoDate(challengeDetail.endTime).getTime() -
-                  convertStringDDMMYYtoDate(
-                    challengeDetail.startTime,
-                  ).getTime()) /
-                  (1000 * 3600 * 24):7}{' '}
+                Thời gian:{' '}
+                {challengeDetail?.endTime != null
+                  ? (convertStringDDMMYYtoDate(
+                      challengeDetail.endTime,
+                    ).getTime() -
+                      convertStringDDMMYYtoDate(
+                        challengeDetail?.startTime,
+                      ).getTime()) /
+                      (1000 * 3600 * 24) +
+                    ''
+                  : 7}{' '}
                 ngày
               </Text>
               <Text style={styles.rowItemSubTxt}>
-                {challengeDetail.spanTime != null
-                  ? challengeDetail.spanTime
+                {challengeDetail?.spanTime != null
+                  ? challengeDetail?.spanTime
                   : '30'}{' '}
                 phút mỗi ngày
               </Text>
-              <Text style={styles.rowItemSubTxt}>
+              {/* <Text style={styles.rowItemSubTxt}>
                 Ngày bắt đầu:{challengeDetail.startTime}
               </Text>
               <Text style={styles.rowItemSubTxt}>
                 Ngày kết thúc:{challengeDetail.endTime}
-              </Text>
+              </Text> */}
             </View>
           </View>
           <FlatList
             style={styles.workoutList}
-            data={workoutListByDay}
+            data={challengeDetail?.listWorkout}
             horizontal
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => renderWorkoutByDayItem(item, index)}
           />
           <Text style={styles.aboutTxt}>Giới thiệu thử thách</Text>
           <ScrollView style={styles.detail}>
-            <Text style={styles.aboutContentTxt}>{challengeDetail.body}</Text>
+            <Text style={styles.aboutContentTxt}>{challengeDetail?.body}</Text>
           </ScrollView>
         </View>
         <LinearGradient
@@ -145,9 +207,30 @@ function ChallengeDetailScreen({route, navigation}) {
           style={styles.commandBtn}
           hasRightIcon
           title={isSubCribed ? 'Hủy đăng kí' : 'Tham gia ngay'}
-          onPress={handleSubcribe}
+          onPress={handleOnSubcribePress}
         />
       </BackgroundImage>
+      <CustomModal
+        visible={showModalConfirm}
+        title="Bạn có chắc muốn từ bỏ thử thách này không ?"
+        onConfirm={async () => {
+          setShowModalConfirm(false);
+          await unSubcribeChallenge();
+        }}
+        onCancel={() => setShowModalConfirm(false)}
+      />
+      {isLoading && (
+        <View
+          style={{
+            position: 'absolute',
+            width: SCREEN_WIDTH,
+            height: SCREEN_HEIGHT,
+            backgroundColor: COLOR.MATTE_BLACK,
+            opacity: 0.95,
+          }}>
+          <LoadingView />
+        </View>
+      )}
     </View>
   );
 }
@@ -165,7 +248,7 @@ const styles = StyleSheet.create({
   },
   blur: {
     position: 'absolute',
-    height: 500,
+    height: 420,
     left: 0,
     bottom: 5,
     right: 0,
@@ -184,6 +267,9 @@ const styles = StyleSheet.create({
     lineHeight: 50,
     marginHorizontal: 10,
     marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 1)',
+    textShadowOffset: {width: -5, height: 5},
+    textShadowRadius: 10,
   },
   rowItem: {
     height: 60,
@@ -216,8 +302,8 @@ const styles = StyleSheet.create({
   detail: {
     paddingHorizontal: 10,
     //backgroundColor:COLOR.BLUE,
-    marginBottom: 70,
-    height: 170,
+    marginBottom: 40,
+    height: 120,
   },
   aboutTxt: {
     fontSize: 16,

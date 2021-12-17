@@ -19,35 +19,46 @@ import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import Icon from 'react-native-ionicons';
 import database from '@react-native-firebase/database';
-import { generateNewChallenge,getListAllChallenge,getListMyAllChallenge } from '../utilities/FirebaseDatabase';
-import { convertObjectToArrayWithoutKey,convertObjectToArray } from '../utilities/Utilities';
-import { Item } from 'react-native-paper/lib/typescript/components/List/List';
+import {
+  generateNewChallenge,
+  getListAllChallenge,
+  getListMyAllChallenge,
+} from '../utilities/FirebaseDatabase';
+import {
+  convertObjectToArrayWithoutKey,
+  convertObjectToArray,
+} from '../utilities/Utilities';
 function ChallengesCategoryScreen({navigation}) {
-  const DATA = [{
-    id: undefined,
-    imgURL:
-    undefined,
-  },];
+  const DATA = [
+    {
+      id: undefined,
+      imgURL: undefined,
+    },
+  ];
   var [allChallenges, setAllChallenges] = useState(DATA);
   var [allChallengesForUser, setAllChallengesForUser] = useState(DATA);
-  useEffect(async()=>{
-   await initAllChallenge()
-   await initAllChallengeForCurrent()
-  },[]);
-  const initAllChallenge =async () => {
-      const res = await getListAllChallenge();      
-      var list=convertObjectToArrayWithoutKey(res.val());   
-      setAllChallenges(list != null?list:[{imgURL:undefined}] )
-      console.log(list);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getData()
+    });
+    return unsubscribe;
+  }, []);
 
+  const getData = async () => {
+    await initAllChallenge();
+    await initAllChallengeForCurrent();
   }
-  const initAllChallengeForCurrent =async () => {
-    console.debug("initmy")
-    const res = await getListMyAllChallenge(auth().currentUser.uid);    
-    if (res.val==null)setAllChallengesForUser( [{imgURL:undefined}] ) 
-    else setAllChallengesForUser(convertObjectToArrayWithoutKey(res.val())); 
-  }    
-  //#region  message    
+
+  const initAllChallenge = async () => {
+    const res = await getListAllChallenge();
+    var list = convertObjectToArrayWithoutKey(res.val() || {});
+    setAllChallenges(list);
+  };
+  const initAllChallengeForCurrent = async () => {
+    const res = await getListMyAllChallenge(auth().currentUser.uid);
+    setAllChallengesForUser(convertObjectToArrayWithoutKey(res.val() || {}));
+  };
+  //#region  message
   // const [notification, setNotification] = useState({
   //   title: undefined,
   //   body: undefined,
@@ -57,7 +68,7 @@ function ChallengesCategoryScreen({navigation}) {
   //   const token = await messaging().getToken();
   //   console.log('.........................: ', token);
   // };
-   
+
   // useEffect(() => {
   //  // const navigation = useNavigation();
 
@@ -68,7 +79,7 @@ function ChallengesCategoryScreen({navigation}) {
   //     PushNotification.configure({
   //       onNotification: function (notification) {
   //         console.log('LOCAL NOTIFICATION ==>', notification);
-  //         navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
+  //         navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key});
   //       },
   //       popInitialNotification: true,
   //       requestPermissions: true,
@@ -90,7 +101,7 @@ function ChallengesCategoryScreen({navigation}) {
 
   //   messaging().onNotificationOpenedApp(remoteMessage => {
   //     console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
-  //     navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
+  //     navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key});
   //     setNotification({
   //       title: remoteMessage.notification.title,
   //       body: remoteMessage.notification.body,
@@ -115,15 +126,25 @@ function ChallengesCategoryScreen({navigation}) {
   //       }
   //     });
   // }, []);
-//#endregion
+  //#endregion
   var FurnitureCard = function (_a) {
     var item = _a.item;
     var randomBool = (0, useMemo)(function () {
       return Math.random() < 0.5;
     }, []);
     return (
-      <View key={item.id} style={{marginBottom: 12, marginLeft: 12, flex: 1,backgroundColor:COLOR.backgroundColor}}>
-        <TouchableOpacity onPress={()=>{ navigation.navigate("ChallengeDetail",{item})}}>
+      <View
+        key={item.id}
+        style={{
+          marginBottom: 12,
+          marginLeft: 12,
+          flex: 1,
+          backgroundColor: COLOR.backgroundColor,
+        }}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('ChallengeDetail', {key: item?.id});
+          }}>
           <Image
             source={{uri: item.imgURL}}
             style={{
@@ -173,8 +194,14 @@ function ChallengesCategoryScreen({navigation}) {
           Tất cả thử thách
         </Text>
         <TouchableOpacity
-          style={{marginTop: 65, position: 'absolute', right: 30, flex: 1}} onPress={()=>{ navigation.navigate("AllChallenge",  { type:"All",challenges:allChallenges})}}>
-        {/* async() =>{console.debug('click');await generateNewChallenge().then(() => console.log('Data updated.'));}}> */}
+          style={{marginTop: 65, position: 'absolute', right: 30, flex: 1}}
+          onPress={() => {
+            navigation.navigate('AllChallenge', {
+              type: 'All',
+              challenges: allChallenges,
+            });
+          }}>
+          {/* async() =>{console.debug('click');await generateNewChallenge().then(() => console.log('Data updated.'));}}> */}
           <Text style={{color: COLOR.GOLD}}> Xem tất cả</Text>
         </TouchableOpacity>
       </View>
@@ -193,7 +220,8 @@ function ChallengesCategoryScreen({navigation}) {
           key={(item, index) => index.toString()}
           numColumns={3}
           data={allChallenges}
-          renderItem={(item,index) => renderItem(item,index)} onRefresh={initAllChallenge}></MasonryList>
+          renderItem={(item, index) => renderItem(item, index)}
+          onRefresh={initAllChallenge}></MasonryList>
       </View>
       <View style={{flexDirection: 'row'}}>
         <Text
@@ -213,7 +241,13 @@ function ChallengesCategoryScreen({navigation}) {
           Thử thách bạn tham gia
         </Text>
         <TouchableOpacity
-          style={{marginTop: 15, position: 'absolute', right: 30, flex: 1}} onPress={()=>{  navigation.navigate("AllChallenge",  { type:"My",challenges:allChallengesForUser})}}>
+          style={{marginTop: 15, position: 'absolute', right: 30, flex: 1}}
+          onPress={() => {
+            navigation.navigate('AllChallenge', {
+              type: 'My',
+              challenges: allChallengesForUser,
+            });
+          }}>
           <Text style={{color: COLOR.GOLD}}> Xem tất cả </Text>
         </TouchableOpacity>
       </View>

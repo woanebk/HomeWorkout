@@ -37,7 +37,6 @@ function AllChallengeScreen({route, navigation}) {
     const res = await getListAllChallenge();
     var list = convertObjectToArrayWithoutKey(res.val());
     setAllChallenges(list != null ? list : [{imgURL: undefined}]);
-    console.log(list);
   };
   const initAllChallengeForCurrent = async () => {
     console.debug('initmy');
@@ -52,10 +51,10 @@ function AllChallengeScreen({route, navigation}) {
       return Math.random() < 0.5;
     }, []);
     return (
-      <View key={item.id} style={{marginTop: 12, marginLeft: 12, flex: 1}}>
+      <View key={item?.id} style={{marginTop: 12, marginLeft: 12, flex: 1}}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('ChallengeDetail', {item});
+            navigation.navigate('ChallengeDetail', {key: item?.id});
           }}>
           <Image
             source={{uri: item.imgURL}}
