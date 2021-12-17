@@ -29,6 +29,7 @@
     "react-native": "0.65.1",
     "react-native-countdown-circle-timer": "^2.5.4",
     "react-native-dialog": "^9.2.0",
+    "react-native-dropdown-picker": "^5.2.3",
     "react-native-effects-view": "^0.4.0",
     "react-native-elements": "^3.4.2",
     "react-native-fbsdk-next": "^6.1.1",
