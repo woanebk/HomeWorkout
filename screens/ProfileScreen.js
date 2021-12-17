@@ -1,25 +1,26 @@
-import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, StatusBar, Alert, ScrollView,Modal} from 'react-native';
-import {Icon} from 'react-native-elements';
+import React, { useEffect, useState } from 'react';
+import { Text, StyleSheet, View, StatusBar, Alert, ScrollView, Modal, Picker } from 'react-native';
+import { Icon } from 'react-native-elements';
 
-import auth, {firebase} from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import RoundButton from '../components/RoundButton';
-import {COLOR} from '../constant';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { COLOR } from '../constant';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import {
   generateNewExercise,
   generateNewWorkout,
 } from '../utilities/FirebaseDatabase';
 import PureChart from 'react-native-pure-chart';
-const data = [{value: 50}, {value: 80}, {value: 90}, {value: 70}];
+const data = [{ value: 50 }, { value: 80 }, { value: 90 }, { value: 70 }];
 import CustomTextInput from '../components/CustomTextInput';
 import CommandButton from '../components/CommandButton';
-import {updateBMIInfo, getUserInfo} from '../utilities/FirebaseDatabase';
+import { updateBMIInfo, getUserInfo } from '../utilities/FirebaseDatabase';
 import {
   convertObjectToArrayWithoutKey,
   convertObjectToArrayWithoutKeySort,
 } from '../utilities/Utilities';
 import UserStatus from '../components/UserStatus';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const onPressSignOut = () => {
   auth()
@@ -35,18 +36,34 @@ const onPressSignOut = () => {
 
 function ProfileScreen() {
   const sampleData = [
-    {x: '2018-01-01', y: 18},
-    {x: '2018-01-02', y: 20},
-    {x: '2018-01-03', y: 17},
-    {x: '2018-01-04', y: 29},
-    {x: '2018-01-05', y: 15},
+    { x: '2018-01-01', y: 18 },
+    { x: '2018-01-02', y: 20 },
+    { x: '2018-01-03', y: 17 },
+    { x: '2018-01-04', y: 29 },
+    { x: '2018-01-05', y: 15 },
   ];
   const [valueHeigh, setValueHeigh] = useState('');
   const [valueWeight, setValueWeight] = useState('');
-  const [user, setUser] = useState({abc: 'abc'});
+  const [user, setUser] = useState({ abc: 'abc' });
   const [listBMI, setListBMI] = useState(sampleData);
   const [visible, setVisible] = useState(false);
   const [valueName, setValueName] = useState('');
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("Người dùng mới");
+  const [items, setItems] = useState([
+    { label: 'Người dùng mới', value: 'Người dùng mới' },
+    { label: 'Người dùng thành thục', value: 'Người dùng thành thục' },
+    { label: 'Người dùng chuyên nghiệp', value: 'Người dùng chuyên nghiệp' },
+
+  ]);
+  const [open2, setOpen2] = useState(false);
+  const [value2, setValue2] = useState("Bài tập giảm mỡ");
+  const [items2, setItems2] = useState([
+    { label: 'Bài tập giảm mỡ', value: 'Bài tập giảm mỡ' },
+    { label: 'Bài tập tăng cơ', value: 'Bài tập tăng cơ' },
+    { label: 'Bài tập giảm cân', value: 'Bài tập giảm cân' },
+
+  ]);
 
   useEffect(async () => {
     await initUser();
@@ -61,7 +78,7 @@ function ProfileScreen() {
     setValueWeight(res.val().weight.toString());
     setValueName(res.val().name.toString());
 
-    
+
     console.log(convertObjectToArrayWithoutKey(res.val().listBMI));
     setListBMI(convertObjectToArrayWithoutKeySort(res.val().listBMI));
   };
@@ -104,7 +121,7 @@ function ProfileScreen() {
   const renderAdminButton = () => {
     return (
       <View>
-        <Text style={{color: COLOR.WHITE}}>Đừng nhấn lung tung nha</Text>
+        <Text style={{ color: COLOR.WHITE }}>Đừng nhấn lung tung nha</Text>
         <TouchableOpacity
           style={{
             height: 50,
@@ -136,14 +153,14 @@ function ProfileScreen() {
   };
   //#region  render
   return (
-    <ScrollView style={{flex: 1, backgroundColor: COLOR.MATTE_BLACK}}>
+    <ScrollView style={{ flex: 1, backgroundColor: COLOR.MATTE_BLACK }}>
       {/* {renderAdminButton()} */}
       <StatusBar
         backgroundColor="transparent"
         translucent
-        style={{height: 50}}
+        style={{ height: 50 }}
       />
-      <View style={{marginTop: 100}}>
+      <View style={{ marginTop: 100 }}>
         <Text
           style={{
             position: 'absolute',
@@ -161,14 +178,14 @@ function ProfileScreen() {
         </Text>
       </View>
       <UserStatus height={user.heigh} weight={user.weight} name={user.name} bmi={user.weight && user.heigh
-              ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
-                100
-              : '---'} onPress={()=>setVisible(true)}/>
-      <View style={{flex: 1, marginTop: 10}}>
+        ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
+        100
+        : '---'} onPress={() => setVisible(true)} />
+      <View style={{ flex: 1, marginTop: 10 }}>
         <PureChart
           data={listBMI}
           type="line"
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           backgroundColor={COLOR.LIGHT_BLUE}
           width={'100%'}
           height={200}
@@ -201,7 +218,7 @@ function ProfileScreen() {
           Cập Nhật Chỉ Số Ngay
         </Text>
         <CustomTextInput
-          style={{alignSelf: 'center', width: '85%', marginTop: 50}}
+          style={{ alignSelf: 'center', width: '85%', marginTop: 50 }}
           value={valueWeight}
           onChangeText={setValueWeight}
           title="Cân Nặng"
@@ -211,7 +228,7 @@ function ProfileScreen() {
           placeholder="Nhập cân nặng hiện tại (kg)"
         />
         <CustomTextInput
-          style={{alignSelf: 'center', width: '85%', marginTop: 30}}
+          style={{ alignSelf: 'center', width: '85%', marginTop: 30 }}
           value={valueHeigh}
           onChangeText={setValueHeigh}
           title="Chiều Cao"
@@ -234,7 +251,7 @@ function ProfileScreen() {
             onPress={() => handleUpdateBMI()}
           />
         </View>
-      </View> 
+      </View>
       <RoundButton
         icon="user-times"
         buttonWidth={40}
@@ -244,38 +261,72 @@ function ProfileScreen() {
         backgroundColor={COLOR.GOLD}
         onPress={() => onPressSignOut()}
       />
-        <Modal
-      animationType="slide"
-      transparent
-      statusBarTranslucent
-      visible={visible}
+      <Modal
+        animationType="slide"
+        transparent
+        statusBarTranslucent
+        visible={visible}
       >
-      <View style={styles.content}>
-      <CustomTextInput
-          style={{alignSelf: 'center', width: '85%', marginTop: 50}}
-          value={valueName}
-          onChangeText={setValueName}
-          title="Họ Tên"
-          secureTextEntry={false}
-          icon="user"
-          placeholder="Nhập họ tên của bạn"
-        />
-        <TouchableOpacity style={styles.commandBtn}>
-          <Text onPress={()=>{}}>
-            Đăng Kí
-          </Text>
-        </TouchableOpacity>
-      
-        <RoundButton
-          icon="close"
-          buttonWidth={25}
-          buttonHeight={25}
-          size={10}
-          style={styles.closeBtnWrapper2}
-          onPress={()=>{setVisible(false)}}
-        />
-      </View>
-    </Modal>
+        <View style={styles.content}>
+          <CustomTextInput
+            style={{ alignSelf: 'center', width: '85%', marginTop: 50 }}
+            value={valueName}
+            onChangeText={setValueName}
+            title="Họ Tên"
+            secureTextEntry={false}
+            icon="user"
+            placeholder="Nhập họ tên của bạn"
+            backgroundColor="#292D3E"
+          />
+          <View style={{ marginTop: 20, flex: 1, width: '85%', alignSelf: "center" }}>
+            <DropDownPicker style={{ marginTop: 0, alignSelf: 'center' }}
+            backgroundColor={COLOR.GREY}
+            searchPlaceholderTextColor={COLOR.GOLD}
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+              placeholder="Chọn loại người tập"
+              theme="DARK"
+            />
+            <View style={{ marginTop: 20, alignSelf: 'center' }}></View>
+             <DropDownPicker style={{ marginTop: 0, alignSelf: 'center' }}
+            backgroundColor={COLOR.GREY}
+            searchPlaceholderTextColor={COLOR.GOLD}
+              open={open2}
+              value={value2}
+              items={items2}
+              setOpen={setOpen2}
+              setValue={setValue2}
+              setItems={setItems2}
+              placeholder="Chọn loại người tập"
+              theme="DARK"
+            />
+            </View>
+            <View style={{ marginTop: 20, flex: 1, width: '85%', alignSelf: "center" }}>
+           
+            
+            </View>
+
+            <TouchableOpacity style={styles.commandBtn}>
+            <Text onPress={() => { }}>
+              Cập Nhật
+            </Text>
+          </TouchableOpacity>
+
+          <RoundButton
+            icon="close"
+            buttonWidth={25}
+            buttonHeight={25}
+            size={10}
+            style={styles.closeBtnWrapper2}
+            onPress={() => { setVisible(false) }}
+          />
+
+        </View>
+      </Modal>
     </ScrollView>
   );
   //#endregion
@@ -346,19 +397,19 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     marginHorizontal: 15,
-    paddingTop: 50, 
-    
-    
-  },commandBtn: {
+    paddingTop: 50,
+
+
+  }, commandBtn: {
     backgroundColor: '#ffcc00',
-    marginTop: 50,
+    marginTop: 100,
     height: 50,
     width: '80%',
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 40,
-  },closeBtnWrapper2: {
+  }, closeBtnWrapper2: {
     position: 'absolute',
     top: 15,
     right: 15,

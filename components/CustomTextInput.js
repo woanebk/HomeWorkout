@@ -17,7 +17,7 @@ function CustomTextInput(props) {
   const inputRef = useRef();
 
   return (
-    <KeyboardAvoidingView style={[styles.body, props.style]}>
+    <KeyboardAvoidingView style={[styles.body, props.style,{ backgroundColor : props.backgroundColor?props.backgroundColor:COLOR.LIGHT_GREY}]}>
       <View style={styles.title}>
         <Text style={styles.titleTxt}>{props.title}</Text>
       </View>
@@ -36,6 +36,7 @@ function CustomTextInput(props) {
         secureTextEntry={props.secureTextEntry}
         keyboardType={props.keyboardType?props.keyboardType:'default'}
         placeholder={props.placeholder}
+       
       />
       <TouchableOpacity onPress={()=>inputRef.current.clear()}>
         <Icon
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 300,
     height: 45,
-    backgroundColor: COLOR.WHITE,
+   
     opacity: 0.6,
     borderRadius: 6,
     borderWidth:0.5,
