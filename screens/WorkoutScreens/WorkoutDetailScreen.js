@@ -15,7 +15,7 @@ const HEADER_HEIGHT = 300; // height of the image
 const SCREEN_HEADER_HEIGHT = 90; // height of the header contain back button
 
 function WorkoutDetailScreen({navigation, route}) {
-  const {workoutData} = route.params;
+  const {workoutData, challengeId, dayIndex} = route.params || {};
 
   const [workout, setWorkout] = useState(workoutData ? workoutData : {});
   const [liked, setLiked] = useState(true);
@@ -167,7 +167,7 @@ function WorkoutDetailScreen({navigation, route}) {
         <TouchableOpacity
           style={styles.commandBtn}
           onPress={() => {
-            navigation.navigate('WorkoutProgress', {workoutData: workout});
+            navigation.navigate('WorkoutProgress', {workoutData: workout, challengeId: challengeId, dayIndex: dayIndex});
           }}>
           <Text style={styles.commandTxt}>Bắt Đầu</Text>
         </TouchableOpacity>
