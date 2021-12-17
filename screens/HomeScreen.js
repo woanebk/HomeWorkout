@@ -146,7 +146,7 @@ useEffect(() => {
     <BackgroundImage
       style={styles.banner}
       source={{
-        uri: 'https://www.cnet.com/a/img/mSdKK71X29nFhsLSencu7IwYlhQ=/1200x675/2019/11/12/e66cc0f3-c6b8-4f6e-9561-e23e08413ce1/gettyimages-1002863304.jpg',
+        uri: workoutOfTheDay?.image || 'https://www.cnet.com/a/img/mSdKK71X29nFhsLSencu7IwYlhQ=/1200x675/2019/11/12/e66cc0f3-c6b8-4f6e-9561-e23e08413ce1/gettyimages-1002863304.jpg',
       }}
       resizeMode="cover">
       <View style={styles.todayWorkout}>
@@ -164,7 +164,7 @@ useEffect(() => {
         <View style={styles.bannerBtnWrapper}>
           <TouchableOpacity
             style={styles.bannerBtn}
-            onPress={() => navigation.navigate('WorkoutInfo', {workoutData: workoutOfTheDay})}>
+            onPress={() => navigation.navigate('WorkoutInfo', {workoutId: workoutOfTheDay?.id})}>
             <Icon
               name="dumbbell"
               type="font-awesome-5"
@@ -275,7 +275,7 @@ useEffect(() => {
               image={{
                 uri: item.imgURL,
               }}
-              onPress={()=>{navigation.navigate("ChallengeDetail",{item})}}
+              onPress={()=>{navigation.navigate("ChallengeDetail",{key: item?.id})}}
             />
           </View>
         )}
@@ -290,7 +290,7 @@ useEffect(() => {
         renderItem={({item}) => (
           <View style={{width: SCREEN_WIDTH, paddingRight: 30}}>
             <WorkoutItem
-              onPress={() => navigation.navigate('WorkoutInfo', {workoutData : item})}
+              onPress={() => navigation.navigate('WorkoutInfo', {workoutId : item?.id})}
               image={{
                 uri: item?.image,
               }}

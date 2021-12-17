@@ -31,14 +31,18 @@ import {IconButton} from 'react-native-paper';
 import WorkoutProgressBar from '../../components/WorkoutProgressBar';
 import CustomModal from '../../components/CustomModal';
 import ProgressCircle from 'react-native-progress-circle';
-import {getUserInfo, submitWorkout} from '../../utilities/FirebaseDatabase';
+import {
+  getUserInfo,
+  submitWorkout,
+  submitWorkoutInChallenge,
+} from '../../utilities/FirebaseDatabase';
 import Toast from 'react-native-toast-message';
 import LoadingView from '../../components/LoadingView';
 
 const STOP_WATCH_HEIGHT = 100;
 
 function WorkoutProgressScreen({route, navigation}, props) {
-  const {workoutData} = route.params;
+  const {workoutData, challengeId, dayIndex} = route.params || {};
 
   const [currentExcersise, setCurrentExcersise] = useState({});
   const [isCounting, setIsCounting] = useState(true);
@@ -76,7 +80,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
   });
 
   useEffect(() => {
-    generateListExercise();
+    generateListExercise();console.log(dayIndex)
   }, [workoutData]);
 
   useEffect(() => {
@@ -131,7 +135,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
     ) {
       setshowModalConfirmFinish(true);
     } else {
-      onSubmitWorkout()
+      onSubmitWorkout();
     }
   };
 
@@ -142,13 +146,26 @@ function WorkoutProgressScreen({route, navigation}, props) {
       const res = await getUserInfo();
       if (!res.val()?.id) throw 'User Không tồn tại';
       const userId = res.val()?.id;
-      await submitWorkout(
-        userId,
-        workoutData?.id,
-        mainTimerRef?.current?.currentTime || 0,
-        calculateWorkoutPercentage().toFixed(),
-        workoutData,
-      );
+      if (challengeId) {
+        await submitWorkoutInChallenge(
+          userId,
+          workoutData?.id,
+          mainTimerRef?.current?.currentTime || 0,
+          calculateWorkoutPercentage().toFixed(),
+          workoutData,
+          challengeId,
+          dayIndex
+        );
+      } else {
+        await submitWorkout(
+          userId,
+          workoutData?.id,
+          mainTimerRef?.current?.currentTime || 0,
+          calculateWorkoutPercentage().toFixed(),
+          workoutData,
+        );
+      }
+
       navigation.navigate('Home');
       Toast.show({
         type: 'success',
@@ -161,6 +178,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
         text1: 'Thông báo',
         text2: e + '👋',
       });
+      console.log(e)
     } finally {
       setIsLoading(false);
     }
@@ -466,7 +484,17 @@ function WorkoutProgressScreen({route, navigation}, props) {
         size={25}
         onPress={() => setShowModalExit(true)}
       />
-      {isLoading && <View style={{position:'absolute',width:SCREEN_WIDTH, height:SCREEN_HEIGHT, backgroundColor:COLOR.MATTE_BLACK}}><LoadingView/></View>}
+      {isLoading && (
+        <View
+          style={{
+            position: 'absolute',
+            width: SCREEN_WIDTH,
+            height: SCREEN_HEIGHT,
+            backgroundColor: COLOR.MATTE_BLACK,
+          }}>
+          <LoadingView />
+        </View>
+      )}
     </View>
   );
 }
