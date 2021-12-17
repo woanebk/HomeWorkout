@@ -88,6 +88,7 @@ function ChallengeDetailScreen({route, navigation}) {
       setIsLoading(true);
       await deleteChallengeOutOfMyList(challengeDetail);
       setIsSubCribed(false);
+      handleGetData()
     } catch {
     } finally {
       setIsLoading(false);
