@@ -263,6 +263,9 @@ export const updateBMIInfo = async (heigh, weight) => {
     .update({
       x: text.substring(0, 10),
       y: Math.round((weight / heigh / heigh) * 1000000) / 100,
+      height: heigh,
+      weight: weight
     });
 };
+
 //#endregion

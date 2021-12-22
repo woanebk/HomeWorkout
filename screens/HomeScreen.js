@@ -105,7 +105,11 @@ useEffect(() => {
   useEffect(()=>{
     getSuggestedWorkout(5)
     getSuggestedChallenges(5)
-    initUser();
+
+    const unsubscribe = navigation.addListener('focus', () => {
+      initUser();
+    });
+    return unsubscribe;
   }, [])
   const initUser = async () => {
     var res = await getUserInfo();

@@ -80,13 +80,6 @@ function WorkoutDetailScreen({navigation, route}) {
               </View>
             ))}
         </ScrollView>
-        <HeartButton
-          style={styles.likeBtn}
-          isliked={liked}
-          onButtonPress={() => {
-            liked ? setLiked(false) : setLiked(true);
-          }}
-        />
       </Animated.View>
     </View>
   );

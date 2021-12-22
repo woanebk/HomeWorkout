@@ -38,14 +38,15 @@ function CustomTextInput(props) {
         placeholder={props.placeholder}
        
       />
-      <TouchableOpacity onPress={()=>inputRef.current.clear()}>
-        <Icon
-        name={'close'}
-        type="font-awesome"
-        size={14}
-        color={COLOR.WHITE}
-        />
-      </TouchableOpacity>
+      {!props?.hideButton && 
+      <TouchableOpacity style={{marginRight:10}} onPress={()=>inputRef.current.clear()}>
+      <Icon
+      name={'close'}
+      type="font-awesome"
+      size={14}
+      color={COLOR.WHITE}
+      />
+    </TouchableOpacity>}
     </KeyboardAvoidingView>
   );
 }
