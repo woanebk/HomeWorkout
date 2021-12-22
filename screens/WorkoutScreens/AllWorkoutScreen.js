@@ -78,7 +78,7 @@ function AllWorkoutScreen({navigation, route}) {
           },
         ]}
         source={{
-          uri: collectionData?.image || 'https://upload.wikimedia.org/wikipedia/vi/4/45/Divide_cover.png',
+          uri: collectionData?.image || 'https://oreni.vn/uploads/contents/workout-la-gi-3.jpg',
         }}
         resizeMode="cover"></Animated.Image>
       <Animated.View

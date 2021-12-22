@@ -79,3 +79,16 @@ export const filterListWorkoutByTag = (arr, tag) => {
     return item?.tag?.includes(tag)
   }))
 }
+
+export const generateArrayFromArrayKey = (arr, key) => {
+  if(arr?.length <= 0) return []
+  let res = []
+  arr?.map((item)=>{
+    item[key] && res.push(item[key])
+  })
+  return res
+}
+
+export function isNumber(val){
+  return !isNaN(val)
+}
