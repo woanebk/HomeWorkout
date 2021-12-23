@@ -98,3 +98,18 @@ export const WORKOUT_TAG_COLLECTION = [
 ];
 
 export const HORIZONTAL_LIST_HEIGHT = 200; //left view 130
+
+export const LEVEL_MAP = [
+  {
+    name: 'Người mới tập',
+    description: 'Tôi chưa từng tập luyện',
+  },
+  {
+    name: 'Người có kinh nghiệm',
+    description: 'Tôi đã có kinh nghiệm tập luyện',
+  },
+  {
+    name: 'Người tập chuyên nghiệp',
+    description: 'Tôi tập luyện đã lâu và có nhiều kinh nghiệm',
+  },
+];

@@ -13,16 +13,15 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from 'react-native';
-import {baseProps} from 'react-native-gesture-handler/lib/typescript/handlers/gestureHandlers';
 import LinearGradient from 'react-native-linear-gradient';
 import Video from 'react-native-video';
 import CustomTextInput from '../../components/CustomTextInput';
 import OTPVerifyModal from '../../components/OTPVerifyModal';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import SingUpModal from '../../components/SignUpModal';
-import {createIconSetFromFontello} from 'react-native-vector-icons';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+import Toast from 'react-native-toast-message';
 
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
@@ -31,57 +30,7 @@ function LoginScreen({navigation}, route) {
   const [valueEmail, setValueEmail] = useState('');
   const [valuePassword, setValuePassword] = useState('');
   const [valuePasswordConfirm, setValuePasswordConfirm] = useState('');
-  //#region SignUp
-  const handleSignUp = () => {
-    console.debug('đăng kí');
 
-    if (valueEmail == '' || valuePassword == '') {
-      Alert.alert(
-        '',
-        //body
-        'Vui lòng nhập địa chỉ email và password',
-      );
-    } else if (valuePassword != valuePasswordConfirm)
-      Alert.alert(
-        '',
-        //body
-        'Mật khẩu không giống',
-      );
-    else {
-      console.debug('đăng kí');
-      auth()
-        .createUserWithEmailAndPassword(valueEmail, valuePasswordConfirm)
-        .then(() => {
-          Alert.alert(
-            '',
-            //body
-            'Tạo tài khoản thành công và đăng nhập',
-          );
-          console.debug('User account created & signed in!');
-        })
-        .catch(error => {
-          if (error.code === 'auth/email-already-in-use') {
-            console.debug('That email address is already in use!');
-            Alert.alert(
-              '',
-              //body
-              'Địa chỉ email này đã được sử dụng',
-            );
-          }
-
-          if (error.code === 'auth/invalid-email') {
-            Alert.alert(
-              '',
-              //body
-              'Vui lòng nhập địa chỉ Email xác thực',
-            );
-          }
-
-          console.debug(error);
-        });
-    }
-  };
-  //#endregion
   //#region Forgotpass
   const handleForgot = () => {
     console.debug('đăng kí');
@@ -211,7 +160,7 @@ function LoginScreen({navigation}, route) {
         <TouchableOpacity>
           <Text
             style={{color: COLOR.WHITE, fontSize: 13, fontWeight: 'bold'}}
-            onPress={() => setVisibleRegister(true)}>
+            onPress={()=>navigation.navigate('Survey')}>
             Đăng Kí Ngay
           </Text>
         </TouchableOpacity>
@@ -296,17 +245,6 @@ function LoginScreen({navigation}, route) {
         visible={showOTP}
         onPressClose={() => setShowOTP(false)}
         onConfirm={() => {}}
-      />
-      <SingUpModal
-        visible={visibleRegister}
-        onPressClose={() => setVisibleRegister(false)}
-        onPressSignUp={() => handleSignUp()}
-        valueEmail={valueEmail}
-        setValueEmail={setValueEmail}
-        valuePassword={valuePassword}
-        setValuePassword={setValuePassword}
-        valuePasswordConfirm={valuePasswordConfirm}
-        setValuePasswordConfirm={setValuePasswordConfirm}
       />
     </View>
   );

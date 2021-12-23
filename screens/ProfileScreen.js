@@ -43,6 +43,8 @@ import Toast from 'react-native-toast-message';
 import LinearGradient from 'react-native-linear-gradient';
 import {LineChart} from 'react-native-chart-kit';
 import MenuButton from '../components/MenuButton';
+import LoadingView from '../components/LoadingView';
+import { NavigationContainer } from '@react-navigation/native';
 const PFP_WIDTH = 80;
 const PFP_HEIGHT = 80;
 
@@ -57,19 +59,7 @@ const chartConfig = {
   useShadowColorFromDataset: false, // optional
 };
 
-const onPressSignOut = () => {
-  auth()
-    .signOut()
-    .then(() =>
-      Alert.alert(
-        '',
-        //body
-        'Đăng xuất thành công',
-      ),
-    );
-};
-
-function ProfileScreen() {
+function ProfileScreen({navigation}) {
   const [valueHeigh, setValueHeigh] = useState('');
   const [valueWeight, setValueWeight] = useState('');
   const [user, setUser] = useState({abc: 'abc'});
@@ -78,19 +68,14 @@ function ProfileScreen() {
   const [valueName, setValueName] = useState('');
 
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('Người dùng mới');
+  const [value, setValue] = useState('Người mới tập');
   const [items, setItems] = useState([
-    {label: 'Người dùng mới', value: 'Người dùng mới'},
-    {label: 'Người dùng thành thục', value: 'Người dùng thành thục'},
-    {label: 'Người dùng chuyên nghiệp', value: 'Người dùng chuyên nghiệp'},
+    {label: 'Người mới tập', value: 'Người mới tập'},
+    {label: 'Người có kinh nghiệm', value: 'Người có kinh nghiệm'},
+    {label: 'Người tập chuyên nghiệp', value: 'Người tập chuyên nghiệp'},
   ]);
-  const [open2, setOpen2] = useState(false);
-  const [value2, setValue2] = useState('Bài tập giảm mỡ');
-  const [items2, setItems2] = useState([
-    {label: 'Bài tập giảm mỡ', value: 'Bài tập giảm mỡ'},
-    {label: 'Bài tập tăng cơ', value: 'Bài tập tăng cơ'},
-    {label: 'Bài tập giảm cân', value: 'Bài tập giảm cân'},
-  ]);
+  
+  const [isLoading, setIsLoadng] = useState(false);
   const [showModalUpdateStat, setShowModalUpdateStat] = useState(false);
   const [chartLoading, setChartLoading] = useState(true);
   const [showWeightChart, setShowWeightChart] = useState(false);
@@ -104,7 +89,7 @@ function ProfileScreen() {
     setChartLoading(true);
     var res = await getUserInfo();
     setUser(res.val());
-    setValueHeigh(res.val().heigh.toString());
+    setValueHeigh(res.val().height.toString());
     setValueWeight(res.val().weight.toString());
     setValueName(res.val().name.toString());
 
@@ -154,7 +139,14 @@ function ProfileScreen() {
       text2: 'Vui lòng nhập lại tên',
     });
     else {
-      await updateUserInfo(value, value2, valueName)
+      const data = {
+        name: valueName,
+        level: value
+      }
+      const res = await getUserInfo()
+      console.log(res.val().id)
+      
+      await updateUserInfo(res.val().id, data)
         .then(async () => {
           Toast.show({
             type: 'info',
@@ -170,6 +162,24 @@ function ProfileScreen() {
             text2: 'Vui lòng thử lại sau',
           });
         });
+    }
+  };
+
+  const onPressSignOut = () => {
+    try{
+      setIsLoadng(true)
+      auth()
+      .signOut()
+      .then(() =>
+        Alert.alert(
+          '',
+          //body
+          'Đăng xuất thành công',
+        ),
+      );
+    } catch (e){
+    }finally{
+      setIsLoadng(false)
     }
   };
   const renderAdminButton = () => {
@@ -334,9 +344,9 @@ function ProfileScreen() {
             }}>
             <View style={styles.infoBlock}>
               <Text style={styles.smallNumberTxt}>
-                {user.weight && user.heigh
+                {user?.weight && user?.height
                   ? Math.round(
-                      (user.weight / user.heigh / user.heigh) * 1000000,
+                      (user?.weight / user?.height / user?.height) * 1000000,
                     ) / 100
                   : '---'}
               </Text>
@@ -559,7 +569,7 @@ function ProfileScreen() {
           start={{x: 0, y: 0.1}}
           end={{x: 0, y: 0.7}}
           colors={[COLOR.TRANSPARENT, COLOR.BLACK]}>
-          <Text style={styles.nameTxt}>{user.name}</Text>
+          <Text style={styles.nameTxt}>{user?.name}</Text>
         </LinearGradient>
       </ImageBackground>
       <View style={styles.titleWrapper}>
@@ -584,7 +594,7 @@ function ProfileScreen() {
               color={COLOR.WHITE}
             />
             <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
-              Người mới tập
+              {user?.level || 'Người mới tập'}
             </Text>
           </View>
           <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
@@ -639,6 +649,10 @@ function ProfileScreen() {
           </TouchableOpacity>
         </View>
         <MenuButton
+          title="Bài tập yêu thích"
+          onPress={() => {navigation.navigate('AllFavoriteWorkout')}}
+        />
+        <MenuButton
           title="Cập nhật thông tin cá nhân"
           onPress={() => setShowModalUpdateInfo(true)}
         />
@@ -658,6 +672,18 @@ function ProfileScreen() {
         }}
         onCancel={() => setShowModalConfirm(false)}
       />
+      {isLoading && (
+        <View
+          style={{
+            position: 'absolute',
+            width: SCREEN_WIDTH,
+            height: SCREEN_HEIGHT,
+            backgroundColor: COLOR.MATTE_BLACK,
+            opacity: 0.95,
+          }}>
+          <LoadingView />
+        </View>
+      )}
     </ScrollView>
   );
 }
