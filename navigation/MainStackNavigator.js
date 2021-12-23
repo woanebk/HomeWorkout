@@ -13,6 +13,7 @@ import AllWorkoutScreen from '../screens/WorkoutScreens/AllWorkoutScreen';
 import ExerciseLibraryScreen from '../screens/Exercise/ExerciseLibraryScreen';
 import ChallengeDetailScreen from '../screens/Challenge/ChallengeDetailScreen';
 import AllChallengeScreen from '../screens/Challenge/AllChallengeSreen';
+import AllFavoriteWorkoutScreen from '../screens/WorkoutScreens/AllFavoriteWorkoutScreen';
 const MainStack = createStackNavigator();
 
 const AuthStack = createStackNavigator();
@@ -94,6 +95,11 @@ function MainStackNavigator() {
           headerTitle: 'asasasd',
           headerMode: 'float',
         }}
+      />
+      <MainStack.Screen
+        name="AllFavoriteWorkout"
+        component={AllFavoriteWorkoutScreen}
+        options={{headerTintColor: '#fff'}}
       />
     </MainStack.Navigator>
   );

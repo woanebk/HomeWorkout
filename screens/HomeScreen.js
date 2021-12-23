@@ -105,7 +105,11 @@ useEffect(() => {
   useEffect(()=>{
     getSuggestedWorkout(5)
     getSuggestedChallenges(5)
-    initUser();
+
+    const unsubscribe = navigation.addListener('focus', () => {
+      initUser();
+    });
+    return unsubscribe;
   }, [])
   const initUser = async () => {
     var res = await getUserInfo();
@@ -216,10 +220,10 @@ useEffect(() => {
 
       <View style={{flexDirection: 'row', paddingVertical: 5}}>
         <View style={{flex: 5}}>
-          <Text style={styles.numberTxt}>{user.name?user.name:"Người dùng mới"}</Text>
+          <Text style={styles.numberTxt}>{user?.name?user?.name:"Người dùng mới"}</Text>
           <Text style={styles.silverTxt}>
-            Chiều Cao: <Text style={styles.numberTxt}>{user.heigh?user.heigh:"---"}cm</Text> - Cân nặng:{' '}
-            <Text style={styles.numberTxt}>{user.weight?user.weight:"---"} kg</Text>
+            Chiều Cao: <Text style={styles.numberTxt}>{user?.height?user?.height:"---"}cm</Text> - Cân nặng:{' '}
+            <Text style={styles.numberTxt}>{user?.weight?user?.weight:"---"} kg</Text>
           </Text>
         </View>
         <View style={{flex: 1, alignItems: 'center', marginTop: -20}}>
@@ -228,8 +232,8 @@ useEffect(() => {
             BMI
           </Text>
           <Text style={{fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE}}>
-          {user.weight && user.heigh
-              ? Math.round((user.weight / user.heigh / user.heigh) * 1000000) /
+          {user?.weight && user?.height
+              ? Math.round((user?.weight / user?.height / user?.height) * 1000000) /
                 100
               : '---'}         </Text>
         </View>
