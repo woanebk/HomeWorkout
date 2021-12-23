@@ -35,7 +35,7 @@ function WorkoutRowItem(props) {
                 </View>
               ))}
           </ScrollView>
-            <HeartButton style={styles.likeBtn} heartStyle={{width:60, height:60}} isliked={props?.isliked} onButtonPress={()=>{}}/>
+            {/* <HeartButton style={styles.likeBtn} heartStyle={{width:60, height:60}} isliked={props?.isliked} onButtonPress={()=>{}}/> */}
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>

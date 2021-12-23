@@ -12,8 +12,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import HeartButton from '../../components/HeartButton';
 import StartButton from '../../components/StartButton';
-import {getWorkoutById} from '../../utilities/FirebaseDatabase';
+import {addWorkoutToListFavorite, getUserInfo, getWorkoutById, removeWorkoutFromListFavorite} from '../../utilities/FirebaseDatabase';
 import LoadingView from '../../components/LoadingView';
+import { convertObjectToArrayWithoutKey } from '../../utilities/Utilities';
 function WorkoutInfoScreen({navigation, route}) {
   const {workoutId, challengeId, dayIndex} = route.params || '';
 
@@ -22,7 +23,8 @@ function WorkoutInfoScreen({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getWorkoutData();console.log(dayIndex)
+    getWorkoutData();
+    checkIsLiked();
   }, [workoutId]);
 
   const getWorkoutData = async () => {
@@ -37,6 +39,26 @@ function WorkoutInfoScreen({navigation, route}) {
       setIsLoading(false)
     }
   };
+
+  const checkIsLiked = async () => {
+    const res = await getUserInfo()
+    const listFavorite = convertObjectToArrayWithoutKey(res.val()?.favoriteWorkouts)
+    const isLiked = listFavorite?.some((item)=>{
+      return item?.id === workoutId
+    })
+    setLiked(isLiked)
+  }
+
+  const handleLike = async () => {
+    if (!liked){
+      addWorkoutToListFavorite(workoutId)
+      setLiked(true)
+    }
+    else {
+      removeWorkoutFromListFavorite(workoutId)
+      setLiked(false)
+    }
+  }
 
   const renderHeader = () => (
     <View style={styles.banner}>
@@ -53,7 +75,7 @@ function WorkoutInfoScreen({navigation, route}) {
             style={styles.likeBtn}
             isliked={liked}
             onButtonPress={() => {
-              liked ? setLiked(false) : setLiked(true);
+              handleLike()
             }}
           />
         </LinearGradient>

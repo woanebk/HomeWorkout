@@ -35,13 +35,13 @@ function CustomModal(props) {
             }}>
             <CommandButton
               style={styles.commandBtn}
-              title="Cancel"
-              onPress={props?.onCancel}
+              title="Confirm"
+              onPress={props?.onConfirm}
             />
             <CommandButton
               style={styles.commandBtn}
-              title="Confirm"
-              onPress={props?.onConfirm}
+              title="Cancel"
+              onPress={props?.onCancel}
             />
           </View>
           {/* <LottieView

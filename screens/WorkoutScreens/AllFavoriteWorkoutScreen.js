@@ -12,7 +12,7 @@ import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import HeartButton from '../../components/HeartButton';
 import {Icon} from 'react-native-elements';
 import WorkoutRowItem from '../../components/WorkoutRowItem';
-import {getListAllWorkout} from '../../utilities/FirebaseDatabase';
+import {getListAllWorkout, getUserInfo} from '../../utilities/FirebaseDatabase';
 import {convertObjectToArrayWithoutKey, filterListWorkoutByTag} from '../../utilities/Utilities';
 
 const HEADER_HEIGHT = 250; // height of the image
@@ -20,29 +20,40 @@ const SCREEN_HEADER_HEIGHT = 90; // height of the header contain back button
 const NOTCH_SIZE = 30;
 const LIST_EXTRA_SIZE = 120;
 
-function AllWorkoutScreen({navigation, route}) {
+function AllFavoriteWorkoutScreen({navigation, route}) {
   const [listWorkout, setListWorkout] = useState([]);
-  const {collectionData} =  route.params || {}
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    getAllWorkoutData();
+    const unsubscribe = navigation.addListener('focus', () => {
+        getAllWorkoutData();
+      });
+      return unsubscribe;
   }, []);
 
   const getAllWorkoutData = async () => {
     try {
       const res = await getListAllWorkout();
       if (!res) throw 'CANNOT GET LIST WORKOUTS';
-      if (collectionData){
-        const listFilterByTag = filterListWorkoutByTag(convertObjectToArrayWithoutKey(res.val()), collectionData?.tag)
-        setListWorkout(listFilterByTag)
-      }
-      else setListWorkout(convertObjectToArrayWithoutKey(res.val()));
+      const list = await filterLikedWorkout(convertObjectToArrayWithoutKey(res.val()))
+      setListWorkout(list);
     } catch (e) {
       console.log(e);
     }
   };
+
+  const filterLikedWorkout = async (arr) => {
+    const res = await getUserInfo()
+    const listFavorite = convertObjectToArrayWithoutKey(res.val()?.favoriteWorkouts)
+    const listFiltered = arr?.filter((item)=>{
+      return listFavorite?.some((favoriteItem)=>{
+          return favoriteItem?.id === item?.id
+      })
+    })
+    console.log(listFiltered)
+    return listFiltered || []
+  }
 
   const renderHeader = () => (
     <Animated.View
@@ -78,7 +89,7 @@ function AllWorkoutScreen({navigation, route}) {
           },
         ]}
         source={{
-          uri: collectionData?.image || 'https://oreni.vn/uploads/contents/workout-la-gi-3.jpg',
+          uri: 'https://bcabadminton.org/wp-content/uploads/2020/07/work-out-la-gi-6.jpg',
         }}
         resizeMode="cover"></Animated.Image>
       <Animated.View
@@ -96,8 +107,7 @@ function AllWorkoutScreen({navigation, route}) {
           },
         ]}>
         <View style={styles.headerTxtWrapper}>
-          <Text style={styles.headerTxt}>Thư viện bài tập</Text>
-          <Text style={styles.headerTxt}>{collectionData?.name}</Text>
+          <Text style={styles.headerTxt}>Bài tập yêu thích</Text>
           <Text style={styles.infoTxt}>Số lượng: {listWorkout?.length}</Text>
         </View>
       </Animated.View>
@@ -188,7 +198,7 @@ function AllWorkoutScreen({navigation, route}) {
               ],
             },
           ]}>
-          Thư viện bài tập
+          Bài tập yêu thích
         </Animated.Text>
       </Animated.View>
     </View>
@@ -284,4 +294,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllWorkoutScreen;
+export default AllFavoriteWorkoutScreen;
