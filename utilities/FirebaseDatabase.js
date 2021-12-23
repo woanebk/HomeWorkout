@@ -247,25 +247,53 @@ export const submitWorkout = async (
 
 //#region UserInfo
 export const getUserInfo = async () => {
-  var currentdate = new Date();
-  var text = currentdate.toISOString().toString();
   return await database.ref('User/' + auth().currentUser.uid).once('value');
 };
-export const updateBMIInfo = async (heigh, weight) => {
+export const updateBMIInfo = async (height, weight) => {
   var currentdate = new Date();
   var text = currentdate.toISOString().toString();
   await database
     .ref('User/' + auth().currentUser.uid)
-    .update({heigh: heigh, weight: weight});
-  console.log(Math.round((weight / heigh / heigh) * 1000000) / 100);
+    .update({height: height, weight: weight});
+  console.log(Math.round((weight / height / height) * 1000000) / 100);
   return await database
     .ref('User/' + auth().currentUser.uid + '/listBMI/' + text.substring(0, 10))
     .update({
       x: text.substring(0, 10),
-      y: Math.round((weight / heigh / heigh) * 1000000) / 100,
-      height: heigh,
+      y: Math.round((weight / height / height) * 1000000) / 100,
+      height: height,
       weight: weight
     });
 };
+
+export const updateUserInfo = async (userId, data) => {
+  var currentdate = new Date();
+  var text = currentdate.toISOString().toString();
+  await database
+    .ref('User/' + userId)
+    .update(data);
+   if (!data?.height || !data?.weight) return
+  console.log(Math.round((data?.weight / data?.height / data?.height) * 1000000) / 100);
+  await database
+    .ref('User/' + userId + '/listBMI/' + text.substring(0, 10))
+    .update({
+      x: text.substring(0, 10),
+      y: Math.round((data?.weight / data?.height / data?.height) * 1000000) / 100,
+      height: data?.height,
+      weight: data?.weight
+    });
+};
+
+export const addWorkoutToListFavorite = async (workoutId) => {
+  await database
+    .ref('User/' + auth().currentUser.uid + '/favoriteWorkouts/'+ workoutId)
+    .update({id: workoutId});
+}
+
+export const removeWorkoutFromListFavorite = async (workoutId) => {
+  await database
+    .ref('User/' + auth().currentUser.uid + '/favoriteWorkouts/'+ workoutId)
+    .remove();
+}
 
 //#endregion

@@ -1,4 +1,4 @@
-import { LEVEL } from "../constant";
+import {LEVEL} from '../constant';
 
 export const handleFormatSecond = seconds => {
   let min = parseInt(seconds / 60);
@@ -10,7 +10,7 @@ export const handleFormatSecond = seconds => {
 
 export const convertObjectToArrayWithoutKey = obj => {
   let arr = [];
-  for (let [key, value] of Object.entries(obj)) {
+  for (let [key, value] of Object.entries(obj || {})) {
     arr.push(value);
   }
   return arr;
@@ -24,7 +24,7 @@ export const convertObjectToArrayWithoutKeySort = obj => {
 };
 export const convertObjectToArray = obj => {
   let arr = [];
-  for (let [key, value] of Object.values(obj)) {
+  for (let [key, value] of Object.values(obj || {})) {
     arr.push(key, value);
   }
   return arr;
@@ -42,53 +42,71 @@ export const convertStringDDMMYYtoDate = stringDate => {
   );
 };
 
-export const shuffle = (array) => {
-  let currentIndex = array.length,  randomIndex;
+export const shuffle = array => {
+  let currentIndex = array.length,
+    randomIndex;
 
   // While there remain elements to shuffle...
   while (currentIndex != 0) {
-
     // Pick a remaining element...
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
     // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
 
   return array;
-}
+};
 
-export const handleArrayToString = (array) => {
-  let str = ''
-  array?.map((item, index)=>{
-    return index === array?.length - 1 ?
-    str += item :
-    str+= item + ', '
-  })
-  return str
-}
+export const handleArrayToString = array => {
+  let str = '';
+  array?.map((item, index) => {
+    return index === array?.length - 1 ? (str += item) : (str += item + ', ');
+  });
+  return str;
+};
 
-export const cloneArrayOrObject = (arr) => {
-  return JSON.parse(JSON.stringify(arr))
-}
+export const cloneArrayOrObject = arr => {
+  return JSON.parse(JSON.stringify(arr));
+};
 
 export const filterListWorkoutByTag = (arr, tag) => {
-  return convertObjectToArrayWithoutKey(arr?.filter((item)=>{
-    return item?.tag?.includes(tag)
-  }))
-}
+  return convertObjectToArrayWithoutKey(
+    arr?.filter(item => {
+      return item?.tag?.includes(tag);
+    }),
+  );
+};
 
 export const generateArrayFromArrayKey = (arr, key) => {
-  if(arr?.length <= 0) return []
-  let res = []
-  arr?.map((item)=>{
-    item[key] && res.push(item[key])
-  })
-  return res
+  if (arr?.length <= 0) return [];
+  let res = [];
+  arr?.map(item => {
+    item[key] && res.push(item[key]);
+  });
+  return res;
+};
+
+export function isNumber(val) {
+  return !isNaN(val);
 }
 
-export function isNumber(val){
-  return !isNaN(val)
-}
+export const generateNumberRangeArray = (fromNumber, toNumber) => {
+  var list = [];
+  for (var i = fromNumber; i <= toNumber; i++) {
+    list.push(i);
+  }
+  return list;
+};
+
+export const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
