@@ -247,6 +247,9 @@ export const submitWorkout = async (
 
 //#region UserInfo
 export const getUserInfo = async () => {
+  await database
+    .ref('User/' + auth().currentUser.uid )
+    .update({id:auth().currentUser.uid})
   return await database.ref('User/' + auth().currentUser.uid).once('value');
 };
 export const updateBMIInfo = async (height, weight) => {
@@ -268,6 +271,7 @@ export const updateBMIInfo = async (height, weight) => {
 
 export const updateUserInfo = async (userId, data) => {
   var currentdate = new Date();
+  userId=auth().currentUser.uid;
   var text = currentdate.toISOString().toString();
   await database
     .ref('User/' + userId)
