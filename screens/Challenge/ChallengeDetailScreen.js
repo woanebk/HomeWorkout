@@ -158,7 +158,7 @@ function ChallengeDetailScreen({route, navigation}) {
             <View style={styles.rowItemTextWrapper}>
               <Text style={styles.rowItemTitleTxt}>
                 Thời gian:{' '}
-                {challengeDetail?.endTime != null
+                {/* {challengeDetail?.endTime != null
                   ? (convertStringDDMMYYtoDate(
                       challengeDetail.endTime,
                     ).getTime() -
@@ -167,13 +167,12 @@ function ChallengeDetailScreen({route, navigation}) {
                       ).getTime()) /
                       (1000 * 3600 * 24) +
                     ''
-                  : 7}{' '}
-                ngày
+                  : 7}{' '} */}
+                  {challengeDetail?.listWorkout?.length || 0 }
+                {' '}ngày
               </Text>
               <Text style={styles.rowItemSubTxt}>
-                {challengeDetail?.spanTime != null
-                  ? challengeDetail?.spanTime
-                  : '30'}{' '}
+                30
                 phút mỗi ngày
               </Text>
               {/* <Text style={styles.rowItemSubTxt}>
