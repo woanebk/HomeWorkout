@@ -112,12 +112,13 @@ function LoginScreen({navigation}, route) {
   //#region FaceBook
   async function onFacebookButtonPress() {
     // Attempt login with permissions
+    LoginManager.logOut();
     console.debug('đăng kí');
     const result = await LoginManager.logInWithPermissions([
       'public_profile',
       'email',
     ]);
-
+   
     if (result.isCancelled) {
       throw 'User cancelled the login process';
     }
