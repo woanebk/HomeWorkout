@@ -20,6 +20,7 @@ import CustomModal from '../components/CustomModal';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   generateNewExercise,
+  generateNewVideo,
   generateNewWorkout,
 } from '../utilities/FirebaseDatabase';
 import PureChart from 'react-native-pure-chart';
@@ -210,7 +211,20 @@ function ProfileScreen({navigation}) {
           onPress={() => {
             generateNewWorkout();
           }}>
-          <Text>Generate Workout</Text>
+          <Text>Generate Video</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            height: 50,
+            backgroundColor: COLOR.WHITE,
+            justifyContent: 'center',
+            padding: 10,
+            marginTop: 20,
+          }}
+          onPress={() => {
+            generateNewVideo();
+          }}>
+          <Text>Generate Video</Text>
         </TouchableOpacity>
       </View>
     );
@@ -614,6 +628,7 @@ function ProfileScreen({navigation}) {
           </View>
         </View>
         {renderUserInfo()}
+        {/* {renderAdminButton()} */}
         <View
           style={{
             flex: 1,
