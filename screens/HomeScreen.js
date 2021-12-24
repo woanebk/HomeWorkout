@@ -14,7 +14,7 @@ import {COLOR, SCREEN_WIDTH, WORKOUT_TAG_COLLECTION} from '../constant';
 import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
-import { getListAllChallenge, getListAllWorkout, Test ,getUserInfo} from '../utilities/FirebaseDatabase';
+import { getListAllChallenge, getListAllWorkout, Test ,getUserInfo, getListAllVideo} from '../utilities/FirebaseDatabase';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import { convertObjectToArrayWithoutKey, shuffle } from '../utilities/Utilities';
@@ -29,6 +29,7 @@ function HomeScreen({navigation}) {
   const [suggestedWorkouts, setSuggestedWorkouts] = useState(['1', '2', '3']);
   const [workoutOfTheDay, setWorkOutOfTheDay] = useState({})
   const [suggestedChallenges, setSuggestedChallenges] = useState(['1', '2', '3']);
+  const [suggestedVideos, setSuggestedVideos] = useState(['1', '2', '3']);
   const [allChallenges, setAllChallenges] = useState(DATA);
   const [user, setUser] = useState({abc: 'abc'});
 
@@ -106,7 +107,7 @@ useEffect(() => {
     
     getSuggestedWorkout(5)
     getSuggestedChallenges(5)
-
+    getSuggestedVideos(5)
     const unsubscribe = navigation.addListener('focus', () => {
       initUser();
     });
@@ -134,6 +135,7 @@ useEffect(() => {
       console.log(e)
     }
   }
+
   const getSuggestedChallenges = async (n) =>{
     try{
       const res = await getListAllChallenge()
@@ -144,6 +146,21 @@ useEffect(() => {
         setSuggestedChallenges(randomList?.slice(0, n))
       }
       else setSuggestedChallenges(randomList)
+    }
+    catch (e){
+      console.log(e)
+    }
+  }
+
+  const getSuggestedVideos = async (n) =>{
+    try{
+      const res = await getListAllVideo()
+      if(!res) throw('CANNOT GET LIST VIDEO')
+      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()))
+      if(randomList?.length > n){
+        setSuggestedVideos(randomList?.slice(0, n))
+      }
+      else setSuggestedVideos(randomList)
     }
     catch (e){
       console.log(e)
@@ -307,7 +324,30 @@ useEffect(() => {
           </View>
         )}
       />
-      <HomeSection title="Lựa chọn cách tập của riêng bạn" onPress={() => navigation.navigate('Category')} />
+      <HomeSection title="Video kiến thức"  onPress={()=>{
+        navigation.navigate("AllVideo")
+        }} />
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.horizontalList}
+        data={suggestedVideos}
+        renderItem={({item, index}) => (
+          <View style={{paddingRight: 15}} key={index}>
+            <ProgramItem
+              style={{height: 200, width: 160}}
+              title={item?.name}
+              image={{
+                uri: item?.image,
+              }}
+              onPress={()=>navigation.navigate('WatchVideo', {videoData: item})}
+              icon='play'
+              iconBackgroundColor={COLOR.RED}
+            />
+          </View>
+        )}
+      />
+      <HomeSection title="Lựa chọn cách tập của riêng bạn" hideButton onPress={() => navigation.navigate('Category')} />
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
