@@ -300,3 +300,39 @@ export const removeWorkoutFromListFavorite = async (workoutId) => {
 }
 
 //#endregion
+
+//#region Video
+
+export const addVideo = video => {
+  return database.ref('Videos').push(video);
+};
+
+export const updateVideo = (id, data) => {
+  return database.ref('Videos/' + id).update(data);
+};
+
+export const generateNewVideo = () => {
+  const dummyVideo = {
+    name: 'Tên tiếng việt',
+    description: 'Tay rộng bằng vai',
+    video: 'link Video',
+    image: 'link image',
+    createdAt: moment().toISOString(),
+  };
+  const ref = addVideo(dummyVideo);
+  const updateID = setTimeout(() => {
+    updateVideo(ref.key, {
+      id: ref.key,
+    });
+    clearTimeout(updateID);
+  }, 2000);
+};
+
+export const getListAllVideo = async () => {
+  return await database.ref('Videos').once('value');
+};
+
+export const getVideoById = async id => {
+  return await database.ref('Videos/' + id).once('value');
+};
+//#endregion
