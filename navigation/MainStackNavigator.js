@@ -15,6 +15,8 @@ import ChallengeDetailScreen from '../screens/Challenge/ChallengeDetailScreen';
 import AllChallengeScreen from '../screens/Challenge/AllChallengeSreen';
 import AllFavoriteWorkoutScreen from '../screens/WorkoutScreens/AllFavoriteWorkoutScreen';
 import SurveyScreen from '../screens/Auth/SurveyScreen';
+import AllVideoScreen from '../screens/Video/AllVideoScreen';
+import WatchVideoScreen from '../screens/Video/WatchVideoScreen';
 const MainStack = createStackNavigator();
 
 const AuthStack = createStackNavigator();
@@ -102,7 +104,17 @@ function MainStackNavigator() {
         component={AllFavoriteWorkoutScreen}
         options={{headerTintColor: '#fff'}}
       />
-      <AuthStack.Screen name="Survey" component={SurveyScreen} />
+      <MainStack.Screen name="Survey" component={SurveyScreen} />
+      <MainStack.Screen
+        name="AllVideo"
+        component={AllVideoScreen}
+        options={{headerTintColor: '#fff'}}
+      />
+      <MainStack.Screen
+        name="WatchVideo"
+        component={WatchVideoScreen}
+        options={{headerTintColor: '#fff'}}
+      />
     </MainStack.Navigator>
   );
 }
