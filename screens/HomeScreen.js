@@ -103,6 +103,7 @@ useEffect(() => {
 //#endregion
 
   useEffect(()=>{
+    
     getSuggestedWorkout(5)
     getSuggestedChallenges(5)
 
@@ -111,9 +112,12 @@ useEffect(() => {
     });
     return unsubscribe;
   }, [])
+
   const initUser = async () => {
     var res = await getUserInfo();
     setUser(res.val());
+    if(!res.val()?.weight || !res.val()?.height || !res.val()?.level || !res.val()?.name)
+    navigation.navigate('Survey', {isUpdateSurveyInfoOnly: true})
   };
   const getSuggestedWorkout = async (n) =>{
     try{
@@ -204,7 +208,7 @@ useEffect(() => {
             color={COLOR.WHITE}
           />
           <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
-            Người mới tập
+            {user?.level || 'Người mới tập'}
           </Text>
         </View>
         <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>

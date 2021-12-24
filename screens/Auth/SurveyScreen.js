@@ -26,6 +26,9 @@ const WEIGHT_RANGE = generateNumberRangeArray(1, 500);
 
 
 function SurveyScreen({navigation, route}) {
+
+  const {isUpdateSurveyInfoOnly} = route.params || {}
+
   const [selectedGender, setSelectedGender] = useState('Nam');
   const [selectedHeight, setSelectedHeight] = useState(160);
   const [selectedWeight, setSelectedWeight] = useState(50);
@@ -40,9 +43,6 @@ function SurveyScreen({navigation, route}) {
   const pagerViewRef = useRef();
 
   const handleSignUp = () => {
-      console.log(valueEmail)
-      console.log(valuePassword)
-      console.log(valuePasswordConfirm)
 
     if (valueEmail === '' || valuePassword === '' || valueName === '') {
       alert(
@@ -94,6 +94,19 @@ function SurveyScreen({navigation, route}) {
         });
     }
   };
+
+  const handleUpdateSurveyInfo = async () => {
+    if (valueName === '') {
+      alert(
+        'Vui lòng nhập đầy đủ thông tin',
+      );
+    }
+    else {
+      const userId = auth().currentUser.uid
+      await updateInfo(userId)
+      navigation.navigate('Home')
+      }
+  }
 
   const updateInfo = async (id) => {
     const data = {
@@ -382,7 +395,11 @@ function SurveyScreen({navigation, route}) {
           icon="circle"
           placeholder="Nhập tên của bạn"
         />
-        <CustomTextInput
+        {
+          !isUpdateSurveyInfoOnly &&
+          (
+           <>
+           <CustomTextInput
           style={styles.textinput}
           value={valueEmail}
           onChangeText={setValueEmail}
@@ -408,7 +425,9 @@ function SurveyScreen({navigation, route}) {
           title="Xác nhận mật khẩu"
           icon="circle"
           placeholder="Nhập Lại mật khẩu"
-        />
+        /></> 
+          )
+        }
         </View>
         <View style={{alignSelf: 'center', position: 'absolute', bottom: 40}}>
           <CommandButton
@@ -418,7 +437,7 @@ function SurveyScreen({navigation, route}) {
             backgroundColor={COLOR.GOLD}
             rightIcon='check-circle'
             onPress={() => {
-              handleSignUp()
+              isUpdateSurveyInfoOnly ? handleUpdateSurveyInfo() : handleSignUp()
             }}
           />
         </View>
@@ -427,7 +446,7 @@ function SurveyScreen({navigation, route}) {
   };
 
   const renderProgressBar = () => {
-      const LIST = generateNumberRangeArray(0,5)
+      const LIST = generateNumberRangeArray(0,4)
     return (
       <View >
         <View
@@ -486,7 +505,7 @@ function SurveyScreen({navigation, route}) {
         {renderGender()}
         {renderHeightWeight()}
         {renderLevel()}
-        {renderTag()}
+        {/* {renderTag()} */}
         {renderSignUp()}
       </PagerView>
     </ImageBackground>

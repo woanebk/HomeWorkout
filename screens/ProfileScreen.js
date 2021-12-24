@@ -362,19 +362,23 @@ function ProfileScreen({navigation}) {
     return (
       <View style={{alignItems: 'center', marginVertical: 10}}>
         <View style={styles.infoWrapper}>
+          <TouchableOpacity>
           <View style={styles.bodyInfoBlock}>
             <Text style={[styles.numberTxt]}>
               {Object.keys(user?.completedWorkouts || {})?.length || 0}{' '}
               <Text style={[styles.infoTitleTxt]}>Bài tập đã hoàn thành</Text>
             </Text>
           </View>
+          </TouchableOpacity>
 
+          <TouchableOpacity onPress={()=>navigation.navigate('Challenges')}>
           <View style={styles.bodyInfoBlock}>
             <Text style={styles.numberTxt}>
               {Object.keys(user?.listChallenge || {})?.length || 0}{' '}
               <Text style={styles.infoTitleTxt}>Thử thách đã tham gia</Text>
             </Text>
           </View>
+          </TouchableOpacity>
         </View>
       </View>
     );

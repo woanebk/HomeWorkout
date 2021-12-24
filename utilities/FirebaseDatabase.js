@@ -271,7 +271,6 @@ export const updateBMIInfo = async (height, weight) => {
 
 export const updateUserInfo = async (userId, data) => {
   var currentdate = new Date();
-  userId=auth().currentUser.uid;
   var text = currentdate.toISOString().toString();
   await database
     .ref('User/' + userId)
