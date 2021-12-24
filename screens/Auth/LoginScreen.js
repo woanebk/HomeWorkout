@@ -22,6 +22,7 @@ import SingUpModal from '../../components/SignUpModal';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import Toast from 'react-native-toast-message';
+import { validateEmail } from '../../utilities/Utilities';
 
 function LoginScreen({navigation}, route) {
   const [showOTP, setShowOTP] = useState(false);
@@ -35,14 +36,16 @@ function LoginScreen({navigation}, route) {
   const handleForgot = () => {
     console.debug('đăng kí');
 
-    if (valueEmail == '' ) {
+    if (valueEmail == '' || !validateEmail(valueEmail)) {
       Alert.alert(
         '',
         //body
-        'Vui lòng nhập địa chỉ email',
+        'Vui lòng nhập địa chỉ email hợp lệ',
       );
-    } else
-      auth().sendPasswordResetEmail(valueEmail)
+    }
+     else
+      auth()
+        .sendPasswordResetEmail(valueEmail)
         .then(onforgotSuccess())
         .catch(err => {
           Alert.alert(
@@ -70,6 +73,12 @@ function LoginScreen({navigation}, route) {
         '',
         //body
         'Vui lòng nhập địa chỉ email và password',
+      );
+    } else if (!validateEmail(valueEmail)) {
+      Alert.alert(
+        '',
+        //body
+        'Địa chỉ email không hợp lệ',
       );
     } else
       auth()
@@ -118,7 +127,7 @@ function LoginScreen({navigation}, route) {
       'public_profile',
       'email',
     ]);
-   
+
     if (result.isCancelled) {
       throw 'User cancelled the login process';
     }
@@ -161,7 +170,7 @@ function LoginScreen({navigation}, route) {
         <TouchableOpacity>
           <Text
             style={{color: COLOR.WHITE, fontSize: 13, fontWeight: 'bold'}}
-            onPress={()=>navigation.navigate('Survey')}>
+            onPress={() => navigation.navigate('Survey')}>
             Đăng Kí Ngay
           </Text>
         </TouchableOpacity>
