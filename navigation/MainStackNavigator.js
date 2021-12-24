@@ -14,6 +14,7 @@ import ExerciseLibraryScreen from '../screens/Exercise/ExerciseLibraryScreen';
 import ChallengeDetailScreen from '../screens/Challenge/ChallengeDetailScreen';
 import AllChallengeScreen from '../screens/Challenge/AllChallengeSreen';
 import AllFavoriteWorkoutScreen from '../screens/WorkoutScreens/AllFavoriteWorkoutScreen';
+import SurveyScreen from '../screens/Auth/SurveyScreen';
 const MainStack = createStackNavigator();
 
 const AuthStack = createStackNavigator();
@@ -101,6 +102,7 @@ function MainStackNavigator() {
         component={AllFavoriteWorkoutScreen}
         options={{headerTintColor: '#fff'}}
       />
+      <AuthStack.Screen name="Survey" component={SurveyScreen} />
     </MainStack.Navigator>
   );
 }
