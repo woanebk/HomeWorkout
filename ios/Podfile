@@ -18,6 +18,8 @@ target 'HomeWorkout' do
 
   pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
 
+  pod 'TextToSpeech', :path => '../node_modules/react-native-tts'
+
   target 'HomeWorkoutTests' do
     inherit! :complete
     # Pods for testing
