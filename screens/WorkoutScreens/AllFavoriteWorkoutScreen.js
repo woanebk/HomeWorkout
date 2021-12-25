@@ -172,6 +172,7 @@ function AllFavoriteWorkoutScreen({navigation, route}) {
         data={listWorkout}
         keyExtractor={(item, index) => index}
         ListHeaderComponent={renderListHeader}
+        ListFooterComponent={()=>(<View style={{height:80}}/>)}
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollY}}}],

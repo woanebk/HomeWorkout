@@ -131,3 +131,7 @@ export const filterListWorkoutByUserLevel = (arr, userLevel) => {
     }),
   );
 };
+
+export const randomNumber = (n = 1) => {
+  return Math.floor(Math.random() * 10 * n );
+}
