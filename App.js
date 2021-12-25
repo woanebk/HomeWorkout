@@ -10,6 +10,7 @@ import LoginScreen from './screens/Auth/LoginScreen';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import Toast from 'react-native-toast-message';
+import Tts from 'react-native-tts';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
@@ -18,6 +19,7 @@ if (Platform.OS === 'android') {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 }
+Tts.setDefaultLanguage('vi-VN');
 
 function App({navigation}) {
   const [initializing, setInitializing] = useState(true);

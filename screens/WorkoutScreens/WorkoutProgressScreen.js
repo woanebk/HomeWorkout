@@ -10,6 +10,7 @@ import {
   Animated,
   FlatList,
   Modal,
+  BackHandler,
 } from 'react-native';
 import Video from 'react-native-video';
 import {
@@ -20,7 +21,6 @@ import {
 } from '../../constant';
 import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 import RoundButton from '../../components/RoundButton';
-import TextTicker from 'react-native-text-ticker';
 import WorkoutStatus from '../../components/WorkoutStatus';
 import CommandButton from '../../components/CommandButton';
 import ProgressingListExerciseItem from '../../components/ProgressingListExerciseItem';
@@ -38,6 +38,10 @@ import {
 } from '../../utilities/FirebaseDatabase';
 import Toast from 'react-native-toast-message';
 import LoadingView from '../../components/LoadingView';
+import Tts from 'react-native-tts';
+import {useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STOP_WATCH_HEIGHT = 100;
 
@@ -54,6 +58,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
   const [showModalExit, setShowModalExit] = useState(false);
   const [showModalConfirmFinish, setshowModalConfirmFinish] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [speakEnable, setSpeakEnable] = useState(true);
 
   const excersiseStatusRef = useRef();
   const currentExcersiseTimerRef = useRef();
@@ -80,14 +85,66 @@ function WorkoutProgressScreen({route, navigation}, props) {
   });
 
   useEffect(() => {
-    generateListExercise();console.log(dayIndex)
+    getLocalSoundSettingData();
+    generateListExercise();
   }, [workoutData]);
 
   useEffect(() => {
     setIsRest(false);
     setCurrentExcersise(listExercise[currentIndex]);
     currentExcersiseTimerRef?.current?.reset();
+    Tts.stop();
   }, [currentIndex, listExercise]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPressDisable = () => {
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPressDisable);
+
+      return () =>
+        BackHandler.removeEventListener(
+          'hardwareBackPress',
+          onBackPressDisable,
+        );
+    }, []),
+  );
+
+  const getLocalSoundSettingData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('soundEnable');
+      const res = jsonValue != null ? JSON.parse(jsonValue) : null;
+      setSpeakEnable(res);
+    } catch (e) {}
+  };
+
+  const speakWithCheckingSetting = text => {
+    if (speakEnable) Tts.speak(text);
+  };
+
+  const speakCurrentExerciseData = () => {
+    speakWithCheckingSetting('Động tác');
+    speakWithCheckingSetting(currentExcersise?.data?.name);
+    speakWithCheckingSetting(currentExcersise?.data?.description);
+  };
+
+  const handleSettingSound = async () => {
+    if (speakEnable) {
+      setSpeakEnable(false);
+      const jsonValue = JSON.stringify(false);
+      await AsyncStorage.setItem('soundEnable', jsonValue);
+      Tts.stop()
+    } else {
+      setSpeakEnable(true);
+      const jsonValue = JSON.stringify(true);
+      await AsyncStorage.setItem('soundEnable', jsonValue);
+      Tts.speak('Động tác')
+      Tts.speak(currentExcersise?.data?.name);
+      Tts.speak(currentExcersise?.data?.description);
+    }
+  };
 
   const generateListExercise = () => {
     let arr = [];
@@ -154,7 +211,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
           calculateWorkoutPercentage().toFixed(),
           workoutData,
           challengeId,
-          dayIndex
+          dayIndex,
         );
       } else {
         await submitWorkout(
@@ -178,7 +235,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
         text1: 'Thông báo',
         text2: e + '👋',
       });
-      console.log(e)
+      console.log(e);
     } finally {
       setIsLoading(false);
     }
@@ -203,36 +260,50 @@ function WorkoutProgressScreen({route, navigation}, props) {
 
   const onDonePress = () => {
     doneIconRef?.current?.start();
+    Tts.stop();
     //Xu ly su kien sau khi icon bien mat o function onHideDoneIcon
   };
 
-  const CountClock = item => (
-    <CountdownCircleTimer
-      isPlaying={isCounting}
-      size={120}
-      strokeWidth={5}
-      strokeLinecap="square"
-      duration={item?.rest || 10}
-      trailColor={isCounting ? COLOR.WHITE : COLOR.RED}
-      onComplete={() => {
-        // do your stuff here
-        setIsCounting(false);
-        //return [true, 1500] // repeat animation in 1.5 seconds
-      }}
-      colors={[
-        [COLOR.KELLY_GREEN, 0.4],
-        [COLOR.YELLOW, 0.4],
-        [COLOR.RED, 0.2],
-      ]}>
-      {({remainingTime, elapsedTime, animatedColor}) => (
-        <Animated.Text
-          adjustsFontSizeToFit
-          style={{color: animatedColor, fontSize: 60, fontWeight: 'bold'}}>
-          {remainingTime}
-        </Animated.Text>
-      )}
-    </CountdownCircleTimer>
-  );
+  const CountClock = item => {
+    let speakCount = 0;
+    return (
+      <CountdownCircleTimer
+        isPlaying={isCounting}
+        size={120}
+        strokeWidth={5}
+        strokeLinecap="square"
+        duration={item?.rest || 10}
+        trailColor={isCounting ? COLOR.WHITE : COLOR.RED}
+        onComplete={totalElapsedTime => {
+          // do your stuff here
+          setIsCounting(false);
+          speakWithCheckingSetting('Đã hết thời gian nghỉ');
+          //return [true, 1500] // repeat animation in 1.5 seconds
+        }}
+        renderAriaTime={({remainingTime}) => {
+          if (remainingTime === 10 && speakCount === 0) {
+            speakWithCheckingSetting('Còn 10 giây nghỉ');
+            speakCount += 1;
+          }
+          return <></>;
+        }}
+        colors={[
+          [COLOR.KELLY_GREEN, 0.4],
+          [COLOR.YELLOW, 0.4],
+          [COLOR.RED, 0.2],
+        ]}>
+        {({remainingTime, elapsedTime, animatedColor}) => {
+          return (
+            <Animated.Text
+              adjustsFontSizeToFit
+              style={{color: animatedColor, fontSize: 60, fontWeight: 'bold'}}>
+              {remainingTime}
+            </Animated.Text>
+          );
+        }}
+      </CountdownCircleTimer>
+    );
+  };
 
   const renderCurrentExercise = () => {
     return (
@@ -254,7 +325,15 @@ function WorkoutProgressScreen({route, navigation}, props) {
               style={styles.video}
               repeat
               source={{uri: currentExcersise?.data?.video}}
-              onLoad={() => currentExcersiseTimerRef?.current?.reset()}
+              onLoad={() => {
+                currentExcersiseTimerRef?.current?.reset();
+                if (
+                  currentExcersise?.data?.description &&
+                  !currentExcersise?.isDone
+                ) {
+                  speakCurrentExerciseData();
+                }
+              }}
             />
             <Timer
               ref={currentExcersiseTimerRef}
@@ -463,6 +542,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
         visible={showModalExit}
         title="Bạn chưa hoàn thành bài tập, bạn có chắc muốn thoát ?"
         onConfirm={() => {
+          Tts.stop();
           navigation.pop();
           setShowModalExit(false);
         }}
@@ -473,6 +553,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
         title="Bạn chưa hoàn thành bài tập, bạn có chắc muốn kết thúc ?"
         onConfirm={() => {
           setshowModalConfirmFinish(false);
+          Tts.stop();
           onSubmitWorkout();
         }}
         onCancel={() => setshowModalConfirmFinish(false)}
@@ -483,6 +564,13 @@ function WorkoutProgressScreen({route, navigation}, props) {
         color={COLOR.WHITE}
         size={25}
         onPress={() => setShowModalExit(true)}
+      />
+      <IconButton
+        icon={speakEnable ? 'volume-high' : 'volume-off'}
+        style={styles.soundButton}
+        color={COLOR.WHITE}
+        size={25}
+        onPress={async () => await handleSettingSound()}
       />
       {isLoading && (
         <View
@@ -557,6 +645,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 35,
     left: 10,
+  },
+  soundButton: {
+    position: 'absolute',
+    top: 35,
+    right: 10,
   },
   finishAllWrapper: {
     height: 80,

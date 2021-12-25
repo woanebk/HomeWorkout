@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@firebase/auth": "^0.19.3",
+    "@react-native-async-storage/async-storage": "^1.15.14",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-firebase/app": "^13.1.0",
@@ -50,6 +51,7 @@
     "react-native-svg": "^12.1.1",
     "react-native-text-ticker": "^1.14.0",
     "react-native-toast-message": "^2.1.0",
+    "react-native-tts": "^4.1.0",
     "react-native-vector-icons": "^8.1.0",
     "react-native-video": "^5.2.0-alpha1",
     "react-native-webview": "^11.15.0",
