@@ -211,7 +211,7 @@ function ProfileScreen({navigation}) {
           onPress={() => {
             generateNewWorkout();
           }}>
-          <Text>Generate Video</Text>
+          <Text>Generate Workout</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{
@@ -628,7 +628,7 @@ function ProfileScreen({navigation}) {
           </View>
         </View>
         {renderUserInfo()}
-        {/* {renderAdminButton()} */}
+        {renderAdminButton()}
         <View
           style={{
             flex: 1,

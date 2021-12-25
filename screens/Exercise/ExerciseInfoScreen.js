@@ -13,7 +13,7 @@ function ExerciseInfoScreen({route, navigation}) {
 
   useEffect(() => {
     getRelatedExercise();
-  }, []);
+  }, [exercise]);
 
   const getRelatedExercise = async () => {
     let list = [];
