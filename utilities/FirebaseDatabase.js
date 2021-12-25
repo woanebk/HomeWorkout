@@ -181,7 +181,7 @@ export const generateNewWorkout = () => {
     name_en: 'Tên tiếng anh',
     point: 3,
     muscle_group: ['Vai', 'Ngực', 'Tay sau'],
-    level: 'Normal',
+    level: 'normal',
     description: 'Mô tả',
     tag: ['Giảm mỡ', 'Giảm cân', 'Tăng cơ'],
     image: 'link image',
