@@ -85,9 +85,10 @@ function ProfileScreen({navigation}) {
     setChartLoading(true);
     var res = await getUserInfo();
     setUser(res.val());
-    setValueHeigh(res.val().height.toString());
-    setValueWeight(res.val().weight.toString());
-    setValueName(res.val().name.toString());
+    setValueHeigh(res.val()?.height?.toString());
+    setValueWeight(res.val()?.weight?.toString());
+    setValueName(res.val()?.name?.toString());
+    setValue(res.val()?.level?.toString())
 
     setListBMI(convertObjectToArrayWithoutKeySort(res.val().listBMI));
     setChartLoading(false);

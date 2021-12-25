@@ -110,3 +110,24 @@ export const validateEmail = (email) => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
 };
+
+export const filterListWorkoutByUserLevel = (arr, userLevel) => {
+  if (userLevel === 'Người tập chuyên nghiệp')
+  return convertObjectToArrayWithoutKey(
+    arr?.filter(item => {
+      return item?.level?.includes('Hard');
+    }),
+  );
+  else if (userLevel === 'Người có kinh nghiệm')
+  return convertObjectToArrayWithoutKey(
+    arr?.filter(item => {
+      return item?.level?.includes('Normal');
+    }),
+  );
+  else
+  return convertObjectToArrayWithoutKey(
+    arr?.filter(item => {
+      return item?.level?.includes('Easy');
+    }),
+  );
+};
