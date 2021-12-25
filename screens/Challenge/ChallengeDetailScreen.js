@@ -301,8 +301,8 @@ const styles = StyleSheet.create({
   detail: {
     paddingHorizontal: 10,
     //backgroundColor:COLOR.BLUE,
-    marginBottom: 40,
-    height: 120,
+    marginBottom: 60,
+    height: 100,
   },
   aboutTxt: {
     fontSize: 16,
