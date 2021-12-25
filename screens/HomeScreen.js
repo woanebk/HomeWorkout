@@ -375,7 +375,7 @@ function HomeScreen({navigation}) {
         )}
       />
       <HomeSection
-        title="Đề xuất cho bạn"
+        title="Danh sách bài tập"
         onPress={() => navigation.navigate('AllWorkout')}
       />
       <FlatList

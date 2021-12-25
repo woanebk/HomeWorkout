@@ -155,6 +155,9 @@ function WorkoutProgressScreen({route, navigation}, props) {
     });
     console.log('DATA', arr);
     const cloneArr = cloneArrayOrObject(arr); // tranh loi isDone sau khi back ve
+    cloneArr?.map((item, index) => {
+      item.randomKey = index
+    })
     setListExercise([...cloneArr]);
   };
 
@@ -396,7 +399,8 @@ function WorkoutProgressScreen({route, navigation}, props) {
               const isSelected = index === currentIndex;
               const isDone = item?.isDone;
               return (
-                <ProgressingListExerciseItem
+                <View key={index}>
+                  <ProgressingListExerciseItem
                   onPress={() => {
                     goToExercise(index);
                     setShowListAll(false);
@@ -406,6 +410,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
                   isDone={isDone}
                   item={item}
                 />
+                </View>
               );
             })}
           </ScrollView>
