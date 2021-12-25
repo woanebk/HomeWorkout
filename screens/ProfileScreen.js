@@ -12,7 +12,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
-
 import auth, {firebase} from '@react-native-firebase/auth';
 import RoundButton from '../components/RoundButton';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../constant';
@@ -23,7 +22,6 @@ import {
   generateNewVideo,
   generateNewWorkout,
 } from '../utilities/FirebaseDatabase';
-import PureChart from 'react-native-pure-chart';
 const data = [{value: 50}, {value: 80}, {value: 90}, {value: 70}];
 import CustomTextInput from '../components/CustomTextInput';
 import CommandButton from '../components/CommandButton';
@@ -38,14 +36,12 @@ import {
   generateArrayFromArrayKey,
   isNumber,
 } from '../utilities/Utilities';
-import UserStatus from '../components/UserStatus';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from 'react-native-toast-message';
 import LinearGradient from 'react-native-linear-gradient';
 import {LineChart} from 'react-native-chart-kit';
 import MenuButton from '../components/MenuButton';
 import LoadingView from '../components/LoadingView';
-import { NavigationContainer } from '@react-navigation/native';
 const PFP_WIDTH = 80;
 const PFP_HEIGHT = 80;
 
@@ -81,7 +77,6 @@ function ProfileScreen({navigation}) {
   const [chartLoading, setChartLoading] = useState(true);
   const [showWeightChart, setShowWeightChart] = useState(false);
   const [showModalConfirm, setShowModalConfirm] = useState(false);
-
   useEffect(async () => {
     await initUser();
   }, []);
@@ -628,7 +623,7 @@ function ProfileScreen({navigation}) {
           </View>
         </View>
         {renderUserInfo()}
-        {renderAdminButton()}
+        {/* {renderAdminButton()} */}
         <View
           style={{
             flex: 1,
@@ -655,7 +650,7 @@ function ProfileScreen({navigation}) {
           {renderUserBMI()}
           <TouchableOpacity
             style={styles.userBtn}
-            onPress={() => setShowModalUpdateStat(true)}>
+            onPress={() => {setShowModalUpdateStat(true)}}>
             <Icon
               name="chart-line"
               type="material-community"
