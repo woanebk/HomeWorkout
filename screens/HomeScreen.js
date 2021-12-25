@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Image, Text, StyleSheet, View, StatusBar} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {BackgroundImage} from 'react-native-elements/dist/config';
@@ -14,164 +14,205 @@ import {COLOR, SCREEN_WIDTH, WORKOUT_TAG_COLLECTION} from '../constant';
 import ProgramItem from '../components/ProgramItem';
 import HomeCategoryItem from '../components/HomeCategoryItem';
 import CommandButton from '../components/CommandButton';
-import { getListAllChallenge, getListAllWorkout, Test ,getUserInfo, getListAllVideo} from '../utilities/FirebaseDatabase';
+import {
+  getListAllChallenge,
+  getListAllWorkout,
+  Test,
+  getUserInfo,
+  getListAllVideo,
+} from '../utilities/FirebaseDatabase';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-import { convertObjectToArrayWithoutKey, shuffle } from '../utilities/Utilities';
+import {
+  convertObjectToArrayWithoutKey,
+  filterListWorkoutByUserLevel,
+  shuffle,
+} from '../utilities/Utilities';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
-  const DATA = [{
-    id: undefined,
-    imgURL:
-    undefined,
-  },];
+  const DATA = [
+    {
+      id: undefined,
+      imgURL: undefined,
+    },
+  ];
   const [suggestedWorkouts, setSuggestedWorkouts] = useState(['1', '2', '3']);
-  const [workoutOfTheDay, setWorkOutOfTheDay] = useState({})
-  const [suggestedChallenges, setSuggestedChallenges] = useState(['1', '2', '3']);
+  const [workoutOfTheDay, setWorkOutOfTheDay] = useState({});
+  const [suggestedChallenges, setSuggestedChallenges] = useState([
+    '1',
+    '2',
+    '3',
+  ]);
   const [suggestedVideos, setSuggestedVideos] = useState(['1', '2', '3']);
   const [allChallenges, setAllChallenges] = useState(DATA);
   const [user, setUser] = useState({abc: 'abc'});
 
- //#region  message    
- const [notification, setNotification] = useState({
-  title: undefined,
-  body: undefined,
-  image: undefined,
-});
-const getToken = async () => {
-  const token = await messaging().getToken();
-  console.log('.........................: ', token);
-};
- 
-useEffect(() => {
- // const navigation = useNavigation();
-
-  getToken();
-  messaging().onMessage(async remoteMessage => {
-    console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-
-    PushNotification.configure({
-      onNotification: function (notification) {
-        console.log('LOCAL NOTIFICATION ==>', notification);
-        navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
-      },
-      popInitialNotification: true,
-      requestPermissions: true,
-    });
-    PushNotification.localNotification({
-      message: remoteMessage.notification.body,
-      title: remoteMessage.notification.title,
-      bigPictureUrl: remoteMessage.notification.android.imageUrl,
-      smallIcon: remoteMessage.notification.android.imageUrl,
-      // chanelId: remoteMessage.messageId,
-      priority: 'high',
-    });
-    setNotification({
-      title: remoteMessage.notification.title,
-      body: remoteMessage.notification.body,
-      image: remoteMessage.notification.android.imageUrl,
-    });
+  //#region  message
+  const [notification, setNotification] = useState({
+    title: undefined,
+    body: undefined,
+    image: undefined,
   });
+  const getToken = async () => {
+    const token = await messaging().getToken();
+    console.log('.........................: ', token);
+  };
 
-  messaging().onNotificationOpenedApp(remoteMessage => {
-    console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
-    navigation.navigate("ChallengeDetail",{key:remoteMessage.data.key}); 
-    setNotification({
-      title: remoteMessage.notification.title,
-      body: remoteMessage.notification.body,
-      image: remoteMessage.notification.android.imageUrl,
+  useEffect(() => {
+    // const navigation = useNavigation();
+
+    getToken();
+    messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+
+      PushNotification.configure({
+        onNotification: function (notification) {
+          console.log('LOCAL NOTIFICATION ==>', notification);
+          navigation.navigate('ChallengeDetail', {key: remoteMessage.data.key});
+        },
+        popInitialNotification: true,
+        requestPermissions: true,
+      });
+      PushNotification.localNotification({
+        message: remoteMessage.notification.body,
+        title: remoteMessage.notification.title,
+        bigPictureUrl: remoteMessage.notification.android.imageUrl,
+        smallIcon: remoteMessage.notification.android.imageUrl,
+        // chanelId: remoteMessage.messageId,
+        priority: 'high',
+      });
+      setNotification({
+        title: remoteMessage.notification.title,
+        body: remoteMessage.notification.body,
+        image: remoteMessage.notification.android.imageUrl,
+      });
     });
-  });
 
-  messaging()
-    .getInitialNotification()
-    .then(remoteMessage => {
-      if (remoteMessage) {
-        console.log(
-          'Notification caused app to open from quit state:',
-          JSON.stringify(remoteMessage),
-        );
-
-        setNotification({
-          title: remoteMessage.notification.title,
-          body: remoteMessage.notification.body,
-          image: remoteMessage.notification.android.imageUrl,
-        });
-      }
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
+      navigation.navigate('ChallengeDetail', {key: remoteMessage.data.key});
+      setNotification({
+        title: remoteMessage.notification.title,
+        body: remoteMessage.notification.body,
+        image: remoteMessage.notification.android.imageUrl,
+      });
     });
-}, []);
-//#endregion
 
-  useEffect(()=>{
-    
-    getSuggestedWorkout(5)
-    getSuggestedChallenges(5)
-    getSuggestedVideos(5)
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state:',
+            JSON.stringify(remoteMessage),
+          );
+
+          setNotification({
+            title: remoteMessage.notification.title,
+            body: remoteMessage.notification.body,
+            image: remoteMessage.notification.android.imageUrl,
+          });
+        }
+      });
+  }, []);
+  //#endregion
+
+  useEffect(() => {
+    getSuggestedWorkout(5);
+    getSuggestedChallenges(5);
+    getSuggestedVideos(5);
     const unsubscribe = navigation.addListener('focus', () => {
       initUser();
     });
     return unsubscribe;
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    getWorkoutOfTheDay();
+  }, [user?.level]);
 
   const initUser = async () => {
     var res = await getUserInfo();
     setUser(res.val());
-    if(!res.val()?.weight || !res.val()?.height || !res.val()?.level || !res.val()?.name)
-    navigation.navigate('Survey', {isUpdateSurveyInfoOnly: true})
+    if (
+      !res.val()?.weight ||
+      !res.val()?.height ||
+      !res.val()?.level ||
+      !res.val()?.name
+    )
+      navigation.navigate('Survey', {isUpdateSurveyInfoOnly: true});
   };
-  const getSuggestedWorkout = async (n) =>{
-    try{
-      const res = await getListAllWorkout()
-      if(!res) throw('CANNOT GET LIST WORKOUTS')
-      setWorkOutOfTheDay(convertObjectToArrayWithoutKey(res.val())[0])
-      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()))
-      if(randomList?.length > n){
-        setSuggestedWorkouts(randomList?.slice(0, n))
-      }
-      else setSuggestedWorkouts(randomList)
-    }
-    catch (e){
-      console.log(e)
-    }
-  }
 
-  const getSuggestedChallenges = async (n) =>{
-    try{
-      const res = await getListAllChallenge()
-      if(!res) throw('CANNOT GET LIST CHALLENGE')
+  const getSuggestedWorkout = async n => {
+    try {
+      const res = await getListAllWorkout();
+      if (!res) throw 'CANNOT GET LIST WORKOUTS';
+      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()));
+      if (randomList?.length > n) {
+        setSuggestedWorkouts(randomList?.slice(0, n));
+      } else setSuggestedWorkouts(randomList);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getWorkoutOfTheDay = async () => {
+    try {
+      var res = await getUserInfo();
+      const userLevel = res?.val()?.level;
+      const workoutsRes = await getListAllWorkout();
+      if (!workoutsRes) throw 'CANNOT GET LIST WORKOUTS';
+      if (!userLevel)
+        setWorkOutOfTheDay(
+          convertObjectToArrayWithoutKey(workoutsRes.val())[0],
+        );
+      else {
+        const listFiltered = filterListWorkoutByUserLevel(
+          shuffle(convertObjectToArrayWithoutKey(workoutsRes.val())),
+          userLevel,
+        );
+        setWorkOutOfTheDay(listFiltered[0] || workoutsRes.val()[0]);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getSuggestedChallenges = async n => {
+    try {
+      const res = await getListAllChallenge();
+      if (!res) throw 'CANNOT GET LIST CHALLENGE';
       setAllChallenges(convertObjectToArrayWithoutKey(res.val()));
-      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()))
-      if(randomList?.length > n){
-        setSuggestedChallenges(randomList?.slice(0, n))
-      }
-      else setSuggestedChallenges(randomList)
+      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()));
+      if (randomList?.length > n) {
+        setSuggestedChallenges(randomList?.slice(0, n));
+      } else setSuggestedChallenges(randomList);
+    } catch (e) {
+      console.log(e);
     }
-    catch (e){
-      console.log(e)
-    }
-  }
+  };
 
-  const getSuggestedVideos = async (n) =>{
-    try{
-      const res = await getListAllVideo()
-      if(!res) throw('CANNOT GET LIST VIDEO')
-      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()))
-      if(randomList?.length > n){
-        setSuggestedVideos(randomList?.slice(0, n))
-      }
-      else setSuggestedVideos(randomList)
+  const getSuggestedVideos = async n => {
+    try {
+      const res = await getListAllVideo();
+      if (!res) throw 'CANNOT GET LIST VIDEO';
+      const randomList = shuffle(convertObjectToArrayWithoutKey(res.val()));
+      if (randomList?.length > n) {
+        setSuggestedVideos(randomList?.slice(0, n));
+      } else setSuggestedVideos(randomList);
+    } catch (e) {
+      console.log(e);
     }
-    catch (e){
-      console.log(e)
-    }
-  }
+  };
 
   const renderBanner = () => (
     <BackgroundImage
       style={styles.banner}
       source={{
-        uri: workoutOfTheDay?.image || 'https://www.cnet.com/a/img/mSdKK71X29nFhsLSencu7IwYlhQ=/1200x675/2019/11/12/e66cc0f3-c6b8-4f6e-9561-e23e08413ce1/gettyimages-1002863304.jpg',
+        uri:
+          workoutOfTheDay?.image ||
+          'https://www.cnet.com/a/img/mSdKK71X29nFhsLSencu7IwYlhQ=/1200x675/2019/11/12/e66cc0f3-c6b8-4f6e-9561-e23e08413ce1/gettyimages-1002863304.jpg',
       }}
       resizeMode="cover">
       <View style={styles.todayWorkout}>
@@ -189,7 +230,11 @@ useEffect(() => {
         <View style={styles.bannerBtnWrapper}>
           <TouchableOpacity
             style={styles.bannerBtn}
-            onPress={() => navigation.navigate('WorkoutInfo', {workoutId: workoutOfTheDay?.id})}>
+            onPress={() =>
+              navigation.navigate('WorkoutInfo', {
+                workoutId: workoutOfTheDay?.id,
+              })
+            }>
             <Icon
               name="dumbbell"
               type="font-awesome-5"
@@ -203,11 +248,17 @@ useEffect(() => {
 
       <View style={styles.bannerRight}>
         <View style={styles.bannerRightInsider}>
-          <Text style={styles.bannerRightTxt}>{workoutOfTheDay?.rounds?.length}</Text>
+          <Text style={styles.bannerRightTxt}>
+            {workoutOfTheDay?.rounds?.length}
+          </Text>
           <Text style={styles.bannerRightSmallTxt}>Số round</Text>
-          <Text style={styles.bannerRightTxt}>{workoutOfTheDay?.estimate_time}m</Text>
+          <Text style={styles.bannerRightTxt}>
+            {workoutOfTheDay?.estimate_time}m
+          </Text>
           <Text style={styles.bannerRightSmallTxt}>Thời gian</Text>
-          <Text style={[styles.bannerRightTxt, {fontSize: 15}]}>{workoutOfTheDay?.level}</Text>
+          <Text style={[styles.bannerRightTxt, {fontSize: 15}]}>
+            {workoutOfTheDay?.level}
+          </Text>
           <Text style={styles.bannerRightSmallTxt}>Level</Text>
         </View>
       </View>
@@ -241,10 +292,18 @@ useEffect(() => {
 
       <View style={{flexDirection: 'row', paddingVertical: 5}}>
         <View style={{flex: 5}}>
-          <Text style={styles.numberTxt}>{user?.name?user?.name:"Người dùng mới"}</Text>
+          <Text style={styles.numberTxt}>
+            {user?.name ? user?.name : 'Người dùng mới'}
+          </Text>
           <Text style={styles.silverTxt}>
-            Chiều Cao: <Text style={styles.numberTxt}>{user?.height?user?.height:"---"}cm</Text> - Cân nặng:{' '}
-            <Text style={styles.numberTxt}>{user?.weight?user?.weight:"---"} kg</Text>
+            Chiều Cao:{' '}
+            <Text style={styles.numberTxt}>
+              {user?.height ? user?.height : '---'}cm
+            </Text>{' '}
+            - Cân nặng:{' '}
+            <Text style={styles.numberTxt}>
+              {user?.weight ? user?.weight : '---'} kg
+            </Text>
           </Text>
         </View>
         <View style={{flex: 1, alignItems: 'center', marginTop: -20}}>
@@ -253,10 +312,12 @@ useEffect(() => {
             BMI
           </Text>
           <Text style={{fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE}}>
-          {user?.weight && user?.height
-              ? Math.round((user?.weight / user?.height / user?.height) * 1000000) /
-                100
-              : '---'}         </Text>
+            {user?.weight && user?.height
+              ? Math.round(
+                  (user?.weight / user?.height / user?.height) * 1000000,
+                ) / 100
+              : '---'}{' '}
+          </Text>
         </View>
       </View>
 
@@ -284,9 +345,15 @@ useEffect(() => {
         translucent></StatusBar>
       {renderBanner()}
       {renderUserInfo()}
-      <HomeSection title="Tham gia thử thách"  onPress={()=>{
-        navigation.navigate("AllChallenge",  { type:"All",challenges:allChallenges})
-        }} />
+      <HomeSection
+        title="Tham gia thử thách"
+        onPress={() => {
+          navigation.navigate('AllChallenge', {
+            type: 'All',
+            challenges: allChallenges,
+          });
+        }}
+      />
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -300,12 +367,17 @@ useEffect(() => {
               image={{
                 uri: item.imgURL,
               }}
-              onPress={()=>{navigation.navigate("ChallengeDetail",{key: item?.id})}}
+              onPress={() => {
+                navigation.navigate('ChallengeDetail', {key: item?.id});
+              }}
             />
           </View>
         )}
       />
-      <HomeSection title="Đề xuất cho bạn" onPress={() => navigation.navigate('AllWorkout')} />
+      <HomeSection
+        title="Đề xuất cho bạn"
+        onPress={() => navigation.navigate('AllWorkout')}
+      />
       <FlatList
         pagingEnabled
         horizontal
@@ -315,18 +387,23 @@ useEffect(() => {
         renderItem={({item}) => (
           <View style={{width: SCREEN_WIDTH, paddingRight: 30}}>
             <WorkoutItem
-              onPress={() => navigation.navigate('WorkoutInfo', {workoutId : item?.id})}
+              onPress={() =>
+                navigation.navigate('WorkoutInfo', {workoutId: item?.id})
+              }
               image={{
                 uri: item?.image,
               }}
-              workout = {item}
+              workout={item}
             />
           </View>
         )}
       />
-      <HomeSection title="Video kiến thức"  onPress={()=>{
-        navigation.navigate("AllVideo")
-        }} />
+      <HomeSection
+        title="Video kiến thức"
+        onPress={() => {
+          navigation.navigate('AllVideo');
+        }}
+      />
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -340,14 +417,20 @@ useEffect(() => {
               image={{
                 uri: item?.image,
               }}
-              onPress={()=>navigation.navigate('WatchVideo', {videoData: item})}
-              icon='play'
+              onPress={() =>
+                navigation.navigate('WatchVideo', {videoData: item})
+              }
+              icon="play"
               iconBackgroundColor={COLOR.RED}
             />
           </View>
         )}
       />
-      <HomeSection title="Lựa chọn cách tập của riêng bạn" hideButton onPress={() => navigation.navigate('Category')} />
+      <HomeSection
+        title="Lựa chọn cách tập của riêng bạn"
+        hideButton
+        onPress={() => navigation.navigate('Category')}
+      />
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -356,12 +439,16 @@ useEffect(() => {
         renderItem={({item, index}) => (
           <View style={{paddingRight: 15}} key={index}>
             <HomeCategoryItem
-            onPress={()=>navigation.navigate('AllWorkout', {collectionData: item})}
+              onPress={() =>
+                navigation.navigate('AllWorkout', {collectionData: item})
+              }
               style={{height: 110, width: 250}}
               title={item?.tag}
               subTitle={item?.description}
               image={{
-                uri: item?.image || 'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
+                uri:
+                  item?.image ||
+                  'https://ggstorage.oxii.vn/images/oxii-2021-3-2/728/tong-hop-22-bai-tap-workout-khong-ta-tai-nha-xin-nhat-2021-phan-1-1.jpg',
               }}
             />
           </View>
@@ -373,7 +460,7 @@ useEffect(() => {
           title="Đi đến thư viện kỹ thuật"
           backgroundColor={COLOR.GOLD}
           onPress={() => {
-            navigation.navigate('ExerciseLibrary')
+            navigation.navigate('ExerciseLibrary');
           }}
         />
       </View>
