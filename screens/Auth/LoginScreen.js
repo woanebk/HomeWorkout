@@ -204,7 +204,6 @@ function LoginScreen({navigation}, route) {
           title="Email"
           icon="envelope"
           placeholder="Nhập Email để đăng nhập"
-          keyboardType="numeric"
         />
         <CustomTextInput
           style={{alignSelf: 'center', marginTop: 30, width: '85%'}}
