@@ -84,11 +84,11 @@ function LoginScreen({navigation}, route) {
       auth()
         .signInWithEmailAndPassword(valueEmail, valuePassword)
         .then(() => {
-          Alert.alert(
-            '',
-            //body
-            'Đăng nhập thành công',
-          );
+          Toast.show({
+            type: 'success',
+            text1: 'Thông báo',
+            text2: 'Đăng nhập thành công',
+          });
           console.debug('User account created & signed in!');
         })
         .catch(error => {
