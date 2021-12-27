@@ -132,14 +132,14 @@ function WorkoutProgressScreen({route, navigation}, props) {
 
   const handleSettingSound = async () => {
     if (speakEnable) {
-      setSpeakEnable(false);
       const jsonValue = JSON.stringify(false);
       await AsyncStorage.setItem('soundEnable', jsonValue);
+      setSpeakEnable(false);
       Tts.stop()
     } else {
-      setSpeakEnable(true);
       const jsonValue = JSON.stringify(true);
       await AsyncStorage.setItem('soundEnable', jsonValue);
+      setSpeakEnable(true);
       Tts.speak('Động tác')
       Tts.speak(currentExcersise?.data?.name);
       Tts.speak(currentExcersise?.data?.description);
