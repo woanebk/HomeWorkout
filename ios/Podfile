@@ -20,6 +20,8 @@ target 'HomeWorkout' do
 
   pod 'TextToSpeech', :path => '../node_modules/react-native-tts'
 
+  pod 'react-native-voice', :path => '../node_modules/@react-native-voice/voice'
+
   target 'HomeWorkoutTests' do
     inherit! :complete
     # Pods for testing
