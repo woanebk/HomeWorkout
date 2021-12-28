@@ -112,6 +112,7 @@ function WorkoutStatus(props, ref) {
         if (index === props.currentIndex + 1)
           return (
             <View
+              key={index}
               style={{
                 width: SCREEN_WIDTH,
                 height: HORIZONTAL_LIST_HEIGHT,

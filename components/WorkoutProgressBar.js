@@ -18,6 +18,7 @@ function WorkoutProgressBar(props) {
         {props?.listExercise.map((item, index) => {
           return (
             <View
+              key={index}
               style={{
                 height: 4,
                 borderRadius: 3,
