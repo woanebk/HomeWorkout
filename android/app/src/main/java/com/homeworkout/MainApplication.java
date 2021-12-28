@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.wenkesj.voice.VoicePackage;
 import net.no_mad.tts.TextToSpeechPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
