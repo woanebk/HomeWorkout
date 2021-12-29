@@ -185,12 +185,13 @@ function WorkoutProgressScreen({route, navigation}, props) {
     setIsListening(true);
   };
 
-  const onSpeechEnd = e => {
+  const onSpeechEnd = async e => {
     //Invoked when SpeechRecognizer stops recognition
     console.log('onSpeechEnd: ', e);
     setIsListening(false);
     //infinite listening:
-    startRecognizing();
+    const res = await Voice.isRecognizing()
+    if(!res) await startRecognizing();
   };
 
   const onSpeechError = e => {
