@@ -105,7 +105,7 @@ function ChallengeDetailScreen({route, navigation}) {
                 type: 'info',
                 text1: 'Thông báo',
                 text2:
-                  'Bạn cần tham gia thử thách để có thể tập luyện bài tập này 👋',
+                  'Để thực hiện bài tập này bạn cần phải tham gia thử thách 👋',
               });
         }}
         isDone={item?.isDone}
