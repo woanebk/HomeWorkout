@@ -8,7 +8,6 @@ import {getExerciseById} from '../../utilities/FirebaseDatabase';
 
 function ExerciseInfoScreen({route, navigation}) {
   const {exercise} = route.params;
-
   const [suggestExercises, setSuggestExercises] = useState([]);
 
   useEffect(() => {
