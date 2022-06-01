@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import {getExerciseById} from '../../utilities/FirebaseDatabase';
+import {getExerciseByIds} from '../../utilities/FirebaseDatabase';
 import LoadingView from '../../components/LoadingView';
 
 const HEADER_HEIGHT = 300; // height of the image
@@ -32,7 +32,7 @@ function WorkoutDetailScreen({navigation, route}) {
     for (let i = 0; i < workout?.rounds?.length; i++) {
       for (let j = 0; j < workout?.rounds[i]?.exercises?.length; j++) {
         const exerciseId = workout?.rounds[i]?.exercises[j]?.id;
-        const res = await getExerciseById(exerciseId);
+        const res = await getExerciseByIds(exerciseId);
         if (res) workout.rounds[i].exercises[j].data = res.val();
       }
     }
