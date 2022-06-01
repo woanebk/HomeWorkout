@@ -312,14 +312,14 @@ export const updateVideo = (id, data) => {
 };
 
 export const generateNewVideo = () => {
-  const dummyVideo = {
+  const tempVideo = {
     name: 'Tên tiếng việt',
     description: 'Tay rộng bằng vai',
     video: 'link Video',
     image: 'link image',
     createdAt: moment().toISOString(),
   };
-  const ref = addVideo(dummyVideo);
+  const ref = addVideo(tempVideo);
   const updateID = setTimeout(() => {
     updateVideo(ref.key, {
       id: ref.key,
