@@ -72,8 +72,8 @@ export const updateChallenge = (id, data) => {
 export const generateNewChallenge = () => {
   const dummyChallenge = {
     body: 'Hãy cố gắng vượt qua thử thách',
-    endTime: '20/12/2021',
-    startTime: '09/12/2021',
+    endTime: '01/06/2022',
+    startTime: '10/06/2022',
     title: 'Thử thách cá hồi hoang',
     topic: 'cahoihoang',
     imgURL:
