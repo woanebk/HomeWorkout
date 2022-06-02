@@ -10,20 +10,16 @@ import {
   LayoutAnimation,
 } from 'react-native';
 import {COLOR, SCREEN_HEIGHT} from '../../constant';
-import HeartButton from '../../components/HeartButton';
 import {Icon} from 'react-native-elements';
 import {
-  ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import {Searchbar} from 'react-native-paper';
 import {
-  addExercise,
   generateNewExercise,
   getListAllExercise,
-  updateExercise,
 } from '../../utilities/FirebaseDatabase';
 import {convertObjectToArrayWithoutKey} from '../../utilities/Utilities';
 import LoadingView from '../../components/LoadingView';
