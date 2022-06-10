@@ -4,9 +4,7 @@ import {
   StyleSheet,
   View,
   StatusBar,
-  Image,
   Animated,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {COLOR} from '../../constant';
 import LinearGradient from 'react-native-linear-gradient';

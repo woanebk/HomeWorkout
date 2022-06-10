@@ -4,11 +4,10 @@ import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import Video from 'react-native-video';
 import SuggestExercise from '../../components/SuggestExercise';
 import {COLOR} from '../../constant';
-import {getExerciseById} from '../../utilities/FirebaseDatabase';
+import {getExerciseByIds} from '../../utilities/FirebaseDatabase';
 
 function ExerciseInfoScreen({route, navigation}) {
   const {exercise} = route.params;
-
   const [suggestExercises, setSuggestExercises] = useState([]);
 
   useEffect(() => {
@@ -19,7 +18,7 @@ function ExerciseInfoScreen({route, navigation}) {
     let list = [];
     for (let i = 0; i < exercise?.related_exercise?.length; i++) {
       const id = exercise?.related_exercise[i];
-      const res = await getExerciseById(id);
+      const res = await getExerciseByIds(id);
       res.val() && list.push(res.val());
     }
     setSuggestExercises(list);

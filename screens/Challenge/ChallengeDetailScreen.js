@@ -8,7 +8,6 @@ import CommandButton from '../../components/CommandButton';
 import WorkoutByDayItem from '../../components/WorkoutByDayItem';
 import CustomModal from '../../components/CustomModal';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
-import {convertStringDDMMYYtoDate} from '../../utilities/Utilities';
 import Toast from 'react-native-toast-message';
 import {
   addChallengeToMyList,
