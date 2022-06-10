@@ -10,7 +10,7 @@ import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import {Icon} from 'react-native-elements';
 import WorkoutRowItem from '../../components/WorkoutRowItem';
 import {getListAllWorkout, getUserInfo} from '../../utilities/FirebaseDatabase';
-import {convertObjectToArrayWithoutKey, filterListWorkoutByTag} from '../../utilities/Utilities';
+import {convertObjectToArrayWithoutKey} from '../../utilities/Utilities';
 
 const HEADER_HEIGHT = 250; // height of the image
 const SCREEN_HEADER_HEIGHT = 90; // height of the header contain back button
