@@ -2,14 +2,11 @@ import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
-  Image,
-  TouchableWithoutFeedback,
   Text,
   ImageBackground,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import LinearGradient from 'react-native-linear-gradient';
 import {COLOR} from '../constant';
 
 function ProgramItem(props) {
