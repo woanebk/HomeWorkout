@@ -22,11 +22,6 @@ function ProgramItem(props) {
               <Text style={styles.desTxt} numberOfLines={2}>{props?.description}</Text>
             )}
           </ImageBackground>
-        {/* <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
-          colors={[COLOR.TRANSPARENT, COLOR.BLACK]}
-          style={styles.linearGradient}></LinearGradient> */}
         <View style={{marginVertical: 5, width:'80%'}}>
           <Text numberOfLines={3} style={styles.title}>{props.title}</Text>
         </View>
