@@ -14,7 +14,7 @@ function HomeCategoryItem(props) {
       <BackgroundImage source={props.image} 
           imageStyle={styles.img} style={[styles.container, props.style]}>
               <Text style={styles.title}>{props.title}</Text>
-              <Text style={styles.subTitle}>{props.subTitle}</Text>
+              <Text style={styles.subTitle}>{props.subTitle}</Text> 
       </BackgroundImage>
     </TouchableOpacity>
   );
