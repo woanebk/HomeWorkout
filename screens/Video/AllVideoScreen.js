@@ -145,7 +145,7 @@ function AllVideoScreen({navigation}) {
               ],
             },
           ]}>
-          Kiến thức tập luyện
+          Kiến thức tập luyện 
         </Animated.Text>
       </Animated.View>
       <Animated.View

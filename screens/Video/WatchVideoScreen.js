@@ -52,7 +52,7 @@ function WatchVideoScreen({route}, props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, 
     backgroundColor: COLOR.MATTE_BLACK,
   },
   titleTxt: {
