@@ -2,16 +2,12 @@ import React, {useState, useRef, useEffect} from 'react';
 import {
   StyleSheet,
   View,
-  Image,
-  TouchableWithoutFeedback,
   Text,
   ScrollView,
   StatusBar,
   Animated,
-  FlatList,
   Modal,
   BackHandler,
-  TouchableOpacity,
   PermissionsAndroid,
 } from 'react-native';
 import Video from 'react-native-video';

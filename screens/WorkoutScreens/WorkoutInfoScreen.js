@@ -6,7 +6,6 @@ import {
   StatusBar,
   ImageBackground,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
