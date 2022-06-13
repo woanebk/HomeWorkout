@@ -445,27 +445,6 @@ function ProfileScreen({navigation}) {
               placeholder="Chọn loại người tập"
               theme="DARK"
             />
-            {/* <View style={{marginTop: 15, alignSelf: 'center'}}>
-              <Text
-                style={[styles.titleTxt, {marginBottom: 5}]}
-                color={COLOR.LIGHT_GREY}>
-                Chọn Loại Bài Tập
-              </Text>
-
-              <DropDownPicker
-                style={{marginTop: 0, alignSelf: 'center'}}
-                backgroundColor={COLOR.GREY}
-                searchPlaceholderTextColor={COLOR.GOLD}
-                open={open2}
-                value={value2}
-                items={items2}
-                setOpen={setOpen2}
-                setValue={setValue2}
-                setItems={setItems2}
-                placeholder="Chọn loại người tập"
-                theme="DARK"
-              />
-            </View> */}
             <View style={{marginTop: 30}}>
               <CommandButton
                 style={{width: '80%', height: 50, alignSelf: 'center'}}
