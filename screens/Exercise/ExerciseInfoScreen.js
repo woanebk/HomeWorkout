@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Text, StyleSheet, View, StatusBar} from 'react-native';
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 import Video from 'react-native-video';
 import SuggestExercise from '../../components/SuggestExercise';
 import {COLOR} from '../../constant';

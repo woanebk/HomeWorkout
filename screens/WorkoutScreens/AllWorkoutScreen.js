@@ -4,7 +4,6 @@ import {
   StyleSheet,
   View,
   StatusBar,
-  Image,
   Animated,
 } from 'react-native';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
