@@ -26,7 +26,7 @@ function CustomTextInput(props) {
         type="font-awesome"
         size={18}
         color={COLOR.WHITE}
-      />
+      /> 
       <TextInput
         ref={inputRef}
         value={props.value}

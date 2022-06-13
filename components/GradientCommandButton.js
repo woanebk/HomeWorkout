@@ -10,7 +10,7 @@ function GradientCommandButton(props) {
     start={{x: 0.7, y: 0.1}}
     end={{x: 0, y: 0.5}}
     colors={[COLOR.GOLD,COLOR.DARK_BROWN , COLOR.BLACK]}
-    >
+    > 
       <TouchableOpacity
         style={[
           styles.commandBtn,
