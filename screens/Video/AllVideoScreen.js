@@ -4,9 +4,7 @@ import {
   StyleSheet,
   View,
   StatusBar,
-  Image,
   Animated,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {COLOR} from '../../constant';
 import LinearGradient from 'react-native-linear-gradient';
@@ -147,7 +145,7 @@ function AllVideoScreen({navigation}) {
               ],
             },
           ]}>
-          Kiến thức tập luyện
+          Kiến thức tập luyện 
         </Animated.Text>
       </Animated.View>
       <Animated.View
