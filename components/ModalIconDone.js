@@ -1,11 +1,9 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import {
-    Text,
     StyleSheet,
     View,
     Modal,
   } from 'react-native';
-import {COLOR} from '../constant'
 import LottieView from 'lottie-react-native';
 
 function ModalIconDone(props, ref) {

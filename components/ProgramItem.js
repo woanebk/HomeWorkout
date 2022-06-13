@@ -2,14 +2,11 @@ import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
-  Image,
-  TouchableWithoutFeedback,
   Text,
   ImageBackground,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import LinearGradient from 'react-native-linear-gradient';
 import {COLOR} from '../constant';
 
 function ProgramItem(props) {
@@ -25,11 +22,6 @@ function ProgramItem(props) {
               <Text style={styles.desTxt} numberOfLines={2}>{props?.description}</Text>
             )}
           </ImageBackground>
-        {/* <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
-          colors={[COLOR.TRANSPARENT, COLOR.BLACK]}
-          style={styles.linearGradient}></LinearGradient> */}
         <View style={{marginVertical: 5, width:'80%'}}>
           <Text numberOfLines={3} style={styles.title}>{props.title}</Text>
         </View>
