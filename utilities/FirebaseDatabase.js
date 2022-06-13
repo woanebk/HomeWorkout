@@ -54,7 +54,7 @@ export const getListAllExercise = async () => {
 //   return await database.ref('Exercises/').orderByChild('id').equalTo(id).once('value')
 // }
 //Hoac co the lay exercise theo path luon
-export const getExerciseById = async id => {
+export const getExerciseByIds = async id => {
   return await database.ref('Exercises/' + id).once('value');
 };
 
