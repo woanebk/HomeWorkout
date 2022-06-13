@@ -6,10 +6,8 @@ import {
   StatusBar,
   Image,
   Animated,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
-import HeartButton from '../../components/HeartButton';
 import {Icon} from 'react-native-elements';
 import WorkoutRowItem from '../../components/WorkoutRowItem';
 import {getListAllWorkout} from '../../utilities/FirebaseDatabase';
@@ -248,7 +246,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   itemWrapper: {
-    //backgroundColor: COLOR.WHITE,
     paddingVertical: 5,
     marginBottom: 10,
   },
@@ -256,7 +253,6 @@ const styles = StyleSheet.create({
     height: 70,
     flexDirection: 'row',
     alignItems: 'center',
-    //backgroundColor: COLOR.WHITE,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     paddingHorizontal: 20,
