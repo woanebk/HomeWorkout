@@ -21,7 +21,7 @@ function StartButton(props) {
                  </LottieView>
                  <Text style={styles.txt}>{props.title}</Text>
             </TouchableWithoutFeedback>
-      </View>
+      </View> 
     );
   }
   

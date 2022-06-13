@@ -16,7 +16,7 @@ function RoundButton(props) {
           },
         ]}
         onPress={props.onPress}      
-         >
+         > 
         <Icon
           name={props.icon}
           type="font-awesome"
