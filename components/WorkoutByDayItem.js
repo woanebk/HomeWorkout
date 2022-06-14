@@ -50,7 +50,7 @@ function WorkoutByDayItem(props) {
                 numberOfLines={1}
                 style={[styles.titleTxt, {fontWeight: 'bold'}]}>
                 Đã Hoàn Thành
-              </Text>
+              </Text> 
             </ImageBackground>
           ) : (
             <ImageBackground
