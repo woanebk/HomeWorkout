@@ -54,7 +54,7 @@ function UserStatus(props) {
                     type='ionicon'
                     size={27}
                     color={COLOR.LIGHT_BLUE_2}/>
-                    <Text style={[styles.btnTxt,{marginLeft:5}]}>Cập nhật thông tin ngay</Text>
+                    <Text style={[styles.btnTxt,{marginLeft:5}]}>Cập nhật thông tin ngay</Text> 
                 </TouchableOpacity>
               </View>
             </LinearGradient>
