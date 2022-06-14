@@ -332,7 +332,7 @@ function HomeScreen({navigation}) {
         />
         <Text style={[styles.userBtnTxt, {marginLeft: 10}]}>
           Cập nhật chỉ số ngay
-        </Text>
+        </Text> 
       </TouchableOpacity>
     </View>
   );
