@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Text, StyleSheet, View, StatusBar, Image, Animated} from 'react-native';
 import {COLOR} from '../../constant';
-import HeartButton from '../../components/HeartButton';
 import {Icon} from 'react-native-elements';
 import {
   ScrollView,
@@ -237,7 +236,6 @@ const styles = StyleSheet.create({
   },
   flatlist: {
     flex: 1,
-    //backgroundColor:COLOR.WHITE
   },
   itemWrapper: {
     backgroundColor: COLOR.WHITE,

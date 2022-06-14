@@ -178,7 +178,7 @@ function AllWorkoutScreen({navigation, route}) {
                     inputRange: [
                       HEADER_HEIGHT - 80,
                       HEADER_HEIGHT - 70,
-                      999999999,
+                      9999999,
                     ],
                     outputRange: [50, 0, 0],
                   }),
