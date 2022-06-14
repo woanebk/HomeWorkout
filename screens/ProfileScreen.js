@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   View,
-  StatusBar,
   Alert,
   ScrollView,
   Modal,
@@ -31,7 +30,6 @@ import {
   updateUserInfo,
 } from '../utilities/FirebaseDatabase';
 import {
-  convertObjectToArrayWithoutKey,
   convertObjectToArrayWithoutKeySort,
   generateArrayFromArrayKey,
   isNumber,
