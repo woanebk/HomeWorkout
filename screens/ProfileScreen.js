@@ -21,7 +21,6 @@ import {
   generateNewVideo,
   generateNewWorkout,
 } from '../utilities/FirebaseDatabase';
-const data = [{value: 50}, {value: 80}, {value: 90}, {value: 70}];
 import CustomTextInput from '../components/CustomTextInput';
 import CommandButton from '../components/CommandButton';
 import {
