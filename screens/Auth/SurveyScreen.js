@@ -8,33 +8,37 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
+  KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
 import {COLOR, LEVEL_MAP, SCREEN_WIDTH} from '../../constant';
 import PagerView from 'react-native-pager-view';
 import LottieView from 'lottie-react-native';
 import CommandButton from '../../components/CommandButton';
 import ScrollPicker from 'react-native-wheel-scrollview-picker';
-import {generateNumberRangeArray, validateEmail} from '../../utilities/Utilities';
+import {
+  generateNumberRangeArray,
+  validateEmail,
+} from '../../utilities/Utilities';
 import {Icon} from 'react-native-elements';
 import CustomTextInput from '../../components/CustomTextInput';
 import auth, {firebase} from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
-import { updateUserInfo } from '../../utilities/FirebaseDatabase';
+import {updateUserInfo} from '../../utilities/FirebaseDatabase';
 
 const HEIGHT_RANGE = generateNumberRangeArray(1, 300);
 const WEIGHT_RANGE = generateNumberRangeArray(1, 500);
 
-
 function SurveyScreen({navigation, route}) {
-
-  const {isUpdateSurveyInfoOnly} = route.params || {}
+  const {isSignUp} = route.params || {isSignUp: true};
 
   const [selectedGender, setSelectedGender] = useState('Nam');
   const [selectedHeight, setSelectedHeight] = useState(160);
   const [selectedWeight, setSelectedWeight] = useState(50);
   const [selectedLevel, setSelectedLevel] = useState(LEVEL_MAP[0].name);
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   const [valueEmail, setValueEmail] = useState('');
   const [valuePassword, setValuePassword] = useState('');
   const [valuePasswordConfirm, setValuePasswordConfirm] = useState('');
@@ -42,82 +46,122 @@ function SurveyScreen({navigation, route}) {
 
   const pagerViewRef = useRef();
 
-  const handleSignUp = () => {
-
+  const handleSignUp = async () => {
     if (valueEmail === '' || valuePassword === '' || valueName === '') {
-      alert(
-        'Vui lòng nhập đầy đủ thông tin',
-      );
-    } else if (valuePassword != valuePasswordConfirm)
-      alert(
-        'Mật khẩu không giống',
-      );
-      else if (!validateEmail(valueEmail))
-      alert(
-        'Email không hợp lệ',
-      );
-      else if (valuePassword?.length < 6)
-      alert(
-        'Mật khẩu phải chứa ít nhất 6 kí tự',
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Vui lòng nhập đầy đủ thông tin',
+        visibilityTime: 700,
+      });
+    } else if (valuePassword !== valuePasswordConfirm)
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Mật khẩu không giống',
+        visibilityTime: 700,
+      });
+    else if (!validateEmail(valueEmail))
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Email không hợp lệ',
+        visibilityTime: 700,
+      });
+    else if (valuePassword?.length < 6)
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Mật khẩu phải chứa ít nhất 6 kí tự',
+        visibilityTime: 700,
+      });
     else {
       console.debug('đăng kí');
-      auth()
-        .createUserWithEmailAndPassword(valueEmail, valuePasswordConfirm)
-        .then((userCredential) => {
-            updateInfo(userCredential.user.uid)
-            console.log(userCredential)
-            console.log(userCredential.user.uid)
-            Toast.show({
-                type: 'info',
-                text1: 'Thông báo',
-                text2: 'Tạo tài khoản thành công',
-              });
-        })
-        .catch(error => {
-          if (error.code === 'auth/email-already-in-use') {
-            console.debug('That email address is already in use!');
-            Toast.show({
-                type: 'error',
-                text1: 'Thông báo',
-                text2: 'Địa chỉ email này đã được sử dụng',
-              });
-          }
+      try {
+        setIsLoading(true);
+        const userCredential = await auth().createUserWithEmailAndPassword(
+          valueEmail,
+          valuePasswordConfirm,
+        );
+        if (userCredential) {
+          await updateInfo(userCredential.user.uid);
+          console.log(userCredential);
+          console.log(userCredential.user.uid);
+          Toast.show({
+            type: 'info',
+            text1: 'Thông báo',
+            text2: 'Tạo tài khoản thành công',
+          });
+          setIsLoading(false);
 
-          if (error.code === 'auth/invalid-email') {
-            alert(
-              'Vui lòng nhập địa chỉ Email xác thực',
-            );
-          }
+          navigation.navigate('Tab');
+        }
+      } catch (error) {
+        setIsLoading(false);
+        if (error.code === 'auth/email-already-in-use') {
+          console.debug('That email address is already in use!');
+          Toast.show({
+            type: 'error',
+            text1: 'Thông báo',
+            text2: 'Địa chỉ email này đã được sử dụng',
+          });
+        }
 
-          console.debug(error);
-        });
+        if (error.code === 'auth/invalid-email') {
+          alert('Vui lòng nhập địa chỉ Email xác thực');
+        }
+
+        console.debug(error);
+      }
     }
+  };
+
+  const loginWithEmailAndPassword = () => {
+    auth()
+      .signInWithEmailAndPassword(valueEmail, valuePassword)
+      .then(() => {})
+      .catch(error => {
+        if (error.code === 'auth/user-not-found') {
+          Toast.show({
+            visibilityTime: 2000,
+            type: 'info',
+            text1: 'Thông báo',
+            text2: 'Địa chỉ email hoặc mật khẩu không tồn tại',
+          });
+        } else if (
+          error.code ===
+          'There is no user record corresponding to this identifier. The user may have been deleted.'
+        ) {
+          Toast.show({
+            visibilityTime: 2000,
+            type: 'info',
+            text1: 'Thông báo',
+            text2: 'Người dùng không tồn tại hoặc đã bị xóa',
+          });
+        }
+      });
   };
 
   const handleUpdateSurveyInfo = async () => {
     if (valueName === '') {
-      alert(
-        'Vui lòng nhập đầy đủ thông tin',
-      );
+      alert('Vui lòng nhập đầy đủ thông tin');
+    } else {
+      const userId = auth().currentUser.uid;
+      await updateInfo(userId);
+      navigation.navigate('Tab');
     }
-    else {
-      const userId = auth().currentUser.uid
-      await updateInfo(userId)
-      navigation.navigate('Home')
-      }
-  }
+  };
 
-  const updateInfo = async (id) => {
+  const updateInfo = async id => {
     const data = {
-        height: selectedHeight,
-        weight: selectedWeight,
-        level: selectedLevel,
-        gender: selectedGender,
-        name: valueName
-    }
-    await updateUserInfo(id, data)
-  }
+      height: selectedHeight,
+      weight: selectedWeight,
+      level: selectedLevel,
+      gender: selectedGender,
+      name: valueName,
+    };
+    await updateUserInfo(id, data);
+  };
 
   const renderWelcome = () => {
     return (
@@ -355,13 +399,9 @@ function SurveyScreen({navigation, route}) {
     return (
       <View key="5">
         <View style={[styles.contentWrapper, {paddingHorizontal: 20}]}>
-          <Text style={styles.title}>
-            Lựa chọn những mục tiêu của bạn{' '}
-          </Text>
+          <Text style={styles.title}>Lựa chọn những mục tiêu của bạn </Text>
         </View>
-        <View style={styles.contentWrapperVertical}>
-
-        </View>
+        <View style={styles.contentWrapperVertical}></View>
         <View style={{alignSelf: 'center', position: 'absolute', bottom: 40}}>
           <CommandButton
             title="Tiếp theo"
@@ -369,7 +409,7 @@ function SurveyScreen({navigation, route}) {
             style={styles.commandBtn}
             backgroundColor={COLOR.GOLD}
             onPress={() => {
-                pagerViewRef?.current?.setPage(5);
+              pagerViewRef?.current?.setPage(5);
             }}
           />
         </View>
@@ -381,53 +421,47 @@ function SurveyScreen({navigation, route}) {
     return (
       <View key="6">
         <View style={[styles.contentWrapper, {paddingHorizontal: 20}]}>
-          <Text style={styles.title}>
-            Nhập thông tin tài khoản{' '}
-          </Text>
+          <Text style={styles.title}>Nhập thông tin tài khoản </Text>
         </View>
-        <View style={[styles.contentWrapperVertical,{marginTop:0}]}>
-        <CustomTextInput
-          style={styles.textinput}
-          value={valueName}
-          onChangeText={setValueName}
-          marginTop="20"
-          title="Tên của bạn"
-          icon="circle"
-          placeholder="Nhập tên của bạn"
-        />
-        {
-          !isUpdateSurveyInfoOnly &&
-          (
-           <>
-           <CustomTextInput
-          style={styles.textinput}
-          value={valueEmail}
-          onChangeText={setValueEmail}
-          title="Email"
-          icon="envelope"
-          placeholder="Nhập Email để đăng kí"
-        />
-        <CustomTextInput
-          style={styles.textinput}
-          value={valuePassword}
-          onChangeText={setValuePassword}
-          title="Mật khẩu"
-          secureTextEntry={true}
-          icon="circle"
-          placeholder="Nhập mật khẩu"
-        />
-        <CustomTextInput
-          style={styles.textinput}
-          value={valuePasswordConfirm}
-          onChangeText={setValuePasswordConfirm}
-          marginTop="20"
-          secureTextEntry={true}
-          title="Xác nhận mật khẩu"
-          icon="circle"
-          placeholder="Nhập Lại mật khẩu"
-        /></> 
-          )
-        }
+        <View style={[styles.contentWrapperVertical, {marginTop: 0}]}>
+          <CustomTextInput
+            style={styles.textinput}
+            value={valueName}
+            onChangeText={setValueName}
+            marginTop="20"
+            title="Tên của bạn"
+            icon="circle"
+            placeholder="Nhập tên của bạn"
+          />
+          {isSignUp && (
+            <>
+              <CustomTextInput
+                style={styles.textinput}
+                value={valueEmail}
+                onChangeText={setValueEmail}
+                title="Email"
+                icon="envelope"
+                placeholder="Nhập Email để đăng kí"
+              />
+              <CustomTextInput
+                isPassword
+                style={styles.textinput}
+                value={valuePassword}
+                onChangeText={setValuePassword}
+                title="Mật khẩu"
+                placeholder="Nhập mật khẩu"
+              />
+              <CustomTextInput
+                isPassword
+                style={styles.textinput}
+                value={valuePasswordConfirm}
+                onChangeText={setValuePasswordConfirm}
+                marginTop="20"
+                title="Xác nhận mật khẩu"
+                placeholder="Nhập Lại mật khẩu"
+              />
+            </>
+          )}
         </View>
         <View style={{alignSelf: 'center', position: 'absolute', bottom: 40}}>
           <CommandButton
@@ -435,9 +469,9 @@ function SurveyScreen({navigation, route}) {
             hasRightIcon
             style={styles.commandBtn}
             backgroundColor={COLOR.GOLD}
-            rightIcon='check-circle'
+            rightIcon="check-circle"
             onPress={() => {
-              isUpdateSurveyInfoOnly ? handleUpdateSurveyInfo() : handleSignUp()
+              !isSignUp ? handleUpdateSurveyInfo() : handleSignUp();
             }}
           />
         </View>
@@ -446,9 +480,9 @@ function SurveyScreen({navigation, route}) {
   };
 
   const renderProgressBar = () => {
-      const LIST = generateNumberRangeArray(0,4)
+    const LIST = generateNumberRangeArray(0, 4);
     return (
-      <View >
+      <View>
         <View
           style={{
             flexDirection: 'row',
@@ -464,9 +498,7 @@ function SurveyScreen({navigation, route}) {
                   height: 4,
                   borderRadius: 3,
                   backgroundColor:
-                    currentIndex >= index
-                      ? COLOR.WHITE
-                      : COLOR.GREY,
+                    currentIndex >= index ? COLOR.WHITE : COLOR.GREY,
                   width: 95 / LIST?.length + '%',
                 }}></View>
             );
@@ -499,7 +531,9 @@ function SurveyScreen({navigation, route}) {
         style={styles.container}
         initialPage={0}
         transitionStyle="scroll"
-        onPageSelected={e => {setCurrentIndex(e.nativeEvent.position)}}
+        onPageSelected={e => {
+          setCurrentIndex(e.nativeEvent.position);
+        }}
         showPageIndicator>
         {renderWelcome()}
         {renderGender()}
@@ -508,6 +542,11 @@ function SurveyScreen({navigation, route}) {
         {/* {renderTag()} */}
         {renderSignUp()}
       </PagerView>
+      {isLoading && (
+        <View style={styles.loading}>
+          <ActivityIndicator size={100} />
+        </View>
+      )}
     </ImageBackground>
   );
 }
@@ -569,6 +608,17 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 50,
     width: '85%',
+  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#00000090',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

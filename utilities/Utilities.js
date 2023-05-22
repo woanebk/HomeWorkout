@@ -82,6 +82,14 @@ export const filterListWorkoutByTag = (arr, tag) => {
   );
 };
 
+export const filterListWorkoutByMuscleGroups = (arr, muscleGroups) => {
+  return convertObjectToArrayWithoutKey(
+    arr?.filter(item => {
+      return item?.muscle_group?.includes(muscleGroups[0]);
+    }),
+  );
+};
+
 export const generateArrayFromArrayKey = (arr, key) => {
   if (arr?.length <= 0) return [];
   let res = [];
@@ -103,36 +111,35 @@ export const generateNumberRangeArray = (fromNumber, toNumber) => {
   return list;
 };
 
-export const validateEmail = (email) => {
+export const validateEmail = email => {
   return String(email)
     .toLowerCase()
     .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     );
 };
 
 export const filterListWorkoutByUserLevel = (arr, userLevel) => {
   if (userLevel === 'Người tập chuyên nghiệp')
-  return convertObjectToArrayWithoutKey(
-    arr?.filter(item => {
-      return item?.level?.includes('Hard');
-    }),
-  );
+    return convertObjectToArrayWithoutKey(
+      arr?.filter(item => {
+        return item?.level?.includes('Hard');
+      }),
+    );
   else if (userLevel === 'Người có kinh nghiệm')
-  return convertObjectToArrayWithoutKey(
-    arr?.filter(item => {
-      return item?.level?.includes('Normal');
-    }),
-  );
+    return convertObjectToArrayWithoutKey(
+      arr?.filter(item => {
+        return item?.level?.includes('Normal');
+      }),
+    );
   else
-  return convertObjectToArrayWithoutKey(
-    arr?.filter(item => {
-      return item?.level?.includes('Easy');
-    }),
-  );
+    return convertObjectToArrayWithoutKey(
+      arr?.filter(item => {
+        return item?.level?.includes('Easy');
+      }),
+    );
 };
 
-
 export const randomNumber = (n = 1) => {
-  return Math.floor(Math.random() * 10 * n );
-}
+  return Math.floor(Math.random() * 10 * n);
+};

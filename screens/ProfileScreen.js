@@ -39,6 +39,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {LineChart} from 'react-native-chart-kit';
 import MenuButton from '../components/MenuButton';
 import LoadingView from '../components/LoadingView';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 const PFP_WIDTH = 80;
 const PFP_HEIGHT = 80;
 
@@ -68,7 +69,7 @@ function ProfileScreen({navigation}) {
     {label: 'Người có kinh nghiệm', value: 'Người có kinh nghiệm'},
     {label: 'Người tập chuyên nghiệp', value: 'Người tập chuyên nghiệp'},
   ]);
-  
+
   const [isLoading, setIsLoadng] = useState(false);
   const [showModalUpdateStat, setShowModalUpdateStat] = useState(false);
   const [chartLoading, setChartLoading] = useState(true);
@@ -85,7 +86,7 @@ function ProfileScreen({navigation}) {
     setValueHeigh(res.val()?.height?.toString());
     setValueWeight(res.val()?.weight?.toString());
     setValueName(res.val()?.name?.toString());
-    setValue(res.val()?.level?.toString())
+    setValue(res.val()?.level?.toString());
 
     setListBMI(convertObjectToArrayWithoutKeySort(res.val().listBMI));
     setChartLoading(false);
@@ -93,22 +94,25 @@ function ProfileScreen({navigation}) {
 
   const handleUpdateBMI = async () => {
     if (valueHeigh == '' || valueWeight == '')
-      Alert.alert(
-        '',
-        //body
-        'Vui lòng nhập lại cân nặng và chiều cao',
-      );
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Vui lòng nhập lại cân nặng và chiều cao',
+      });
     else if (!isNumber(valueHeigh) || !isNumber(valueWeight))
-      Alert.alert(
-        '',
-        //body
-        'Vui lòng nhập lại cân nặng và chiều cao',
-      );
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Vui lòng nhập lại cân nặng và chiều cao',
+      });
     else {
       setShowModalUpdateStat(false);
       await updateBMIInfo(parseInt(valueHeigh), parseInt(valueWeight))
         .then(async () => {
           Toast.show({
+            visibilityTime: 2000,
             type: 'info',
             text1: 'Thông báo',
             text2: 'Cập nhật thành công',
@@ -117,6 +121,7 @@ function ProfileScreen({navigation}) {
         })
         .catch(er => {
           Toast.show({
+            visibilityTime: 2000,
             type: 'info',
             text1: 'Thông báo',
             text2: 'Vui lòng thử lại',
@@ -127,22 +132,24 @@ function ProfileScreen({navigation}) {
 
   const handleUpdateInfo = async () => {
     if (valueName == '')
-    Toast.show({
-      type: 'info',
-      text1: 'Thông báo',
-      text2: 'Vui lòng nhập lại tên',
-    });
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'info',
+        text1: 'Thông báo',
+        text2: 'Vui lòng nhập lại tên',
+      });
     else {
       const data = {
         name: valueName,
-        level: value
-      }
-      const res = await getUserInfo()
-      console.log(res.val().id)
-      
+        level: value,
+      };
+      const res = await getUserInfo();
+      console.log(res.val().id);
+
       await updateUserInfo(res.val().id, data)
         .then(async () => {
           Toast.show({
+            visibilityTime: 2000,
             type: 'info',
             text1: 'Thông báo',
             text2: 'Cập nhật thành công',
@@ -151,6 +158,7 @@ function ProfileScreen({navigation}) {
         })
         .catch(er => {
           Toast.show({
+            visibilityTime: 2000,
             type: 'error',
             text1: 'Thông báo',
             text2: 'Vui lòng thử lại sau',
@@ -159,21 +167,28 @@ function ProfileScreen({navigation}) {
     }
   };
 
-  const onPressSignOut = () => {
-    try{
-      setIsLoadng(true)
+  const onPressSignOut = async () => {
+    try {
+      setIsLoadng(true);
+      // Signout google
+      const isGoogleSignedIn = await GoogleSignin.isSignedIn();
+      if (isGoogleSignedIn) {
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+      }
       auth()
-      .signOut()
-      .then(() =>
-        Alert.alert(
-          '',
-          //body
-          'Đăng xuất thành công',
-        ),
-      );
-    } catch (e){
-    }finally{
-      setIsLoadng(false)
+        .signOut()
+        .then(() => {
+          Toast.show({
+            visibilityTime: 2000,
+            type: 'info',
+            text1: 'Thông báo',
+            text2: 'Đăng xuất thành công',
+          });
+        });
+    } catch (e) {
+    } finally {
+      setIsLoadng(false);
     }
   };
   const renderAdminButton = () => {
@@ -370,21 +385,21 @@ function ProfileScreen({navigation}) {
       <View style={{alignItems: 'center', marginVertical: 10}}>
         <View style={styles.infoWrapper}>
           <TouchableOpacity>
-          <View style={styles.bodyInfoBlock}>
-            <Text style={[styles.numberTxt]}>
-              {Object.keys(user?.completedWorkouts || {})?.length || 0}{' '}
-              <Text style={[styles.infoTitleTxt]}>Bài tập đã hoàn thành</Text>
-            </Text>
-          </View>
+            <View style={styles.bodyInfoBlock}>
+              <Text style={[styles.numberTxt]}>
+                {Object.keys(user?.completedWorkouts || {})?.length || 0}{' '}
+                <Text style={[styles.infoTitleTxt]}>Bài tập đã hoàn thành</Text>
+              </Text>
+            </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={()=>navigation.navigate('Challenges')}>
-          <View style={styles.bodyInfoBlock}>
-            <Text style={styles.numberTxt}>
-              {Object.keys(user?.listChallenge || {})?.length || 0}{' '}
-              <Text style={styles.infoTitleTxt}>Thử thách đã tham gia</Text>
-            </Text>
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('Challenges')}>
+            <View style={styles.bodyInfoBlock}>
+              <Text style={styles.numberTxt}>
+                {Object.keys(user?.listChallenge || {})?.length || 0}{' '}
+                <Text style={styles.infoTitleTxt}>Thử thách đã tham gia</Text>
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -446,7 +461,10 @@ function ProfileScreen({navigation}) {
               <CommandButton
                 style={{width: '80%', height: 50, alignSelf: 'center'}}
                 title="Cập nhật"
-                onPress={()=>{handleUpdateInfo(); setShowModalUpdateInfo(false)}}
+                onPress={() => {
+                  handleUpdateInfo();
+                  setShowModalUpdateInfo(false);
+                }}
               />
             </View>
           </View>
@@ -606,7 +624,6 @@ function ProfileScreen({navigation}) {
             flex: 1,
             marginVertical: 10,
             paddingHorizontal: 10,
-            borderRadius: 10,
             padding: 10,
             backgroundColor: COLOR.LIGHT_BLACK,
             marginHorizontal: 5,
@@ -627,7 +644,9 @@ function ProfileScreen({navigation}) {
           {renderUserBMI()}
           <TouchableOpacity
             style={styles.userBtn}
-            onPress={() => {setShowModalUpdateStat(true)}}>
+            onPress={() => {
+              setShowModalUpdateStat(true);
+            }}>
             <Icon
               name="chart-line"
               type="material-community"
@@ -641,7 +660,9 @@ function ProfileScreen({navigation}) {
         </View>
         <MenuButton
           title="Bài tập yêu thích"
-          onPress={() => {navigation.navigate('AllFavoriteWorkout')}}
+          onPress={() => {
+            navigation.navigate('AllFavoriteWorkout');
+          }}
         />
         <MenuButton
           title="Cập nhật thông tin cá nhân"

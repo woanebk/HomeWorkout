@@ -1,176 +1,124 @@
 import React, {useState, useRef} from 'react';
 import {
-  Alert,
   StyleSheet,
   View,
   Image,
-  TouchableWithoutFeedback,
   Text,
-  TextInput,
   StatusBar,
-  Animated,
-  FlatList,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ActivityIndicator,
+  Modal,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Video from 'react-native-video';
 import CustomTextInput from '../../components/CustomTextInput';
 import OTPVerifyModal from '../../components/OTPVerifyModal';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
-import SingUpModal from '../../components/SignUpModal';
 import auth, {firebase} from '@react-native-firebase/auth';
-import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import Toast from 'react-native-toast-message';
-import { validateEmail } from '../../utilities/Utilities';
+import {validateEmail} from '../../utilities/Utilities';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import CommandButton from '../../components/CommandButton';
+import RoundButton from '../../components/RoundButton';
 
 function LoginScreen({navigation}, route) {
+  // Controls:
   const [showOTP, setShowOTP] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  // Values:
   const [OTPCode, setOTPCode] = useState();
-  const [text, onChangeText] = useState('');
-  const [valueEmail, setValueEmail] = useState('');
-  const [valuePassword, setValuePassword] = useState('');
-  const [valuePasswordConfirm, setValuePasswordConfirm] = useState('');
+  const [emailValue, setEmailValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
 
-  //#region Forgotpass
-  const handleForgot = () => {
-    console.debug('đăng kí');
-
-    if (valueEmail == '' || !validateEmail(valueEmail)) {
-      Alert.alert(
-        '',
-        //body
-        'Vui lòng nhập địa chỉ email hợp lệ',
-      );
-    }
-     else
-      auth()
-        .sendPasswordResetEmail(valueEmail)
-        .then(onforgotSuccess())
-        .catch(err => {
-          Alert.alert(
-            err.message,
-            //body
-            'Vui lòng nhập địa chỉ email',
-          );
-        });
-  };
-  const onforgotSuccess = () => {
-    Alert.alert(
-      '',
-      //body
-      'Vui lòng kiểm tra email của bạn',
-    );
-  };
-  //#endregion
-  //#region Login
   const handleLogin = () => {
-    dosomething();
-  };
-  const dosomething = () => {
-    if (valueEmail == '' || valuePassword == '') {
-      Alert.alert(
-        '',
-        //body
-        'Vui lòng nhập địa chỉ email và password',
-      );
-    } else if (!validateEmail(valueEmail)) {
-      Alert.alert(
-        '',
-        //body
-        'Địa chỉ email không hợp lệ',
-      );
-    } else
+    if (emailValue === '' || passwordValue === '') {
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'info',
+        text1: 'Thông báo',
+        text2: 'Vui lòng nhập địa chỉ email và password',
+      });
+    } else if (!validateEmail(emailValue)) {
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'info',
+        text1: 'Thông báo',
+        text2: 'Địa chỉ email không hợp lệ',
+      });
+    } else {
+      setIsLoading(true);
       auth()
-        .signInWithEmailAndPassword(valueEmail, valuePassword)
+        .signInWithEmailAndPassword(emailValue, passwordValue)
         .then(() => {
-          Toast.show({
-            type: 'success',
-            text1: 'Thông báo',
-            text2: 'Đăng nhập thành công',
-          });
-          console.debug('User account created & signed in!');
+          setIsLoading(false);
+          navigation.navigate('Tab');
         })
         .catch(error => {
           if (error.code === 'auth/user-not-found') {
-            console.debug(
-              'The password is invalid or the user does not have a password.',
-            );
-            Alert.alert(
-              '',
-              //body
-              'Địa chỉ email hoặc mật khẩu không xác thực',
-            );
+            Toast.show({
+              visibilityTime: 2000,
+              type: 'info',
+              text1: 'Thông báo',
+              text2: 'Địa chỉ email hoặc mật khẩu không xác thực',
+            });
           }
 
           if (
             error.code ===
             'There is no user record corresponding to this identifier. The user may have been deleted.'
           ) {
-            Alert.alert(
-              '',
-              //body
-              'Vui lòng nhập địa chỉ Email xác thực',
-            );
+            Toast.show({
+              visibilityTime: 2000,
+              type: 'info',
+              text1: 'Thông báo',
+              text2: 'Vui lòng nhập địa chỉ Email xác thực',
+            });
           }
 
           console.debug(error);
+          setIsLoading(false);
         });
-  };
-  //#endregion
-  //#region FaceBook
-  async function onFacebookButtonPress() {
-    // Attempt login with permissions
-    LoginManager.logOut();
-    console.debug('đăng kí');
-    const result = await LoginManager.logInWithPermissions([
-      'public_profile',
-      'email',
-    ]);
-
-    if (result.isCancelled) {
-      throw 'User cancelled the login process';
     }
-    console.debug('mở lên dc rồi');
+  };
 
-    // Once signed in, get the users AccesToken
-    const data = await AccessToken.getCurrentAccessToken();
+  const onGoogleLoginPressed = async () => {
+    try {
+      setIsLoading(true);
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      // Get the users ID token
+      const {idToken} = await GoogleSignin.signIn();
 
-    if (!data) {
-      throw 'Something went wrong obtaining access token';
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      await auth().signInWithCredential(googleCredential);
+
+      navigation.navigate('Tab');
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
     }
-
-    // Create a Firebase credential with the AccessToken
-    const facebookCredential = auth.FacebookAuthProvider.credential(
-      data.accessToken,
-    );
-
-    // Sign-in the user with the credential
-    return auth().signInWithCredential(facebookCredential);
-  }
-  //#endregion
-  const onLoginSuccess = () => {
-    this.setState({
-      error: '',
-      loading: false,
-    });
   };
-  const [visibleRegister, setVisibleRegister] = useState(false);
 
-  const showDialog = () => {
-    setVisibleRegister(true);
-  };
-  //#region Render
   const renderSignUp = () => {
     return (
       <View style={styles.signupWrapper}>
         <Text style={{color: COLOR.WHITE, fontSize: 13}}>
-          Chưa có tài khoản ?{' '}
+          Chưa có tài khoản ?{'  '}
         </Text>
         <TouchableOpacity>
           <Text
             style={{color: COLOR.WHITE, fontSize: 13, fontWeight: 'bold'}}
-            onPress={() => navigation.navigate('Survey')}>
+            onPress={async () => {
+              await navigation.navigate('Survey');
+            }}>
             Đăng Kí Ngay
           </Text>
         </TouchableOpacity>
@@ -178,8 +126,100 @@ function LoginScreen({navigation}, route) {
     );
   };
 
+  const renderForgotPasswordModal = () => {
+    const [warning, setWarning] = useState('');
+
+    const handleForgot = () => {
+      if (forgotPasswordEmail === '' || !validateEmail(forgotPasswordEmail)) {
+        setWarning('Vui lòng nhập địa chỉ email hợp lệ');
+      } else {
+        auth()
+          .sendPasswordResetEmail(forgotPasswordEmail)
+          .then(onForgotPasswordSucceed())
+          .catch(err => {
+            Toast.show({
+              visibilityTime: 2000,
+              type: 'info',
+              text1: 'Thông báo',
+              text2: 'Email chưa được đăng kí',
+            });
+            setShowForgotPasswordModal(false);
+          });
+      }
+    };
+    const onForgotPasswordSucceed = () => {
+      setShowForgotPasswordModal(false);
+
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'info',
+        text1: 'Thông báo',
+        text2: 'Vui lòng kiểm tra email của bạn',
+      });
+    };
+    return (
+      <Modal
+        onDismiss={() => {
+          setForgotPasswordEmail('');
+        }}
+        animationType="slide"
+        transparent
+        statusBarTranslucent
+        visible={showForgotPasswordModal}>
+        <View style={{flex: 1, backgroundColor: COLOR.BLACK}}>
+          <View
+            style={{
+              marginTop: 100,
+              flex: 1,
+              width: '85%',
+              alignSelf: 'center',
+            }}>
+            <Text style={styles.titleTxt} color={COLOR.LIGHT_GREY}>
+              Nhập email của bạn để lấy lại mật khẩu
+            </Text>
+
+            <CustomTextInput
+              style={{alignSelf: 'center', marginTop: 40, width: '100%'}}
+              value={forgotPasswordEmail}
+              onChangeText={value => {
+                setForgotPasswordEmail(value);
+                setWarning('');
+              }}
+              title="Email"
+              secureTextEntry={false}
+              icon="envelope"
+              placeholder="Nhập email"
+              backgroundColor="#292D3E"
+            />
+            <View style={{paddingTop: 12, marginBottom: 16}}>
+              <Text style={{color: '#ff0020'}}>{warning}</Text>
+            </View>
+            <CommandButton
+              style={{width: '80%', height: 50, alignSelf: 'center'}}
+              title="Xác nhận"
+              onPress={() => {
+                handleForgot();
+              }}
+            />
+          </View>
+
+          <RoundButton
+            icon="close"
+            buttonWidth={25}
+            buttonHeight={25}
+            size={10}
+            style={{position: 'absolute', right: 40, top: 50}}
+            onPress={() => {
+              setShowForgotPasswordModal(false);
+            }}
+          />
+        </View>
+      </Modal>
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
       <StatusBar
         barStyle="light-content"
         translucent
@@ -191,7 +231,7 @@ function LoginScreen({navigation}, route) {
         resizeMode="cover"
         source={require('../../assets/video/Intro.mp4')}
       />
-      {/* <Image style={styles.logo} source={require('../../assets/dumbell.jpg')} /> */}
+      {/*<Image style={styles.logo} source={require('../../assets/dumbell.jpg')} />*/}
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 0, y: 0.85}}
@@ -199,18 +239,18 @@ function LoginScreen({navigation}, route) {
         style={styles.linearGradient}>
         <CustomTextInput
           style={styles.textinput}
-          value={valueEmail}
-          onChangeText={setValueEmail}
+          value={emailValue}
+          onChangeText={setEmailValue}
           title="Email"
           icon="envelope"
           placeholder="Nhập Email để đăng nhập"
         />
         <CustomTextInput
+          isPassword
           style={{alignSelf: 'center', marginTop: 30, width: '85%'}}
-          value={valuePassword}
-          onChangeText={setValuePassword}
+          value={passwordValue}
+          onChangeText={setPasswordValue}
           title="Mật khẩu"
-          secureTextEntry={true}
           icon="circle"
           placeholder="Nhập mật khẩu"
         />
@@ -225,10 +265,12 @@ function LoginScreen({navigation}, route) {
               color: COLOR.WHITE,
               alignSelf: 'center',
               textAlign: 'center',
-              marginTop: 10,
+              marginTop: 30,
               fontWeight: 'bold',
             }}
-            onPress={() => handleForgot()}>
+            onPress={() => {
+              setShowForgotPasswordModal(true);
+            }}>
             Quên mật khẩu?
           </Text>
         </TouchableOpacity>
@@ -236,26 +278,28 @@ function LoginScreen({navigation}, route) {
 
         <TouchableOpacity
           style={styles.facebookBtn}
-          onPress={() =>
-            onFacebookButtonPress().then(() =>
-              console.log('Signed in with Facebook!'),
-            )
-          }>
+          onPress={onGoogleLoginPressed}>
           <Image
             resizeMode="cover"
-            style={styles.facebook}
-            source={require('../../assets/facebook-icon.jpg')}
+            style={styles.google}
+            source={require('../../assets/images/google_icon.png')}
           />
         </TouchableOpacity>
       </LinearGradient>
       {renderSignUp()}
+      {renderForgotPasswordModal()}
       <OTPVerifyModal
         code={OTPCode}
         visible={showOTP}
         onPressClose={() => setShowOTP(false)}
         onConfirm={() => {}}
       />
-    </View>
+      {isLoading && (
+        <View style={styles.loading}>
+          <ActivityIndicator size={100} color={COLOR.WHITE} />
+        </View>
+      )}
+    </KeyboardAvoidingView>
   );
 }
 //#endregion
@@ -273,7 +317,7 @@ const styles = StyleSheet.create({
     // opacity:0.9
   },
   linearGradient: {
-    height: '80%',
+    height: '85%',
     width: '100%',
     position: 'absolute',
     bottom: 0,
@@ -317,9 +361,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 10,
   },
-  facebook: {
-    width: 40,
-    height: 40,
+  google: {
+    width: 34,
+    height: 34,
     borderRadius: 40,
     marginTop: 0,
   },
@@ -328,6 +372,20 @@ const styles = StyleSheet.create({
     height: 80,
     alignSelf: 'center',
     marginTop: 200,
+  },
+  loading: {
+    position: 'absolute',
+    backgroundColor: '#18151090',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titleTxt: {
+    color: COLOR.WHITE,
   },
 });
 

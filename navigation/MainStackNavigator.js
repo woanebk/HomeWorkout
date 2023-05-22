@@ -62,21 +62,19 @@ function MainStackNavigator() {
       <MainStack.Screen
         name="WorkoutProgress"
         component={WorkoutProgressScreen}
-        options={{headerTintColor: '#fff',
-        headerLeft: ()=> null
-      }}
+        options={{headerTintColor: '#fff', headerLeft: () => null}}
       />
-      <MainStack.Screen
-        name="AuthStack"
-        component={AuthStackNavigator}
-        options={{headerTintColor: '#fff'}}
-      />
+      {/*<MainStack.Screen*/}
+      {/*  name="AuthStack"*/}
+      {/*  component={AuthStackNavigator}*/}
+      {/*  options={{headerTintColor: '#fff'}}*/}
+      {/*/>*/}
       <MainStack.Screen
         name="AllWorkout"
         component={AllWorkoutScreen}
         options={{headerTintColor: '#fff'}}
       />
-       <MainStack.Screen
+      <MainStack.Screen
         name="ExerciseLibrary"
         component={ExerciseLibraryScreen}
         options={{headerTintColor: '#fff'}}
@@ -90,7 +88,7 @@ function MainStackNavigator() {
           headerMode: 'float',
         }}
       />
-       <MainStack.Screen
+      <MainStack.Screen
         name="AllChallenge"
         component={AllChallengeScreen}
         options={{headerTintColor: '#fff'}}
@@ -119,19 +117,19 @@ function MainStackNavigator() {
   );
 }
 
-function AuthStackNavigator() {
-  return (
-    <AuthStack.Navigator
-      initialRouteName="Login"
-      screenOptions={{
-        headerTransparent: true,
-        headerTitle: '',
-        headerMode: 'float',
-      }}>
-      <AuthStack.Screen name="Login" component={LoginScreen} />
-    </AuthStack.Navigator>
-  );
-}
+// function AuthStackNavigator() {
+//   return (
+//     <AuthStack.Navigator
+//       initialRouteName="Login"
+//       screenOptions={{
+//         headerTransparent: true,
+//         headerTitle: '',
+//         headerMode: 'float',
+//       }}>
+//       <AuthStack.Screen name="Login" component={LoginScreen} />
+//     </AuthStack.Navigator>
+//   );
+// }
 
 const styles = StyleSheet.create({});
 

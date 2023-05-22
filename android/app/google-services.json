@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "441584493982",
+    "firebase_url": "https://homeworkout-73750-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "homeworkout-73750",
     "storage_bucket": "homeworkout-73750.appspot.com"
   },
@@ -14,7 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "441584493982-j10cn1kh0dfpolhtvpqs8fnsbt6heiha.apps.googleusercontent.com",
+          "client_id": "441584493982-iik8kji957f4qen6bnerepep3l2k3vrg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.homeworkout",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "441584493982-lr6nb2it025o6dnfi1bg1kgvhaogtpbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.homeworkout",
+            "certificate_hash": "c59bc948807cbe4bd0f9c162d61e224dc9620bdf"
+          }
+        },
+        {
+          "client_id": "441584493982-eg6pb0mrq60j3qmdq7hf9bbphj9mon2e.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +44,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "441584493982-j10cn1kh0dfpolhtvpqs8fnsbt6heiha.apps.googleusercontent.com",
+              "client_id": "441584493982-eg6pb0mrq60j3qmdq7hf9bbphj9mon2e.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

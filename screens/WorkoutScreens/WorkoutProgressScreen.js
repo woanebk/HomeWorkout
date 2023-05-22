@@ -24,7 +24,10 @@ import CommandButton from '../../components/CommandButton';
 import ProgressingListExerciseItem from '../../components/ProgressingListExerciseItem';
 import Timer from '../../components/Timer';
 import ModalIconDone from '../../components/ModalIconDone';
-import {cloneArrayOrObject, handleArrayToString} from '../../utilities/Utilities';
+import {
+  cloneArrayOrObject,
+  handleArrayToString,
+} from '../../utilities/Utilities';
 import {IconButton} from 'react-native-paper';
 import WorkoutProgressBar from '../../components/WorkoutProgressBar';
 import CustomModal from '../../components/CustomModal';
@@ -144,7 +147,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
   }, [microphoneEnable]);
 
   useEffect(() => {
-    handleVoice(results)
+    handleVoice(results);
   }, [results]);
 
   const requestMicroPermission = async () => {
@@ -186,8 +189,8 @@ function WorkoutProgressScreen({route, navigation}, props) {
     console.log('onSpeechEnd: ', e);
     setIsListening(false);
     //infinite listening:
-    const res = await Voice.isRecognizing()
-    if(!res) await startRecognizing();
+    const res = await Voice.isRecognizing();
+    if (!res) await startRecognizing();
   };
 
   const onSpeechError = e => {
@@ -333,7 +336,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
   };
 
   const handleFinishWorkout = () => {
-    setMicrophoneEnable(false)
+    setMicrophoneEnable(false);
     if (
       listExercise?.some(item => {
         return !item?.isDone;
@@ -431,21 +434,21 @@ function WorkoutProgressScreen({route, navigation}, props) {
             autoPlay
             loop></LottieView>
         )}
-        {microphoneEnable && 
-        (
+        {microphoneEnable && (
           <>
-          <Text style={{color: COLOR.WHITE, textAlign: 'center'}}>
-          <Icon
-            name="microphone"
-            type="font-awesome"
-            size={12}
-            color={COLOR.WHITE}
-          />{' '}
-          {partialResults || ''}
-        </Text>
-        <Text style={{color: COLOR.WHITE, textAlign: 'center'}}>
-        {handleArrayToString(results) || ''}
-      </Text></>
+            <Text style={{color: COLOR.WHITE, textAlign: 'center'}}>
+              <Icon
+                name="microphone"
+                type="font-awesome"
+                size={12}
+                color={COLOR.WHITE}
+              />{' '}
+              {partialResults || ''}
+            </Text>
+            <Text style={{color: COLOR.WHITE, textAlign: 'center'}}>
+              {handleArrayToString(results) || ''}
+            </Text>
+          </>
         )}
       </View>
     );
@@ -754,8 +757,9 @@ function WorkoutProgressScreen({route, navigation}, props) {
         style={styles.exitBtn}
         color={COLOR.WHITE}
         size={25}
-        onPress={() => {setShowModalExit(true);
-          setMicrophoneEnable(false)
+        onPress={() => {
+          setShowModalExit(true);
+          setMicrophoneEnable(false);
         }}
       />
       <IconButton
@@ -765,17 +769,17 @@ function WorkoutProgressScreen({route, navigation}, props) {
         size={25}
         onPress={async () => await onSoundButtonPress()}
       />
-      <IconButton
-        icon={microphoneEnable ? 'microphone' : 'microphone-off'}
-        style={styles.microBtn}
-        color={COLOR.WHITE}
-        size={25}
-        onPress={() => {
-          microphoneEnable
-            ? setMicrophoneEnable(false)
-            : setMicrophoneEnable(true);
-        }}
-      />
+      {/*<IconButton*/}
+      {/*  icon={microphoneEnable ? 'microphone' : 'microphone-off'}*/}
+      {/*  style={styles.microBtn}*/}
+      {/*  color={COLOR.WHITE}*/}
+      {/*  size={25}*/}
+      {/*  onPress={() => {*/}
+      {/*    microphoneEnable*/}
+      {/*      ? setMicrophoneEnable(false)*/}
+      {/*      : setMicrophoneEnable(true);*/}
+      {/*  }}*/}
+      {/*/>*/}
       {isLoading && (
         <View
           style={{
@@ -799,7 +803,7 @@ const styles = StyleSheet.create({
     width: '94%',
     height: 200,
     alignSelf: 'center',
-    borderRadius: 15,
+    // borderRadius: 15,
     backgroundColor: COLOR.MATTE_BLACK,
   },
   nameTxt: {

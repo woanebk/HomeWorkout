@@ -144,7 +144,14 @@ export const submitWorkoutInChallenge = async (
     isDone: true,
   };
   const ref = await database
-    .ref('User/' + userId + '/listChallenge/' + challengeId + '/listWorkout/' + dayIndex)
+    .ref(
+      'User/' +
+        userId +
+        '/listChallenge/' +
+        challengeId +
+        '/listWorkout/' +
+        dayIndex,
+    )
     .update(submitData);
   return ref;
 };
@@ -248,8 +255,8 @@ export const submitWorkout = async (
 //#region UserInfo
 export const getUserInfo = async () => {
   await database
-    .ref('User/' + auth().currentUser.uid )
-    .update({id:auth().currentUser.uid})
+    .ref('User/' + auth().currentUser.uid)
+    .update({id: auth().currentUser.uid});
   return await database.ref('User/' + auth().currentUser.uid).once('value');
 };
 export const updateBMIInfo = async (height, weight) => {
@@ -265,39 +272,41 @@ export const updateBMIInfo = async (height, weight) => {
       x: text.substring(0, 10),
       y: Math.round((weight / height / height) * 1000000) / 100,
       height: height,
-      weight: weight
+      weight: weight,
     });
 };
 
 export const updateUserInfo = async (userId, data) => {
   var currentdate = new Date();
   var text = currentdate.toISOString().toString();
-  await database
-    .ref('User/' + userId)
-    .update(data);
-   if (!data?.height || !data?.weight) return
-  console.log(Math.round((data?.weight / data?.height / data?.height) * 1000000) / 100);
-  await database
+  await database.ref('User/' + userId).update(data);
+  if (!data?.height || !data?.weight) return;
+  console.log(
+    Math.round((data?.weight / data?.height / data?.height) * 1000000) / 100,
+  );
+  var res = await database
     .ref('User/' + userId + '/listBMI/' + text.substring(0, 10))
     .update({
       x: text.substring(0, 10),
-      y: Math.round((data?.weight / data?.height / data?.height) * 1000000) / 100,
+      y:
+        Math.round((data?.weight / data?.height / data?.height) * 1000000) /
+        100,
       height: data?.height,
-      weight: data?.weight
+      weight: data?.weight,
     });
 };
 
-export const addWorkoutToListFavorite = async (workoutId) => {
+export const addWorkoutToListFavorite = async workoutId => {
   await database
-    .ref('User/' + auth().currentUser.uid + '/favoriteWorkouts/'+ workoutId)
+    .ref('User/' + auth().currentUser.uid + '/favoriteWorkouts/' + workoutId)
     .update({id: workoutId});
-}
+};
 
-export const removeWorkoutFromListFavorite = async (workoutId) => {
+export const removeWorkoutFromListFavorite = async workoutId => {
   await database
-    .ref('User/' + auth().currentUser.uid + '/favoriteWorkouts/'+ workoutId)
+    .ref('User/' + auth().currentUser.uid + '/favoriteWorkouts/' + workoutId)
     .remove();
-}
+};
 
 //#endregion
 

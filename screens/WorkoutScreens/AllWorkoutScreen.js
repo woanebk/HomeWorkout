@@ -1,16 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  Text,
-  StyleSheet,
-  View,
-  StatusBar,
-  Animated,
-} from 'react-native';
+import {Text, StyleSheet, View, StatusBar, Animated} from 'react-native';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import {Icon} from 'react-native-elements';
 import WorkoutRowItem from '../../components/WorkoutRowItem';
 import {getListAllWorkout} from '../../utilities/FirebaseDatabase';
-import {convertObjectToArrayWithoutKey, filterListWorkoutByTag} from '../../utilities/Utilities';
+import {
+  convertObjectToArrayWithoutKey,
+  filterListWorkoutByMuscleGroups,
+  filterListWorkoutByTag,
+} from '../../utilities/Utilities';
 
 const HEADER_HEIGHT = 250; // height of the image
 const SCREEN_HEADER_HEIGHT = 90; // height of the header contain back button
@@ -19,7 +17,7 @@ const LIST_EXTRA_SIZE = 120;
 
 function AllWorkoutScreen({navigation, route}) {
   const [listWorkout, setListWorkout] = useState([]);
-  const {collectionData} =  route.params || {}
+  const {collectionData} = route.params || {};
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -31,11 +29,19 @@ function AllWorkoutScreen({navigation, route}) {
     try {
       const res = await getListAllWorkout();
       if (!res) throw 'CANNOT GET LIST WORKOUTS';
-      if (collectionData){
-        const listFilterByTag = filterListWorkoutByTag(convertObjectToArrayWithoutKey(res.val()), collectionData?.tag)
-        setListWorkout(listFilterByTag)
-      }
-      else setListWorkout(convertObjectToArrayWithoutKey(res.val()));
+      if (collectionData?.tag) {
+        const listFilterByTag = filterListWorkoutByTag(
+          convertObjectToArrayWithoutKey(res.val()),
+          collectionData?.tag,
+        );
+        setListWorkout(listFilterByTag);
+      } else if (collectionData?.muscleGroups) {
+        const listFilterByMuscleGroups = filterListWorkoutByMuscleGroups(
+          convertObjectToArrayWithoutKey(res.val()),
+          collectionData?.muscleGroups,
+        );
+        setListWorkout(listFilterByMuscleGroups);
+      } else setListWorkout(convertObjectToArrayWithoutKey(res.val()));
     } catch (e) {
       console.log(e);
     }
@@ -75,7 +81,9 @@ function AllWorkoutScreen({navigation, route}) {
           },
         ]}
         source={{
-          uri: collectionData?.image || 'https://oreni.vn/uploads/contents/workout-la-gi-3.jpg',
+          uri:
+            collectionData?.image ||
+            'https://oreni.vn/uploads/contents/workout-la-gi-3.jpg',
         }}
         resizeMode="cover"></Animated.Image>
       <Animated.View
@@ -127,7 +135,9 @@ function AllWorkoutScreen({navigation, route}) {
   const renderItem = item => (
     <View style={styles.itemWrapper}>
       <WorkoutRowItem
-        onPress={() => navigation.navigate('WorkoutInfo', {workoutId: item?.id})}
+        onPress={() =>
+          navigation.navigate('WorkoutInfo', {workoutId: item?.id})
+        }
         isliked={true}
         title={item?.name}
         image={{
@@ -159,7 +169,7 @@ function AllWorkoutScreen({navigation, route}) {
         data={listWorkout}
         keyExtractor={(item, index) => index}
         ListHeaderComponent={renderListHeader}
-        ListFooterComponent={()=>(<View style={{height:80}}/>)}
+        ListFooterComponent={() => <View style={{height: 80}} />}
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollY}}}],

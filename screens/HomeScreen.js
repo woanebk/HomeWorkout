@@ -1,5 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {Image, Text, StyleSheet, View, StatusBar} from 'react-native';
+import React, {useState, useEffect, Fragment} from 'react';
+import {
+  Image,
+  Text,
+  StyleSheet,
+  View,
+  StatusBar,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {BackgroundImage} from 'react-native-elements/dist/config';
 import {
@@ -28,6 +36,9 @@ import {
   filterListWorkoutByUserLevel,
   shuffle,
 } from '../utilities/Utilities';
+import {Skeleton} from '@rneui/themed';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import HomeUserInfoArea from '../components/HomeUserInfoArea';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
@@ -38,7 +49,7 @@ function HomeScreen({navigation}) {
     },
   ];
   const [suggestedWorkouts, setSuggestedWorkouts] = useState(['1', '2', '3']);
-  const [workoutOfTheDay, setWorkOutOfTheDay] = useState({});
+  const [workoutOfTheDay, setWorkOutOfTheDay] = useState();
   const [suggestedChallenges, setSuggestedChallenges] = useState([
     '1',
     '2',
@@ -46,7 +57,8 @@ function HomeScreen({navigation}) {
   ]);
   const [suggestedVideos, setSuggestedVideos] = useState(['1', '2', '3']);
   const [allChallenges, setAllChallenges] = useState(DATA);
-  const [user, setUser] = useState({abc: 'abc'});
+  const [user, setUser] = useState();
+  const [isUserLoading, setIsUserLoading] = useState(false);
 
   //#region  message
   const [notification, setNotification] = useState({
@@ -123,25 +135,40 @@ function HomeScreen({navigation}) {
     getSuggestedChallenges(5);
     getSuggestedVideos(5);
     const unsubscribe = navigation.addListener('focus', () => {
-      initUser();
+      if (!user) {
+        initUser(true);
+      } else {
+        initUser(false);
+      }
     });
-    return unsubscribe;
+    // return () => {
+    //   navigation.removeListener(unsubscribe);
+    // };
   }, []);
 
   useEffect(() => {
     getWorkoutOfTheDay();
   }, [user?.level]);
 
-  const initUser = async () => {
-    var res = await getUserInfo();
-    setUser(res.val());
-    if (
-      !res.val()?.weight ||
-      !res.val()?.height ||
-      !res.val()?.level ||
-      !res.val()?.name
-    )
-      navigation.navigate('Survey', {isUpdateSurveyInfoOnly: true});
+  const initUser = async showLoading => {
+    try {
+      if (showLoading) setIsUserLoading(true);
+      const res = await getUserInfo();
+      setUser(res.val());
+      const isSignInWithGoogle = await GoogleSignin.isSignedIn();
+      if (
+        (!res.val()?.weight ||
+          !res.val()?.height ||
+          !res.val()?.level ||
+          !res.val()?.name) &&
+        isSignInWithGoogle
+      ) {
+        navigation.navigate('Survey', {isSignUp: false});
+      }
+    } catch (e) {
+    } finally {
+      setIsUserLoading(false);
+    }
   };
 
   const getSuggestedWorkout = async n => {
@@ -215,6 +242,24 @@ function HomeScreen({navigation}) {
           'https://www.cnet.com/a/img/mSdKK71X29nFhsLSencu7IwYlhQ=/1200x675/2019/11/12/e66cc0f3-c6b8-4f6e-9561-e23e08413ce1/gettyimages-1002863304.jpg',
       }}
       resizeMode="cover">
+      {!workoutOfTheDay && (
+        <View
+          style={{
+            paddingTop: 20,
+            display: 'flex',
+            flex: 1,
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            position: 'absolute',
+            backgroundColor: COLOR.MATTE_BLACK,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <ActivityIndicator size={70} color={COLOR.WHITE} />
+        </View>
+      )}
       <View style={styles.todayWorkout}>
         <Text style={styles.todayWorkoutTxt}>Bài Tập Của Ngày</Text>
       </View>
@@ -227,23 +272,25 @@ function HomeScreen({navigation}) {
 
       <View style={styles.bannerLeft}>
         <Text style={styles.bannerTxt}>{workoutOfTheDay?.name}</Text>
-        <View style={styles.bannerBtnWrapper}>
-          <TouchableOpacity
-            style={styles.bannerBtn}
-            onPress={() =>
-              navigation.navigate('WorkoutInfo', {
-                workoutId: workoutOfTheDay?.id,
-              })
-            }>
-            <Icon
-              name="dumbbell"
-              type="font-awesome-5"
-              size={13}
-              color={COLOR.WHITE}
-            />
-            <Text style={styles.bannerBtnTxt}>Tập Ngay</Text>
-          </TouchableOpacity>
-        </View>
+        {workoutOfTheDay && (
+          <View style={styles.bannerBtnWrapper}>
+            <TouchableOpacity
+              style={styles.bannerBtn}
+              onPress={() =>
+                navigation.navigate('WorkoutInfo', {
+                  workoutId: workoutOfTheDay?.id,
+                })
+              }>
+              <Icon
+                name="dumbbell"
+                type="font-awesome-5"
+                size={13}
+                color={COLOR.WHITE}
+              />
+              <Text style={styles.bannerBtnTxt}>Tập Ngay</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <View style={styles.bannerRight}>
@@ -253,7 +300,9 @@ function HomeScreen({navigation}) {
           </Text>
           <Text style={styles.bannerRightSmallTxt}>Số round</Text>
           <Text style={styles.bannerRightTxt}>
-            {workoutOfTheDay?.estimate_time}m
+            {workoutOfTheDay?.estimate_time
+              ? `${workoutOfTheDay?.estimate_time}m`
+              : ''}
           </Text>
           <Text style={styles.bannerRightSmallTxt}>Thời gian</Text>
           <Text style={[styles.bannerRightTxt, {fontSize: 15}]}>
@@ -267,73 +316,7 @@ function HomeScreen({navigation}) {
 
   const renderUserInfo = () => (
     <View style={styles.userStatus}>
-      <View style={styles.userTagWrapper}>
-        <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-          <Icon
-            name="account"
-            type="material-community"
-            size={14}
-            color={COLOR.WHITE}
-          />
-          <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
-            {user?.level || 'Người mới tập'}
-          </Text>
-        </View>
-        <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-          <Icon
-            name="account"
-            type="material-community"
-            size={14}
-            color={COLOR.WHITE}
-          />
-          <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>Tăng cơ</Text>
-        </View>
-      </View>
-
-      <View style={{flexDirection: 'row', paddingVertical: 5}}>
-        <View style={{flex: 5}}>
-          <Text style={styles.numberTxt}>
-            {user?.name ? user?.name : 'Người dùng mới'}
-          </Text>
-          <Text style={styles.silverTxt}>
-            Chiều Cao:{' '}
-            <Text style={styles.numberTxt}>
-              {user?.height ? user?.height : '---'}cm
-            </Text>{' '}
-            - Cân nặng:{' '}
-            <Text style={styles.numberTxt}>
-              {user?.weight ? user?.weight : '---'} kg
-            </Text>
-          </Text>
-        </View>
-        <View style={{flex: 1, alignItems: 'center', marginTop: -20}}>
-          <Text
-            style={{fontWeight: 'bold', fontSize: 20, color: COLOR.DARK_BROWN}}>
-            BMI
-          </Text>
-          <Text style={{fontSize: 20, fontWeight: 'bold', color: COLOR.WHITE}}>
-            {user?.weight && user?.height
-              ? Math.round(
-                  (user?.weight / user?.height / user?.height) * 1000000,
-                ) / 100
-              : '---'}{' '}
-          </Text>
-        </View>
-      </View>
-
-      <TouchableOpacity
-        style={styles.userBtn}
-        onPress={() => navigation.navigate('Profile')}>
-        <Icon
-          name="chart-line"
-          type="material-community"
-          size={20}
-          color={COLOR.WHITE}
-        />
-        <Text style={[styles.userBtnTxt, {marginLeft: 10}]}>
-          Cập nhật chỉ số ngay
-        </Text> 
-      </TouchableOpacity>
+      <HomeUserInfoArea user={user} />
     </View>
   );
 
@@ -464,7 +447,16 @@ function HomeScreen({navigation}) {
           }}
         />
       </View>
-      {/* <TouchableOpacity style={{height:50, backgroundColor:'#123123'}} onPress={()=>navigation.navigate('WorkoutInfo')}/> */}
+      <View style={styles.libraryBtnWrapper}>
+        <CommandButton
+          icon="tag"
+          title="Bài tập theo nhóm cơ"
+          backgroundColor={COLOR.GOLD}
+          onPress={() => {
+            navigation.navigate('Category');
+          }}
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -564,47 +556,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
-  userBtn: {
-    width: '100%',
-    height: 40,
-    backgroundColor: COLOR.LIGHT_BROWN,
-    borderRadius: 20,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  userBtnTxt: {
-    color: COLOR.WHITE,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  numberTxt: {
-    color: COLOR.WHITE,
-    fontSize: 15,
-  },
-  silverTxt: {
-    fontSize: 13,
-    color: '#aaa9ad',
-  },
-  userTag: {
-    height: 20,
-    borderWidth: 1,
-    borderRadius: 7,
-    alignItems: 'center',
-    paddingHorizontal: 5,
-    flexDirection: 'row',
-    marginRight: 10,
-    justifyContent: 'space-between',
-  },
-  userTagWrapper: {
-    flexDirection: 'row',
-  },
-  userTagTxt: {
-    fontSize: 11,
-    marginLeft: 3,
-  },
+
   libraryBtnWrapper: {
     height: 50,
     marginBottom: 15,
