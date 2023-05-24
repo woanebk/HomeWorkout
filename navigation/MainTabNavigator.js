@@ -6,6 +6,7 @@ import ChallengesCategoryScreen from '../screens/ChallengesCategoryScreen';
 import {Text, StyleSheet, View} from 'react-native';
 import {COLOR} from '../constant';
 import {Icon} from 'react-native-elements';
+import ExerciseLibraryScreen from '../screens/Exercise/ExerciseLibraryScreen';
 
 const MainTab = createMaterialBottomTabNavigator();
 
@@ -32,10 +33,10 @@ function MainTabNavigator({navigation}) {
         }}
       />
       <MainTab.Screen
-        name="Challenges"
-        component={ChallengesCategoryScreen}
+        name="ExerciseLibrary"
+        component={ExerciseLibraryScreen}
         options={{
-          tabBarLabel: 'Thử thách',
+          tabBarLabel: 'Thư viện',
           tabBarIcon: ({color}) => (
             <Icon
               name="dumbbell"

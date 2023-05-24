@@ -437,16 +437,16 @@ function HomeScreen({navigation}) {
           </View>
         )}
       />
-      <View style={styles.libraryBtnWrapper}>
-        <CommandButton
-          icon="tag"
-          title="Đi đến thư viện kỹ thuật"
-          backgroundColor={COLOR.GOLD}
-          onPress={() => {
-            navigation.navigate('ExerciseLibrary');
-          }}
-        />
-      </View>
+      {/*<View style={styles.libraryBtnWrapper}>*/}
+      {/*  <CommandButton*/}
+      {/*    icon="tag"*/}
+      {/*    title="Đi đến thư viện kỹ thuật"*/}
+      {/*    backgroundColor={COLOR.GOLD}*/}
+      {/*    onPress={() => {*/}
+      {/*      navigation.navigate('ExerciseLibrary');*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*</View>*/}
       <View style={styles.libraryBtnWrapper}>
         <CommandButton
           icon="tag"

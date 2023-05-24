@@ -87,7 +87,7 @@ function ChallengeDetailScreen({route, navigation}) {
       setIsLoading(true);
       await deleteChallengeOutOfMyList(challengeDetail);
       setIsSubCribed(false);
-      handleGetData()
+      handleGetData();
     } catch {
     } finally {
       setIsLoading(false);
@@ -99,7 +99,11 @@ function ChallengeDetailScreen({route, navigation}) {
       <WorkoutByDayItem
         onPress={() => {
           isSubCribed
-            ? navigation.navigate('WorkoutInfo', {workoutId: item?.workoutId, challengeId: challengeDetail?.id, dayIndex: index})
+            ? navigation.navigate('WorkoutInfo', {
+                workoutId: item?.workoutId,
+                challengeId: challengeDetail?.id,
+                dayIndex: index,
+              })
             : Toast.show({
                 type: 'info',
                 text1: 'Thông báo',
@@ -138,7 +142,7 @@ function ChallengeDetailScreen({route, navigation}) {
           overlayColor={'#00000010'}
           style={styles.blur}
           blurType="dark"
-          blurAmount={15}
+          blurAmount={30}
           reducedTransparencyFallbackColor="black"
         />
         <View style={styles.titleWrapper}>
@@ -167,13 +171,9 @@ function ChallengeDetailScreen({route, navigation}) {
                       (1000 * 3600 * 24) +
                     ''
                   : 7}{' '} */}
-                  {challengeDetail?.listWorkout?.length || 0 }
-                {' '}ngày
+                {challengeDetail?.listWorkout?.length || 0} ngày
               </Text>
-              <Text style={styles.rowItemSubTxt}>
-                30
-                phút mỗi ngày
-              </Text>
+              <Text style={styles.rowItemSubTxt}>30 phút mỗi ngày</Text>
               {/* <Text style={styles.rowItemSubTxt}>
                 Ngày bắt đầu:{challengeDetail.startTime}
               </Text>
