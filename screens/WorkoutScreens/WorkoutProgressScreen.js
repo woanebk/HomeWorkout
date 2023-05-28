@@ -9,6 +9,7 @@ import {
   Modal,
   BackHandler,
   PermissionsAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import Video from 'react-native-video';
 import {
@@ -68,6 +69,7 @@ function WorkoutProgressScreen({route, navigation}, props) {
 
   const excersiseStatusRef = useRef();
   const currentExcersiseTimerRef = useRef();
+  const [isLoadingVideo, setIsLoadingVideo] = useState(false);
   const mainTimerRef = useRef();
   const doneIconRef = useRef();
   const flatListRef = useRef();
@@ -515,7 +517,15 @@ function WorkoutProgressScreen({route, navigation}, props) {
               style={styles.video}
               repeat
               source={{uri: currentExcersise?.data?.video}}
+              onLoadStart={() => {
+                if (!isLoadingVideo) setIsLoadingVideo(true);
+              }}
+              onBuffer={() => {
+                if (!isLoadingVideo) setIsLoadingVideo(true);
+              }}
               onLoad={() => {
+                if (isLoadingVideo) setIsLoadingVideo(false);
+
                 currentExcersiseTimerRef?.current?.reset();
                 if (
                   currentExcersise?.data?.description &&
@@ -530,6 +540,11 @@ function WorkoutProgressScreen({route, navigation}, props) {
               style={{position: 'absolute', right: 30, top: 10}}
               warningTime={currentExcersise?.rest}
             />
+            {isLoadingVideo && (
+              <View style={styles.videoLoading}>
+                <ActivityIndicator color={COLOR.WHITE} />
+              </View>
+            )}
           </View>
         )}
         <View style={styles.nameWrapper}>
@@ -804,6 +819,17 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: 'center',
     // borderRadius: 15,
+    backgroundColor: COLOR.MATTE_BLACK,
+  },
+  videoLoading: {
+    position: 'absolute',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: COLOR.MATTE_BLACK,
   },
   nameTxt: {

@@ -1,14 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, StatusBar} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  StatusBar,
+  ActivityIndicator,
+} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Video from 'react-native-video';
 import SuggestExercise from '../../components/SuggestExercise';
 import {COLOR} from '../../constant';
 import {getExerciseByIds} from '../../utilities/FirebaseDatabase';
+import AnimatedText from '../../components/animatedText/AnimatedText';
 
 function ExerciseInfoScreen({route, navigation}) {
   const {exercise} = route.params;
   const [suggestExercises, setSuggestExercises] = useState([]);
+  const [isLoadingVideo, setIsLoadingVideo] = useState(false);
 
   useEffect(() => {
     getRelatedExercise();
@@ -64,14 +72,28 @@ function ExerciseInfoScreen({route, navigation}) {
         <Video
           source={{uri: exercise?.video}}
           repeat
+          onLoadStart={() => {
+            if (!isLoadingVideo) setIsLoadingVideo(true);
+          }}
+          onBuffer={() => {
+            if (!isLoadingVideo) setIsLoadingVideo(true);
+          }}
+          onLoad={() => {
+            if (isLoadingVideo) setIsLoadingVideo(false);
+          }}
           style={styles.backgroundVideo}
           resizeMode="cover"
         />
+        {isLoadingVideo && (
+          <View style={styles.videoLoading}>
+            <ActivityIndicator color={COLOR.WHITE} />
+          </View>
+        )}
       </View>
       <View style={styles.titleWrapper}>
-        <Text numberOfLines={2} style={styles.title}>
+        <AnimatedText ySlideStart={0} numberOfLines={2} style={styles.title}>
           {exercise?.name}
-        </Text>
+        </AnimatedText>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Nhóm cơ tác động:</Text>
@@ -91,7 +113,9 @@ function ExerciseInfoScreen({route, navigation}) {
       </ScrollView>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Những lưu ý khi tập:</Text>
-        <Text style={styles.desTxt}>{exercise?.description}</Text>
+        <AnimatedText style={styles.desTxt} ySlideStart={0} timing={300}>
+          {exercise?.description}
+        </AnimatedText>
       </View>
       {suggestExercises?.length > 0 && renderSuggestedExercises()}
     </ScrollView>
@@ -145,6 +169,18 @@ const styles = StyleSheet.create({
   suggestItem: {
     height: 200,
     width: 150,
+  },
+
+  videoLoading: {
+    position: 'absolute',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: COLOR.MATTE_BLACK,
   },
 });
 

@@ -20,6 +20,7 @@ import {
 } from '../../utilities/FirebaseDatabase';
 import LoadingView from '../../components/LoadingView';
 import {convertObjectToArrayWithoutKey} from '../../utilities/Utilities';
+import AnimatedText from '../../components/animatedText/AnimatedText';
 function WorkoutInfoScreen({navigation, route}) {
   const {workoutId, challengeId, dayIndex} = route.params || '';
 
@@ -70,6 +71,9 @@ function WorkoutInfoScreen({navigation, route}) {
     <View style={styles.banner}>
       <ImageBackground
         source={{uri: workout?.image}}
+        imageStyle={{
+          transform: [{scale: 1.0}],
+        }}
         resizeMode="cover"
         style={{flex: 1, justifyContent: 'space-between'}}>
         <LinearGradient
@@ -90,12 +94,15 @@ function WorkoutInfoScreen({navigation, route}) {
           end={{x: 0, y: 1}}
           colors={[COLOR.TRANSPARENT, COLOR.BLACK]}
           style={styles.linearGradient}>
-          <Text style={styles.levelTxt} numberOfLines={1}>
+          <AnimatedText
+            style={styles.levelTxt}
+            numberOfLines={1}
+            ySlideStart={-20}>
             Level: {workout?.level}
-          </Text>
-          <Text style={styles.title} numberOfLines={2}>
+          </AnimatedText>
+          <AnimatedText style={styles.title} numberOfLines={2} ySlideStart={0}>
             {workout?.name}
-          </Text>
+          </AnimatedText>
           <ScrollView horizontal style={styles.tagScroll}>
             {workout?.muscle_group &&
               workout?.muscle_group?.map((item, index) => (
@@ -106,12 +113,12 @@ function WorkoutInfoScreen({navigation, route}) {
                 </View>
               ))}
           </ScrollView>
-          <Text style={styles.levelTxt}>
+          <AnimatedText style={styles.levelTxt}>
             Thời gian ước tính : {workout?.estimate_time} phút
-          </Text>
-          <Text style={styles.levelTxt}>
+          </AnimatedText>
+          <AnimatedText style={styles.levelTxt}>
             Số Round : x{workout?.rounds?.length}
-          </Text>
+          </AnimatedText>
         </LinearGradient>
       </ImageBackground>
     </View>

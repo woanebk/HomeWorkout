@@ -17,6 +17,7 @@ import {
   lookupChallengeInMyList,
 } from '../../utilities/FirebaseDatabase';
 import LoadingView from '../../components/LoadingView';
+import AnimatedText from '../../components/animatedText/AnimatedText';
 const LINEAR_GRADIENT_HEIGHT = 120;
 
 function ChallengeDetailScreen({route, navigation}) {
@@ -145,8 +146,11 @@ function ChallengeDetailScreen({route, navigation}) {
           blurAmount={30}
           reducedTransparencyFallbackColor="black"
         />
+        <View style={styles.imageOverlay} />
         <View style={styles.titleWrapper}>
-          <Text style={styles.titleTxt}>{challengeDetail?.title}</Text>
+          <AnimatedText ySlideStart={0} timing={800} style={styles.titleTxt}>
+            {challengeDetail?.title}
+          </AnimatedText>
         </View>
         <View style={[styles.blur]}>
           <View style={styles.rowItem}>
@@ -244,9 +248,18 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: COLOR.BLACK,
   },
+  imageOverlay: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: COLOR.BLACK,
+    opacity: 0.4,
+  },
   blur: {
     position: 'absolute',
-    height: 420,
+    height: '55%',
     left: 0,
     bottom: 5,
     right: 0,
@@ -304,9 +317,10 @@ const styles = StyleSheet.create({
     height: 100,
   },
   aboutTxt: {
-    fontSize: 16,
+    fontSize: 18,
     color: COLOR.WHITE,
     marginBottom: 5,
+    fontWeight: 'bold',
     marginHorizontal: 10,
   },
   aboutContentTxt: {

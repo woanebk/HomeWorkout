@@ -1,38 +1,46 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet, View, Text} from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  Text,
+  Touchable,
+} from 'react-native';
 import {COLOR} from '../constant';
 import {Icon} from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-function CommandButton(props) {
+function CommandButton({icon = 'heart', title, onPress}) {
   return (
-    <TouchableOpacity onPress={props?.onPress}>
-      <View style={styles.commandBtn}>
-        <Text style={styles.txt}>{props?.title}</Text>
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.menuButton}>
+        <Icon name={icon} type="font-awesome-5" size={13} color={COLOR.WHITE} />
+        <View style={{flex: 1, marginLeft: 12}}>
+          <Text style={{color: COLOR.WHITE}}>{title}</Text>
+        </View>
+        <Ionicons
+          name={'chevron-forward-outline'}
+          type="font-awesome-5"
+          size={13}
+          color={COLOR.WHITE}
+        />
       </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  commandBtn: {
-    backgroundColor: COLOR.GREY,
-    height: 45,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  rightIconWrapper: {
-    width: 30,
-    height: 30,
-    marginLeft: 15,
-    borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  txt: {
+  menuButton: {
+    marginBottom: 8,
+    marginHorizontal: 12,
+    display: 'flex',
+    flexDirection: 'row',
+    borderRadius: 6,
+    paddingHorizontal: 24,
     color: COLOR.WHITE,
-    fontSize: 15,
-    fontWeight: 'bold',
+    backgroundColor: '#ffffff90',
+    alignItems: 'center',
+    paddingVertical: 12,
   },
 });
 

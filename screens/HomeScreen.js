@@ -39,6 +39,7 @@ import {
 import {Skeleton} from '@rneui/themed';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import HomeUserInfoArea from '../components/HomeUserInfoArea';
+import AnimatedText from '../components/animatedText/AnimatedText';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
@@ -147,7 +148,7 @@ function HomeScreen({navigation}) {
   }, []);
 
   useEffect(() => {
-    getWorkoutOfTheDay();
+    if (user?.level) getWorkoutOfTheDay();
   }, [user?.level]);
 
   const initUser = async showLoading => {
@@ -271,7 +272,13 @@ function HomeScreen({navigation}) {
         colors={[COLOR.TRANSPARENT, COLOR.MATTE_BLACK]}></LinearGradient>
 
       <View style={styles.bannerLeft}>
-        <Text style={styles.bannerTxt}>{workoutOfTheDay?.name}</Text>
+        {workoutOfTheDay?.name ? (
+          <AnimatedText ySlideStart={0} style={styles.bannerTxt}>
+            {workoutOfTheDay?.name}
+          </AnimatedText>
+        ) : (
+          <Text style={styles.bannerTxt}></Text>
+        )}
         {workoutOfTheDay && (
           <View style={styles.bannerBtnWrapper}>
             <TouchableOpacity
@@ -295,19 +302,32 @@ function HomeScreen({navigation}) {
 
       <View style={styles.bannerRight}>
         <View style={styles.bannerRightInsider}>
-          <Text style={styles.bannerRightTxt}>
-            {workoutOfTheDay?.rounds?.length}
-          </Text>
+          {workoutOfTheDay?.rounds ? (
+            <AnimatedText ySlideStart={0} style={styles.bannerRightTxt}>
+              {workoutOfTheDay?.rounds?.length}
+            </AnimatedText>
+          ) : (
+            <Text style={styles.bannerRightTxt}></Text>
+          )}
           <Text style={styles.bannerRightSmallTxt}>Số round</Text>
-          <Text style={styles.bannerRightTxt}>
-            {workoutOfTheDay?.estimate_time
-              ? `${workoutOfTheDay?.estimate_time}m`
-              : ''}
-          </Text>
+          {workoutOfTheDay?.estimate_time ? (
+            <AnimatedText ySlideStart={0} style={styles.bannerRightTxt}>
+              {workoutOfTheDay?.estimate_time + 'm'}
+            </AnimatedText>
+          ) : (
+            <Text style={styles.bannerRightTxt}></Text>
+          )}
+
           <Text style={styles.bannerRightSmallTxt}>Thời gian</Text>
-          <Text style={[styles.bannerRightTxt, {fontSize: 15}]}>
-            {workoutOfTheDay?.level}
-          </Text>
+          {workoutOfTheDay?.level ? (
+            <AnimatedText
+              ySlideStart={0}
+              style={[styles.bannerRightTxt, {fontSize: 15}]}>
+              {workoutOfTheDay?.level}
+            </AnimatedText>
+          ) : (
+            <Text style={styles.bannerRightTxt}></Text>
+          )}
           <Text style={styles.bannerRightSmallTxt}>Level</Text>
         </View>
       </View>
@@ -316,7 +336,7 @@ function HomeScreen({navigation}) {
 
   const renderUserInfo = () => (
     <View style={styles.userStatus}>
-      <HomeUserInfoArea user={user} />
+      <HomeUserInfoArea user={user} navigation={navigation} />
     </View>
   );
 

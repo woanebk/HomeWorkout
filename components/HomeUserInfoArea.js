@@ -6,7 +6,7 @@ import {Skeleton} from '@rneui/themed';
 import LinearGradient from 'react-native-linear-gradient';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-function HomeUserInfoArea({user}) {
+function HomeUserInfoArea({user, navigation}) {
   return (
     <View style={styles.userStatus}>
       <View style={styles.userTagWrapper}>
@@ -120,7 +120,7 @@ function HomeUserInfoArea({user}) {
           color={COLOR.WHITE}
         />
         <Text style={[styles.userBtnTxt, {marginLeft: 10}]}>
-          Cập nhật chỉ số ngay
+          Theo dõi sức khỏe
         </Text>
       </TouchableOpacity>
     </View>

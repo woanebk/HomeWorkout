@@ -40,7 +40,7 @@ function ExerciseLibraryScreen({navigation}) {
     duration: 500,
     create: {
       type: LayoutAnimation.Types.easeIn,
-      property: LayoutAnimation.Properties.scaleY,
+      property: LayoutAnimation.Properties.opacity,
       springDamping: 1,
     },
     update: {

@@ -41,6 +41,8 @@ import {LineChart} from 'react-native-chart-kit';
 import MenuButton from '../components/MenuButton';
 import LoadingView from '../components/LoadingView';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AnimatedText from '../components/animatedText/AnimatedText';
 const PFP_WIDTH = 80;
 const PFP_HEIGHT = 80;
 
@@ -579,7 +581,9 @@ function ProfileScreen({navigation}) {
             start={{x: 0, y: 0.1}}
             end={{x: 0, y: 0.7}}
             colors={[COLOR.TRANSPARENT, COLOR.BLACK]}>
-            <Text style={styles.nameTxt}>{user?.name}</Text>
+            <AnimatedText ySlideStart={0} style={styles.nameTxt}>
+              {user?.name}
+            </AnimatedText>
           </LinearGradient>
         </ImageBackground>
         <View style={styles.titleWrapper}>
@@ -660,20 +664,25 @@ function ProfileScreen({navigation}) {
               </Text>
             </TouchableOpacity>
           </View>
-          <MenuButton
-            title="Bài tập yêu thích"
-            onPress={() => {
-              navigation.navigate('AllFavoriteWorkout');
-            }}
-          />
-          <MenuButton
-            title="Cập nhật thông tin cá nhân"
-            onPress={() => setShowModalUpdateInfo(true)}
-          />
-          <MenuButton
-            title="Đăng xuất"
-            onPress={() => setShowModalConfirm(true)}
-          />
+          <View style={styles.menu}>
+            <MenuButton
+              icon={'heart'}
+              title="Bài tập yêu thích"
+              onPress={() => {
+                navigation.navigate('AllFavoriteWorkout');
+              }}
+            />
+            <MenuButton
+              icon={'pen'}
+              title="Cập nhật thông tin cá nhân"
+              onPress={() => setShowModalUpdateInfo(true)}
+            />
+            <MenuButton
+              icon={'sign-out-alt'}
+              title="Đăng xuất"
+              onPress={() => setShowModalConfirm(true)}
+            />
+          </View>
         </View>
         {renderModalUpdateStat()}
         {renderModalUpdateUserInfo()}
@@ -711,6 +720,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     marginTop: -30,
     paddingTop: 10,
+    alignItems: 'center',
   },
   titleWrapper: {
     position: 'absolute',
@@ -849,6 +859,10 @@ const styles = StyleSheet.create({
   chart: {
     marginRight: 10,
     borderRadius: 5,
+  },
+  menu: {
+    width: '100%',
+    marginHorizontal: 12,
   },
 });
 
