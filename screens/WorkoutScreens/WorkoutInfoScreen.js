@@ -6,14 +6,20 @@ import {
   StatusBar,
   ImageBackground,
   ScrollView,
+  Animated,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../constant';
 import HeartButton from '../../components/HeartButton';
 import StartButton from '../../components/StartButton';
-import {addWorkoutToListFavorite, getUserInfo, getWorkoutById, removeWorkoutFromListFavorite} from '../../utilities/FirebaseDatabase';
+import {
+  addWorkoutToListFavorite,
+  getUserInfo,
+  getWorkoutById,
+  removeWorkoutFromListFavorite,
+} from '../../utilities/FirebaseDatabase';
 import LoadingView from '../../components/LoadingView';
-import { convertObjectToArrayWithoutKey } from '../../utilities/Utilities';
+import {convertObjectToArrayWithoutKey} from '../../utilities/Utilities';
 function WorkoutInfoScreen({navigation, route}) {
   const {workoutId, challengeId, dayIndex} = route.params || '';
 
@@ -28,36 +34,37 @@ function WorkoutInfoScreen({navigation, route}) {
 
   const getWorkoutData = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const res = await getWorkoutById(workoutId);
       if (!res) throw 'CANNOT GET WORKOUT DATA';
       setWorkout(res.val());
     } catch (e) {
       console.log(e);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
   const checkIsLiked = async () => {
-    const res = await getUserInfo()
-    const listFavorite = convertObjectToArrayWithoutKey(res.val()?.favoriteWorkouts)
-    const isLiked = listFavorite?.some((item)=>{
-      return item?.id === workoutId
-    })
-    setLiked(isLiked)
-  }
+    const res = await getUserInfo();
+    const listFavorite = convertObjectToArrayWithoutKey(
+      res.val()?.favoriteWorkouts,
+    );
+    const isLiked = listFavorite?.some(item => {
+      return item?.id === workoutId;
+    });
+    setLiked(isLiked);
+  };
 
   const handleLike = async () => {
-    if (!liked){
-      addWorkoutToListFavorite(workoutId)
-      setLiked(true)
+    if (!liked) {
+      addWorkoutToListFavorite(workoutId);
+      setLiked(true);
+    } else {
+      removeWorkoutFromListFavorite(workoutId);
+      setLiked(false);
     }
-    else {
-      removeWorkoutFromListFavorite(workoutId)
-      setLiked(false)
-    }
-  }
+  };
 
   const renderHeader = () => (
     <View style={styles.banner}>
@@ -74,7 +81,7 @@ function WorkoutInfoScreen({navigation, route}) {
             style={styles.likeBtn}
             isliked={liked}
             onButtonPress={() => {
-              handleLike()
+              handleLike();
             }}
           />
         </LinearGradient>
@@ -121,7 +128,11 @@ function WorkoutInfoScreen({navigation, route}) {
         <StartButton
           title="Bắt Đầu"
           onButtonPress={() =>
-            navigation.navigate('WorkoutDetail', {workoutData: workout, challengeId: challengeId, dayIndex: dayIndex})
+            navigation.navigate('WorkoutDetail', {
+              workoutData: workout,
+              challengeId: challengeId,
+              dayIndex: dayIndex,
+            })
           }></StartButton>
       </View>
       {isLoading && (
@@ -130,7 +141,7 @@ function WorkoutInfoScreen({navigation, route}) {
             position: 'absolute',
             width: SCREEN_WIDTH,
             height: SCREEN_HEIGHT,
-            backgroundColor:COLOR.MATTE_BLACK
+            backgroundColor: COLOR.MATTE_BLACK,
           }}>
           <LoadingView />
         </View>

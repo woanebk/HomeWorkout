@@ -9,6 +9,7 @@ import {
   Image,
   ImageBackground,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import auth, {firebase} from '@react-native-firebase/auth';
@@ -561,129 +562,131 @@ function ProfileScreen({navigation}) {
   };
 
   return (
-    <ScrollView style={{flex: 1}}>
-      <ImageBackground
-        style={{
-          height: 200,
-          backgroundColor: COLOR.WHITE,
-          justifyContent: 'flex-end',
-        }}
-        source={{
-          uri: 'https://oreni.vn/uploads/contents/workout-la-gi-2.jpg',
-        }}
-        blurRadius={0}>
-        <LinearGradient
-          style={styles.linearGradient}
-          start={{x: 0, y: 0.1}}
-          end={{x: 0, y: 0.7}}
-          colors={[COLOR.TRANSPARENT, COLOR.BLACK]}>
-          <Text style={styles.nameTxt}>{user?.name}</Text>
-        </LinearGradient>
-      </ImageBackground>
-      <View style={styles.titleWrapper}>
-        <Text style={styles.titleTxt}>Thông tin cá nhân</Text>
-      </View>
-
-      <View style={styles.contentWrapper}>
-        <View style={styles.pfpWrapper}>
-          <Image
-            resizeMode="cover"
-            style={styles.pfp}
-            source={{
-              uri: 'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
-            }}></Image>
-        </View>
-        <View style={styles.userTagWrapper}>
-          <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-            <Icon
-              name="account"
-              type="material-community"
-              size={14}
-              color={COLOR.WHITE}
-            />
-            <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
-              {user?.level || 'Người mới tập'}
-            </Text>
-          </View>
-          <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
-            <Icon
-              name="account"
-              type="material-community"
-              size={14}
-              color={COLOR.WHITE}
-            />
-            <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
-              Tăng cơ
-            </Text>
-          </View>
-        </View>
-        {renderUserInfo()}
-        {/* {renderAdminButton()} */}
-        <View
+    <View style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}>
+        <ImageBackground
           style={{
-            flex: 1,
-            marginVertical: 10,
-            paddingHorizontal: 10,
-            padding: 10,
-            backgroundColor: COLOR.LIGHT_BLACK,
-            marginHorizontal: 5,
-            borderRadius: 5,
-          }}>
+            height: 200,
+            backgroundColor: COLOR.WHITE,
+            justifyContent: 'flex-end',
+          }}
+          source={{
+            uri: 'https://oreni.vn/uploads/contents/workout-la-gi-2.jpg',
+          }}
+          blurRadius={0}>
+          <LinearGradient
+            style={styles.linearGradient}
+            start={{x: 0, y: 0.1}}
+            end={{x: 0, y: 0.7}}
+            colors={[COLOR.TRANSPARENT, COLOR.BLACK]}>
+            <Text style={styles.nameTxt}>{user?.name}</Text>
+          </LinearGradient>
+        </ImageBackground>
+        <View style={styles.titleWrapper}>
+          <Text style={styles.titleTxt}>Thông tin cá nhân</Text>
+        </View>
+
+        <View style={styles.contentWrapper}>
+          <View style={styles.pfpWrapper}>
+            <Image
+              resizeMode="cover"
+              style={styles.pfp}
+              source={{
+                uri: 'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
+              }}></Image>
+          </View>
+          <View style={styles.userTagWrapper}>
+            <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
+              <Icon
+                name="account"
+                type="material-community"
+                size={14}
+                color={COLOR.WHITE}
+              />
+              <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
+                {user?.level || 'Người mới tập'}
+              </Text>
+            </View>
+            <View style={[styles.userTag, {borderColor: COLOR.WHITE}]}>
+              <Icon
+                name="account"
+                type="material-community"
+                size={14}
+                color={COLOR.WHITE}
+              />
+              <Text style={[styles.userTagTxt, {color: COLOR.WHITE}]}>
+                Tăng cơ
+              </Text>
+            </View>
+          </View>
+          {renderUserInfo()}
+          {/* {renderAdminButton()} */}
           <View
             style={{
-              marginBottom: 10,
-              marginLeft: 5,
-              flexDirection: 'row',
-              alignItems: 'center',
+              flex: 1,
+              marginVertical: 10,
+              paddingHorizontal: 10,
+              padding: 10,
+              backgroundColor: COLOR.LIGHT_BLACK,
+              marginHorizontal: 5,
+              borderRadius: 5,
             }}>
-            <Text style={styles.infoTitleTxt}>
-              {showWeightChart ? 'Lịch sử cân nặng' : 'Lịch sử BMI'}
-            </Text>
+            <View
+              style={{
+                marginBottom: 10,
+                marginLeft: 5,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.infoTitleTxt}>
+                {showWeightChart ? 'Lịch sử cân nặng' : 'Lịch sử BMI'}
+              </Text>
+            </View>
+            {showWeightChart ? renderWeightChart() : renderBMIChart()}
+            {renderUserBMI()}
+            <TouchableOpacity
+              style={styles.userBtn}
+              onPress={() => {
+                setShowModalUpdateStat(true);
+              }}>
+              <Icon
+                name="chart-line"
+                type="material-community"
+                size={20}
+                color={COLOR.WHITE}
+              />
+              <Text style={[styles.userBtnTxt, {marginLeft: 10}]}>
+                Cập nhật chỉ số ngay
+              </Text>
+            </TouchableOpacity>
           </View>
-          {showWeightChart ? renderWeightChart() : renderBMIChart()}
-          {renderUserBMI()}
-          <TouchableOpacity
-            style={styles.userBtn}
+          <MenuButton
+            title="Bài tập yêu thích"
             onPress={() => {
-              setShowModalUpdateStat(true);
-            }}>
-            <Icon
-              name="chart-line"
-              type="material-community"
-              size={20}
-              color={COLOR.WHITE}
-            />
-            <Text style={[styles.userBtnTxt, {marginLeft: 10}]}>
-              Cập nhật chỉ số ngay
-            </Text>
-          </TouchableOpacity>
+              navigation.navigate('AllFavoriteWorkout');
+            }}
+          />
+          <MenuButton
+            title="Cập nhật thông tin cá nhân"
+            onPress={() => setShowModalUpdateInfo(true)}
+          />
+          <MenuButton
+            title="Đăng xuất"
+            onPress={() => setShowModalConfirm(true)}
+          />
         </View>
-        <MenuButton
-          title="Bài tập yêu thích"
-          onPress={() => {
-            navigation.navigate('AllFavoriteWorkout');
+        {renderModalUpdateStat()}
+        {renderModalUpdateUserInfo()}
+        <CustomModal
+          visible={showModalConfirm}
+          title="Bạn có chắc muốn đăng xuất ?"
+          onConfirm={async () => {
+            setShowModalConfirm(false);
+            onPressSignOut();
           }}
+          onCancel={() => setShowModalConfirm(false)}
         />
-        <MenuButton
-          title="Cập nhật thông tin cá nhân"
-          onPress={() => setShowModalUpdateInfo(true)}
-        />
-        <MenuButton
-          title="Đăng xuất"
-          onPress={() => setShowModalConfirm(true)}
-        />
-      </View>
-      {renderModalUpdateStat()}
-      {renderModalUpdateUserInfo()}
-      <CustomModal
-        visible={showModalConfirm}
-        title="Bạn có chắc muốn đăng xuất ?"
-        onConfirm={async () => {
-          setShowModalConfirm(false);
-          onPressSignOut();
-        }}
-        onCancel={() => setShowModalConfirm(false)}
-      />
+      </ScrollView>
       {isLoading && (
         <View
           style={{
@@ -696,7 +699,7 @@ function ProfileScreen({navigation}) {
           <LoadingView />
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 }
 
