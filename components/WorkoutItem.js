@@ -20,8 +20,8 @@ function WorkoutItem(props) {
           imageStyle={styles.img}
           source={{uri: props?.workout?.image}}>
           <LinearGradient
-            start={{x: 1, y: 0.2}}
-            end={{x: 0.3, y: 0.9}}
+            start={{x: 0.7, y: 1}}
+            end={{x: 0.7, y: 0}}
             colors={[COLOR.BLACK, COLOR.TRANSPARENT]}
             style={styles.linearGradient}>
             <View style={{width: '40%'}}>
@@ -54,7 +54,9 @@ function WorkoutItem(props) {
           <Text numberOfLines={1} style={styles.titleTxt}>
             {props?.workout?.name}
           </Text>
-          <Text numberOfLines={1} style={{color: COLOR.GREY, fontSize: 12}}>
+          <Text
+            numberOfLines={1}
+            style={{color: COLOR.LIGHT_GREY, fontSize: 12, marginTop: 5}}>
             Nhóm cơ tác động:{' '}
             {handleArrayToString(props?.workout?.muscle_group)}
           </Text>
@@ -76,29 +78,29 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.WHITE,
   },
   img: {
-    flex: 0.75,
+    flex: 1,
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
     flexDirection: 'row-reverse',
   },
   infoWrapper: {
-    backgroundColor: COLOR.WHITE,
-    flex: 0.25,
+    position: 'absolute',
+    bottom: 0,
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
     paddingHorizontal: 10,
     paddingTop: 10,
-    paddingBottom: 5,
+    paddingBottom: 10,
     //opacity:0.5
   },
   titleTxt: {
-    color: COLOR.BLACK,
+    color: COLOR.WHITE,
     fontSize: 18,
     fontWeight: 'bold',
   },
   linearGradient: {
     width: '100%',
-    borderTopRightRadius: 5,
+    borderRadius: 5,
     flexDirection: 'row-reverse',
   },
   tag: {

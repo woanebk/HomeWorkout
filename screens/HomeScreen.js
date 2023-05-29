@@ -40,6 +40,7 @@ import {Skeleton} from '@rneui/themed';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import HomeUserInfoArea from '../components/HomeUserInfoArea';
 import AnimatedText from '../components/animatedText/AnimatedText';
+import MuscleLibraryCard from '../components/MuscleLibraryCard';
 
 const HOME_BANNER_HEIGHT = 300;
 function HomeScreen({navigation}) {
@@ -401,6 +402,16 @@ function HomeScreen({navigation}) {
           </View>
         )}
       />
+      <HomeSection hideButton title="Tác động nhóm cơ nhất định" />
+      <View
+        style={{
+          width: '100%',
+          paddingHorizontal: 15,
+          paddingBottom: 16,
+          marginTop: 15,
+        }}>
+        <MuscleLibraryCard navigation={navigation} />
+      </View>
       <HomeSection
         title="Video kiến thức"
         onPress={() => {
@@ -467,16 +478,6 @@ function HomeScreen({navigation}) {
       {/*    }}*/}
       {/*  />*/}
       {/*</View>*/}
-      <View style={styles.libraryBtnWrapper}>
-        <CommandButton
-          icon="tag"
-          title="Bài tập theo nhóm cơ"
-          backgroundColor={COLOR.GOLD}
-          onPress={() => {
-            navigation.navigate('Category');
-          }}
-        />
-      </View>
     </ScrollView>
   );
 }
