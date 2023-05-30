@@ -1,4 +1,4 @@
-package com.homeworkout;
+package com.namdaovstheworld.homeworkout;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;

@@ -128,7 +128,7 @@ android {
 
     defaultConfig {
         multiDexEnabled true
-        applicationId "com.homeworkout"
+        applicationId "com.namdaovstheworld.homeworkout"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

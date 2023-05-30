@@ -50,6 +50,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441584493982:android:a3b4e36ea0108a789ae28f",
+        "android_client_info": {
+          "package_name": "com.namdaovstheworld.homeworkout"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441584493982-vfq5uto2e28jo5oe3arpkap13f4ho8gv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.namdaovstheworld.homeworkout",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "441584493982-eg6pb0mrq60j3qmdq7hf9bbphj9mon2e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkRL-ioTDzcncb0Loq4uwEa1lEheiXIO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441584493982-eg6pb0mrq60j3qmdq7hf9bbphj9mon2e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

@@ -1,4 +1,4 @@
-package com.homeworkout;
+package com.namdaovstheworld.homeworkout;
 
 import android.app.Application;
 import android.content.Context;
