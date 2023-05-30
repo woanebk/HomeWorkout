@@ -5,17 +5,17 @@ import {BackgroundImage} from 'react-native-elements/dist/config';
 import {COLOR} from '../constant';
 
 function MuscleLibraryCard({navigation}) {
-  const scaleAnim = useRef(new Animated.Value(1.0)).current;
+  const scaleAnim = useRef(new Animated.Value(1.3)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(scaleAnim, {
-          toValue: 1.2,
+          toValue: 1.5,
           duration: 7000,
         }),
         Animated.timing(scaleAnim, {
-          toValue: 1.0,
+          toValue: 1.3,
           duration: 7000,
         }),
       ]),
@@ -64,8 +64,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   img: {
+    flex: 1,
     borderRadius: 15,
     position: 'absolute',
+    width: '100%',
+    height: undefined,
     left: 0,
     top: 0,
     right: 0,
