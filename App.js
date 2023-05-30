@@ -39,7 +39,7 @@ function App({navigation}) {
   }
 
   useEffect(() => {
-    checkSoundService();
+    // checkSoundService();
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);

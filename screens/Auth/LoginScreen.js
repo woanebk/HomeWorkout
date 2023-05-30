@@ -58,16 +58,17 @@ function LoginScreen({navigation}, route) {
           navigation.navigate('Tab');
         })
         .catch(error => {
-          if (error.code === 'auth/user-not-found') {
+          if (
+            error.code === 'auth/user-not-found' ||
+            error.code === 'auth/wrong-password'
+          ) {
             Toast.show({
               visibilityTime: 2000,
               type: 'info',
               text1: 'Thông báo',
-              text2: 'Địa chỉ email hoặc mật khẩu không xác thực',
+              text2: 'Địa chỉ email hoặc mật khẩu không đúng',
             });
-          }
-
-          if (
+          } else if (
             error.code ===
             'There is no user record corresponding to this identifier. The user may have been deleted.'
           ) {
@@ -76,6 +77,21 @@ function LoginScreen({navigation}, route) {
               type: 'info',
               text1: 'Thông báo',
               text2: 'Vui lòng nhập địa chỉ Email xác thực',
+            });
+          } else if (error.code === 'auth/too-many-requests') {
+            Toast.show({
+              visibilityTime: 2000,
+              type: 'info',
+              text1: 'Thông báo',
+              text2:
+                'Tạm thời khóa đăng nhập vì đăng nhập thất bại quá nhiều lần',
+            });
+          } else {
+            Toast.show({
+              visibilityTime: 2000,
+              type: 'info',
+              text1: 'Thông báo',
+              text2: 'Đăng nhập thất bại',
             });
           }
 
@@ -255,7 +271,11 @@ function LoginScreen({navigation}, route) {
           placeholder="Nhập mật khẩu"
         />
         <TouchableOpacity style={styles.commandBtn}>
-          <Text style={styles.commandTxt} onPress={() => handleLogin()}>
+          <Text
+            style={styles.commandTxt}
+            onPress={() => {
+              handleLogin();
+            }}>
             Đăng nhập
           </Text>
         </TouchableOpacity>
