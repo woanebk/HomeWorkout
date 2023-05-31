@@ -60,6 +60,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "441584493982-r95avnoirg6de3cs1h3t6gcido6vjgc4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.namdaovstheworld.homeworkout",
+            "certificate_hash": "c59bc948807cbe4bd0f9c162d61e224dc9620bdf"
+          }
+        },
+        {
           "client_id": "441584493982-vfq5uto2e28jo5oe3arpkap13f4ho8gv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
